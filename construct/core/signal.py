@@ -8,7 +8,7 @@ from fnmatch import fnmatch
 DEFAULT_PRIORITY = 0
 
 
-class SignalHub(object):
+class SignalRouter(object):
     '''Manages and sends signals by string identifier. Supports fuzzy signal
     subscriptions using fnmatch with *. So you could connect to "new.*" to
     subscribe to all signals that start with "new.".
@@ -17,7 +17,7 @@ class SignalHub(object):
 
         Basic subscription:
 
-            >>> hub = SignalHub()
+            >>> hub = SignalRouter()
             >>> def subscriber():
             ...     return 'HI'
             ...
@@ -27,7 +27,7 @@ class SignalHub(object):
 
         Fuzzy subscription:
 
-            >>> hub = SignalHub()
+            >>> hub = SignalRouter()
             >>> @hub.route('foo.*')
             ... def foo_subscriber():
             ...     return 'FOO'
@@ -39,7 +39,7 @@ class SignalHub(object):
 
         Use a Signal alias:
 
-            >>> hub = SignalHub()
+            >>> hub = SignalRouter()
             >>> my_signal = hub.signal('my.signal')
             >>> @my_signal.route()
             ... def my_subscriber():
@@ -137,7 +137,7 @@ class SignalHub(object):
             priority (int): obj priority
 
         Examples:
-            >>> hub = SignalHub()
+            >>> hub = SignalRouter()
             >>> @hub.route('my.signal')
             ... def subscriber():
             ...     pass
@@ -178,12 +178,12 @@ class SignalHub(object):
         Examples:
             Clear all signals' subscribers:
 
-                >>> hub = SignalHub()
+                >>> hub = SignalRouter()
                 >>> hub.clear()
 
             Clear one signal's subscribers:
 
-                >>> hub = SignalHub()
+                >>> hub = SignalRouter()
                 >>> hub.clear('my.signal')
         '''
         if not identifier:
@@ -245,7 +245,7 @@ class Signal(object):
     themselves, instead they should get them from a hub using the
     :meth:`signal`:
 
-        >>> hub = SignalHub()
+        >>> hub = SignalRouter()
         >>> hub.signal('my.signal') # doctest: +ELLIPSIS
         Signal(hub=..., identifier='my.signal')
     '''
