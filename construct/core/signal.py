@@ -3,12 +3,12 @@ from __future__ import absolute_import, division, print_function
 from bisect import bisect_right
 from collections import defaultdict
 from fnmatch import fnmatch
-
+__all__ = ['DEFAULT_PRIORITY', 'SignalHub', 'Signal']
 
 DEFAULT_PRIORITY = 0
 
 
-class SignalRouter(object):
+class SignalHub(object):
     '''Manages and sends signals by string identifier. Supports fuzzy signal
     subscriptions using fnmatch with *. So you could connect to "new.*" to
     subscribe to all signals that start with "new.".
@@ -17,7 +17,7 @@ class SignalRouter(object):
 
         Basic subscription:
 
-            >>> hub = SignalRouter()
+            >>> hub = SignalHub()
             >>> def subscriber():
             ...     return 'HI'
             ...
@@ -27,7 +27,7 @@ class SignalRouter(object):
 
         Fuzzy subscription:
 
-            >>> hub = SignalRouter()
+            >>> hub = SignalHub()
             >>> @hub.route('foo.*')
             ... def foo_subscriber():
             ...     return 'FOO'
@@ -39,7 +39,7 @@ class SignalRouter(object):
 
         Use a Signal alias:
 
-            >>> hub = SignalRouter()
+            >>> hub = SignalHub()
             >>> my_signal = hub.signal('my.signal')
             >>> @my_signal.route()
             ... def my_subscriber():
@@ -137,7 +137,7 @@ class SignalRouter(object):
             priority (int): obj priority
 
         Examples:
-            >>> hub = SignalRouter()
+            >>> hub = SignalHub()
             >>> @hub.route('my.signal')
             ... def subscriber():
             ...     pass
@@ -178,12 +178,12 @@ class SignalRouter(object):
         Examples:
             Clear all signals' subscribers:
 
-                >>> hub = SignalRouter()
+                >>> hub = SignalHub()
                 >>> hub.clear()
 
             Clear one signal's subscribers:
 
-                >>> hub = SignalRouter()
+                >>> hub = SignalHub()
                 >>> hub.clear('my.signal')
         '''
         if not identifier:
@@ -245,7 +245,7 @@ class Signal(object):
     themselves, instead they should get them from a hub using the
     :meth:`signal`:
 
-        >>> hub = SignalRouter()
+        >>> hub = SignalHub()
         >>> hub.signal('my.signal') # doctest: +ELLIPSIS
         Signal(hub=..., identifier='my.signal')
     '''

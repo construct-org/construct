@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from construct.actions.project import NewProject, tag_project_step
+from construct.actions.project import NewProject
 
 
-def is_available(context):
+def available(context):
     return True
 
 
@@ -12,7 +12,6 @@ def register(cons):
 
     # Project actions
     cons.action_hub.register(NewProject)
-    cons.action_hub.subscribe(NewProject, tag_project_step)
 
 
 def unregister(cons):
@@ -20,5 +19,4 @@ def unregister(cons):
 
     # Project actions
     cons.action_hub.unregister(NewProject)
-    cons.action_hub.unsubscribe(NewProject, tag_project_step)
 

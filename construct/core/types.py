@@ -1,7 +1,27 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+import abc
 from collections import Mapping, deque
 from construct.core.util import update_dict
+__all__ = [
+    'ABC',
+    'Namespace',
+    'Stack',
+    'Priority',
+    'STAGE0',
+    'STAGE1',
+    'STAGE2',
+    'STAGE3',
+    'STAGE4',
+    'STAGE',
+    'VALIDATE',
+    'REPAIR',
+    'COMMIT',
+    'INTEGRATE'
+]
+
+
+ABC = abc.ABCMeta('ABC', (object,), {})
 
 
 class Namespace(object):
@@ -46,3 +66,55 @@ class Stack(deque):
 
     def top(self):
         return self[-1]
+
+
+# Priority Type and Defaults
+
+
+class Priority(int):
+
+    _instances = {}
+
+    def __new__(cls, value, label=None, description=None):
+
+        key = (value, label, description)
+        if key in cls._instances:
+            return cls._instances[key]
+
+        if label is None:
+            label = 'Priority-' + str(value)
+
+        if description is None:
+            description = 'Priority ' + str(value)
+
+        key = (value, label, description)
+        if key in cls._instances:
+            return cls._instances[key]
+
+        obj = super(Priority, cls).__new__(cls, value)
+        obj.label = label
+        obj.description = description
+
+        return cls._instances.setdefault(key, obj)
+
+
+STAGE0 = Priority(0, 'Stage-0', 'First stage')
+STAGE1 = Priority(1, 'Stage-1', 'Second stage')
+STAGE2 = Priority(2, 'Stage-2', 'Third stage')
+STAGE3 = Priority(3, 'Stage-3', 'Fourth stage')
+STAGE4 = Priority(4, 'Stage-4', 'Fifth stage')
+
+STAGE = Priority(0, 'Stage', 'Stage data for validation')
+VALIDATE = Priority(1, 'Validate', 'Validate collected data')
+REPAIR = Priority(2, 'Repair', 'Repair data that failed validation')
+COMMIT = Priority(3, 'Commit', 'Commit new artifacts based on data')
+INTEGRATE = Priority(4, 'Integrate', 'Integrate artifacts')
+
+DEFAULTS = {
+    (0, None, None): STAGE0,
+    (1, None, None): STAGE1,
+    (2, None, None): STAGE2,
+    (3, None, None): STAGE3,
+    (4, None, None): STAGE4,
+}
+Priority._instances.update(DEFAULTS)

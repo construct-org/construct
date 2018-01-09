@@ -5,41 +5,13 @@ context class
 import os
 import fsfs
 from fstrings import f
-from construct.core.util import update_dict
+from construct.core.globals import _ctx_stack
 from collections import Mapping
 
 __all__ = ['Context', 'from_env', 'from_path']
 
 
-class Namespace(object):
-
-    def __init__(self, **kwargs):
-        self.__dict__.update(**kwargs)
-
-    def __repr__(self):
-        kwargs = [f('{k}={v}') for k, v in self.__dict__.items()]
-        kwargs = ', '.join(kwargs)
-        return f('{self.__class__.__name__}({kwargs})')
-
-    def __contains__(self, key):
-        return key in self.__dict__
-
-    def __getitem__(self, key):
-        return self.__dict__.__getitem__(key)
-
-    def __setitem__(self, key, value):
-        return self.__dict__.__setitem__(key, value)
-
-    def update(self, other):
-        if isinstance(other, Namespace):
-            update_dict(self.__dict__, other.__dict__)
-        elif isinstance(other, Mapping):
-            update_dict(self.__dict__, other)
-        else:
-            raise TypeError('Argument must be a Namespace or Mapping instance')
-
-
-class Context(Namespace):
+class Context(object):
 
     _keys = [
         'host',
@@ -49,13 +21,47 @@ class Context(Namespace):
         'shot',
         'asset',
         'workspace',
-        'selection',
     ]
     _defaults = {k: None for k in _keys}
 
     def __init__(self, **kwargs):
         kwargs = dict(self._defaults, **kwargs)
-        super(Context, self).__init__(**kwargs)
+        self.__dict__.update(kwargs)
+
+    def __repr__(self):
+        kwargs = ', '.join([f('{k}={v}') for k, v in self.__dict__.items()])
+        return f('{self.__class__.__name__}({kwargs})')
+
+    def __enter__(self):
+        self.push()
+        return self
+
+    def __exit__(self, exc_type, exc_value, tb):
+        self.pop()
+        raise exc_type, exc_value, tb
+
+    def __getitem__(self, key):
+        return self.__dict__.__getitem__(key)
+
+    def __setitem__(self, key, value):
+        self.__dict__.__setitem__(key, value)
+
+    def __contains__(self, key):
+        return self.__dict__.__contains__(key)
+
+    def push(self):
+        _ctx_stack.push(self)
+
+    def pop(self):
+        if _ctx_stack.top() is self:
+            _ctx_stack.pop()
+
+    def update(self, other):
+        if isinstance(other, Mapping):
+            self.__dict__.update(other)
+        elif isinstance(other, Context):
+            self.__dict__.update(other.__dict__)
+        raise TypeError('Not a Mapping or Context: ', other)
 
 
 def to_env(context):
@@ -65,16 +71,6 @@ def to_env(context):
         value = getattr(context, key)
         if value is not None:
             os.environ['CONSTRUCT_' + key.upper()] = value
-
-
-def merge(a, b, exclude=['root', 'host']):
-    '''Join two contexts'''
-
-    context = Context(**a.__dict__)
-    for k, v in b.__dict__.items():
-        if k not in exclude:
-            context.__dict__[k] = v
-    return context
 
 
 def from_env():
@@ -87,6 +83,7 @@ def from_env():
         asset=os.environ.get('CONSTRUCT_ASSET', None),
         sequence=os.environ.get('CONSTRUCT_SEQUENCE', None),
         shot=os.environ.get('CONSTRUCT_SHOT', None),
+        workspace=os.environ.get('CONSTRUCT_WORKSPACE', None)
     )
     return Context(**ctx)
 

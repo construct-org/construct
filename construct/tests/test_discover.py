@@ -12,6 +12,7 @@ def test_discover_single_path():
     '''Discover plugins on single path'''
 
     plugins = discover(data_path('plugin_path1'))
+    print(plugins)
     assert 'plugin1' in plugins
     assert 'plugin2' in plugins
     assert isinstance(plugins['plugin1'], ModuleType)

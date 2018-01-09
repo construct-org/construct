@@ -17,7 +17,7 @@ class Plugin4Action(Action):
     description = 'A test action from plugin4'
 
     @staticmethod
-    def is_available(context):
+    def available(context):
         return True
 
 
@@ -25,7 +25,7 @@ def plugin4subscriber(action):
     action.data['results'] = action.kwargs['argument']
 
 
-def is_available(context):
+def available(context):
     return True
 
 

@@ -8,7 +8,7 @@ def capture_action(action):
     capture.append(action.identifier)
 
 
-def is_available(context):
+def available(context):
     return True
 
 

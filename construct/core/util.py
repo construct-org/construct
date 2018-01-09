@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, absolute_import
 import os
+from collections import Mapping
 from fstrings import f
 from construct.compat import basestring
 __all__ = [
@@ -10,11 +11,25 @@ __all__ = [
     'env_with_default',
     'get_callable_name',
     'path_split',
+    'pop_attr',
+    'update_dict'
 ]
+
+
+def pop_attr(obj, attr, default):
+    '''Get the value of an attr then delete it else return default'''
+
+    try:
+        value = getattr(obj, attr)
+        delattr(obj, attr)
+    except AttributeError:
+        value = default
+    return value
 
 
 def get_callable_name(obj):
     '''Get name of obj object or callable'''
+
     try:
         return obj.func_name
     except NameError:
@@ -64,3 +79,22 @@ def ensure_callable(obj, exc_type=TypeError):
 
     if not callable(obj):
         raise exc_type('{obj} must be callable')
+
+
+def update_dict(d, u):
+    '''Update a dict recursively.
+
+    See also:
+        https://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth
+    '''
+
+    for k, v in u.items():
+        if isinstance(v, Mapping):
+            dv = d.get(k, {})
+            if isinstance(dv, Mapping):
+                d[k] = update_dict(dv, v)
+            else:
+                d[k] = v
+        else:
+            d[k] = v
+    return d

@@ -45,7 +45,7 @@ def import_pkg(path):
 def is_plugin(obj):
     '''Check if obj is a valid construct plugin.'''
 
-    plugin_methods = ['register', 'unregister', 'is_available']
+    plugin_methods = ['register', 'unregister', 'available']
     return all([hasattr(obj, method) for method in plugin_methods])
 
 

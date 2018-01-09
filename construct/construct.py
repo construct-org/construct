@@ -34,7 +34,8 @@ class Construct(object):
         self.__dict__.update(defaults)
 
         # Create action and event hub
-        self.action_hub = ActionHub(self)
+        self.action_hub = ActionHub()
+        self.action_hub._signals.connect('make.context', self._build_context)
 
         # Action aliases
         # Forward calls to action_hub
@@ -46,29 +47,33 @@ class Construct(object):
         self.new_workspace = self.action_hub.alias('new.workspace')
 
         # Initialize context and discover plugins
-        self.context = context.from_env()
+        self.ctx = context.from_env()
         if host:
-            self.context.host = host
+            self.ctx.host = host
         if root:
-            self.context.root = root
+            self.ctx.root = root
 
         self._register_builtins()
         self.discover_plugins()
 
+    def _build_context(self, ctx):
+        '''Called by ActionHub.make_context prior to creating an action.'''
+
+        ctx.update(self.ctx)
+        return ctx
+
     def get_context(self):
-        return self.context
+        return self.ctx
 
     def set_context(self, ctx):
-        self.context = ctx
+        self.ctx = ctx
 
     def set_context_from_path(self, path):
-        path_context = context.from_path(path)
-        ctx = context.merge(
-            self.context,
-            path_context,
-            exclude=['host', 'root']
-        )
-        self.set_context(ctx)
+        path_ctx = context.from_path(path)
+        self.ctx.update(path_ctx)
+
+    def context_from_path(self, path):
+        return context.from_path(path)
 
     def search(self, *args, **kwargs):
         '''Yield all entries matching the provided tags.
@@ -88,7 +93,7 @@ class Construct(object):
         See also:
             :meth:`fsfs.search`
         '''
-        kwargs.setdefault('root', self.context.root or os.getcwd())
+        kwargs.setdefault('root', self.ctx.root or os.getcwd())
 
         for entry in fsfs.search(*args, **kwargs):
             yield entry
@@ -111,7 +116,7 @@ class Construct(object):
         See also:
             :meth:`fsfs.one`
         '''
-        kwargs.setdefault('root', self.context.root or os.getcwd())
+        kwargs.setdefault('root', self.ctx.root or os.getcwd())
 
         return fsfs.one(*args, **kwargs)
 
@@ -131,7 +136,7 @@ class Construct(object):
         self.plugins = plugins.discover(*self.plugin_paths)
         for name, plugin in self.plugins.items():
             plugin.enabled = False
-            if plugin.is_available(self.context):
+            if plugin.available(self.ctx):
                 plugin.enabled = True
 
                 try:

@@ -3,7 +3,7 @@ DIS BE A PLUGIN MODULE...
 '''
 
 
-def is_available(context):
+def available(context):
     return True
 
 

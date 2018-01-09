@@ -37,8 +37,8 @@ class RegistrationError(ConstructError):
     '''Raised when a plugin raises an exception during registration'''
 
 
-class SubscribeError(ConstructError):
-    '''Raised when :meth:`ActionHub.subscribe` fails'''
+class ConnectError(ConstructError):
+    '''Raised when :meth:`ActionHub.connect` fails'''
 
 
 class InvalidIdentifier(ConstructError):
@@ -59,4 +59,8 @@ class InjectorError(ConstructError):
 
 
 class ActionError(ConstructError):
-    '''Raised when an action failes'''
+    '''Raised when an action fails'''
+
+
+class TimeoutError(ConstructError):
+    '''Raised when task times out'''
