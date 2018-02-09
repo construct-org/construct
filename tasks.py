@@ -260,7 +260,7 @@ class Tasks(object):
     def commit(self, message):
         '''Commit Changes...'''
 
-        run('git commit -m '+ message)
+        run(f('git commit -m "{message}"'))
 
     def tag(self, tag):
         '''Tag current commit'''
