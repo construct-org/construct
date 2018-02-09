@@ -48,29 +48,29 @@ def log_methods(cls):
             name = method.__name__
             doc = method.__doc__
             prefix = '[' + name + ']'
-            try:
-                print(prefix, colored(doc, 'white'))
-                with print_prefix(prefix):
+            with print_prefix(prefix):
+                try:
+                    print(colored(doc, 'white'))
                     return_value = method(self, *args, **kwargs)
-            except SubprocessError as e:
-                print(f('[{name}]'), colored(e.message, 'red'))
-                if e.popen.stdout:
-                    print(e.popen.stdout.read())
-                    e.popen.stdout.close()
-                if e.popen.stderr:
-                    print(e.popen.stderr.read())
-                    e.popen.stderr.close()
-                if cls._verbose:
-                    raise
-                sys.exit(e.popen.returncode)
-            except Exception as e:
-                print(f('[{name}]'), colored(e.message, 'red'))
-                if cls._verbose:
-                    raise
-                sys.exit()
-            else:
-                print(prefix, colored('Success!', 'green'))
-                return return_value
+                except SubprocessError as e:
+                    print(colored(e.message, 'red'))
+                    if e.popen.stdout:
+                        print(e.popen.stdout.read())
+                        e.popen.stdout.close()
+                    if e.popen.stderr:
+                        print(e.popen.stderr.read())
+                        e.popen.stderr.close()
+                    if cls._verbose:
+                        raise
+                    sys.exit(e.popen.returncode)
+                except Exception as e:
+                    print(colored(e.message, 'red'))
+                    if cls._verbose:
+                        raise
+                    sys.exit()
+                else:
+                    print(colored('Success!', 'green'))
+                    return return_value
         return log_method_call
 
     tasks = [
