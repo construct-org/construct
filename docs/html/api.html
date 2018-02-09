@@ -1,0 +1,1965 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Documentation &mdash; construct 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="construct 0.0.1 documentation" href="index.html"/>
+        <link rel="prev" title="Guide" href="guide.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> construct
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">construct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.action">construct.action module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.actionhub">construct.actionhub module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.actionloop">construct.actionloop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.actionparams">construct.actionparams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.api">construct.api module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.compat">construct.compat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.constants">construct.constants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.construct">construct.construct module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.context">construct.context module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#context-class">context class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.err">construct.err module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#errors-and-exceptions">errors and exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.plugins">construct.plugins module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.signal">construct.signal module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.tasks">construct.tasks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.types">construct.types module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.util">construct.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">construct</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-documentation">
+<h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-construct.action">
+<span id="construct-action-module"></span><h2>construct.action module<a class="headerlink" href="#module-construct.action" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.action.Action">
+<em class="property">class </em><code class="descclassname">construct.action.</code><code class="descname">Action</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.action.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">abc.ABC</span></code></p>
+<p>Action Base Class</p>
+<dl class="attribute">
+<dt id="construct.action.Action.label">
+<code class="descname">label</code><a class="headerlink" href="#construct.action.Action.label" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Nice name used for labeling like: ‘New Project’</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.action.Action.identifier">
+<code class="descname">identifier</code><a class="headerlink" href="#construct.action.Action.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Used to find and run the action like: ‘new.project’</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.action.Action.description">
+<code class="descname">description</code><a class="headerlink" href="#construct.action.Action.description" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – Description of what the action does</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.action.Action.parameters">
+<code class="descname">parameters</code><a class="headerlink" href="#construct.action.Action.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict or staticmethod</em> – Description of parameters for</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">validation like</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">{</code></dt>
+<dd><dl class="docutils">
+<dt>‘str_param’: {</dt>
+<dd>‘name’: ‘Str Param’,
+‘type’: str,
+‘required’: True,</dd>
+</dl>
+<p>},
+‘int_param’: {</p>
+<blockquote>
+<div>‘name’: ‘Int Param’,
+‘type’: int,
+‘required’: False,
+‘default’: 1</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">}</code></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.action.Action.available">
+<code class="descname">available</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.action.Action.available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if this action is available in the provided Context. Must
+be a staticmethod.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ctx</strong> (<a class="reference internal" href="#construct.context.Context" title="construct.context.Context"><em>Context</em></a>) – Context class</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">description</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">identifier</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">label</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">parameters</code><em class="property"> = {}</em></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="construct.action.Action.params">
+<em class="property">classmethod </em><code class="descname">params</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.action.Action.params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.action.Action.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.action.Action.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.action.Action.run_group">
+<code class="descname">run_group</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.action.Action.run_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.action.Action.run_next">
+<code class="descname">run_next</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.action.Action.run_next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.actionhub">
+<span id="construct-actionhub-module"></span><h2>construct.actionhub module<a class="headerlink" href="#module-construct.actionhub" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.actionhub.ActionHub">
+<em class="property">class </em><code class="descclassname">construct.actionhub.</code><code class="descname">ActionHub</code><a class="headerlink" href="#construct.actionhub.ActionHub" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Maintains a registry mapping Tasks to Actions. Tasks can be
+connected using the string attribute <code class="xref py py-attr docutils literal"><span class="pre">Action.identifier</span></code> so that we
+can connected to <code class="xref py py-class docutils literal"><span class="pre">Action</span></code> before the <code class="xref py py-class docutils literal"><span class="pre">Action</span></code> is actually
+registered.</p>
+<dl class="method">
+<dt id="construct.actionhub.ActionHub.alias">
+<code class="descname">alias</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionHub.alias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.actionhub.ActionHub.aliases">
+<code class="descname">aliases</code><a class="headerlink" href="#construct.actionhub.ActionHub.aliases" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionHub.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><em>identifier=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionHub.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect Tasks from an Action identifier.
+If no identifier is passed, disconnect all Tasks and unregister all
+Actions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>identifer</strong> (<em>str</em>) – Optional <code class="xref py py-meth docutils literal"><span class="pre">Action.identifier()</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionHub.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>identifier</em>, <em>task</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionHub.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect a Task to an Action. When the Action is run the Task
+will be queued for execution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – <code class="xref py py-meth docutils literal"><span class="pre">Action.identifier()</span></code></li>
+<li><strong>task</strong> (<a class="reference internal" href="#construct.tasks.Task" title="construct.tasks.Task"><em>Task</em></a>) – object to connect</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionHub.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><em>identifier</em>, <em>task</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionHub.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect a Task from an Action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – <code class="xref py py-meth docutils literal"><span class="pre">Action.identifier()</span></code></li>
+<li><strong>task</strong> (<a class="reference internal" href="#construct.tasks.Task" title="construct.tasks.Task"><em>Task</em></a>) – object to disconnect</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionHub.get_action">
+<code class="descname">get_action</code><span class="sig-paren">(</span><em>identifier</em>, <em>context=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionHub.get_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an action by identifier.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>identifier</strong> (<em>str</em>) – <code class="xref py py-attr docutils literal"><span class="pre">Action.identifier</span></code></li>
+<li><strong>context</strong> (<a class="reference internal" href="#construct.context.Context" title="construct.context.Context"><em>Context</em></a>) – Context to check for action availability</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Action</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">ActionUnavailable when action is not available in the specified ctx</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionHub.get_actions">
+<code class="descname">get_actions</code><span class="sig-paren">(</span><em>context=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionHub.get_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict containing all actions available in the given context.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>identifier</strong> (<em>str</em>) – Action identifier</li>
+<li><strong>context</strong> (<a class="reference internal" href="#construct.context.Context" title="construct.context.Context"><em>Context</em></a>) – Optional Context for lookup</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Dict[str, Action]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionHub.get_tasks">
+<code class="descname">get_tasks</code><span class="sig-paren">(</span><em>identifier</em>, <em>context=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionHub.get_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all available tasks for the given action identifier
+and context.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>identifier</strong> (<em>str</em>) – Action identifier</li>
+<li><strong>context</strong> (<a class="reference internal" href="#construct.context.Context" title="construct.context.Context"><em>Context</em></a>) – Optional Context for lookup</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List[Task]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionHub.register">
+<code class="descname">register</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionHub.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register an action</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>action</strong> (<a class="reference internal" href="#construct.action.Action" title="construct.action.Action"><em>Action</em></a>) – <code class="xref py py-class docutils literal"><span class="pre">Action</span></code> type to register</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">ActionAlias</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">RegistrationError</span></code> – When argument is not an <code class="xref py py-class docutils literal"><span class="pre">Action</span></code> type</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – When action is already registered</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionHub.unregister">
+<code class="descname">unregister</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionHub.unregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unregister an action</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> (<a class="reference internal" href="#construct.action.Action" title="construct.action.Action"><em>Action</em></a>) – <code class="xref py py-class docutils literal"><span class="pre">Action</span></code> type to register</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.actionhub.ActionAlias">
+<em class="property">class </em><code class="descclassname">construct.actionhub.</code><code class="descname">ActionAlias</code><span class="sig-paren">(</span><em>action_hub</em>, <em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionAlias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Alias for an action available through an action_hub. This allows you
+to provide a shortcut to sending an action.</p>
+<p>instead of:</p>
+<blockquote>
+<div>action_hub.connect(‘action.identifier’, function)
+action_hub(‘action.identifier’, <a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs)</div></blockquote>
+<p>do:</p>
+<blockquote>
+<div>action = ActionAlias(action_hub, ‘action.identifier’)
+action.connect(function)
+action(<a href="#id5"><span class="problematic" id="id6">*</span></a>args, <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs)</div></blockquote>
+<p>Many action aliases are provided on a <code class="xref py py-class docutils literal"><span class="pre">Construct</span></code> instance like:
+new_project, new_asset, new_task, new_sequence, new_shot…</p>
+<dl class="attribute">
+<dt id="construct.actionhub.ActionAlias.action">
+<code class="descname">action</code><a class="headerlink" href="#construct.actionhub.ActionAlias.action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionAlias.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionAlias.clear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionAlias.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>obj</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionAlias.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionAlias.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionAlias.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.actionhub.ActionAlias.registered">
+<code class="descname">registered</code><a class="headerlink" href="#construct.actionhub.ActionAlias.registered" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionhub.ActionAlias.tasks">
+<code class="descname">tasks</code><span class="sig-paren">(</span><em>context=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionhub.ActionAlias.tasks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.actionloop">
+<span id="construct-actionloop-module"></span><h2>construct.actionloop module<a class="headerlink" href="#module-construct.actionloop" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.actionloop.TaskGroup">
+<em class="property">class </em><code class="descclassname">construct.actionloop.</code><code class="descname">TaskGroup</code><span class="sig-paren">(</span><em>priority</em>, <em>tasks</em>, <em>loop</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.TaskGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="construct.actionloop.TaskGroup.done">
+<code class="descname">done</code><a class="headerlink" href="#construct.actionloop.TaskGroup.done" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.actionloop.TaskGroup.failed">
+<code class="descname">failed</code><a class="headerlink" href="#construct.actionloop.TaskGroup.failed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionloop.TaskGroup.get_exception">
+<code class="descname">get_exception</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.TaskGroup.get_exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionloop.TaskGroup.get_status">
+<code class="descname">get_status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.TaskGroup.get_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionloop.TaskGroup.push">
+<code class="descname">push</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.TaskGroup.push" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionloop.TaskGroup.raise_exception">
+<code class="descname">raise_exception</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.TaskGroup.raise_exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionloop.TaskGroup.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.TaskGroup.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.actionloop.TaskGroup.running">
+<code class="descname">running</code><a class="headerlink" href="#construct.actionloop.TaskGroup.running" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionloop.TaskGroup.set_exception">
+<code class="descname">set_exception</code><span class="sig-paren">(</span><em>exc</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.TaskGroup.set_exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionloop.TaskGroup.set_status">
+<code class="descname">set_status</code><span class="sig-paren">(</span><em>status</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.TaskGroup.set_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.actionloop.TaskGroup.success">
+<code class="descname">success</code><a class="headerlink" href="#construct.actionloop.TaskGroup.success" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.actionloop.TaskGroup.waiting">
+<code class="descname">waiting</code><a class="headerlink" href="#construct.actionloop.TaskGroup.waiting" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.actionloop.ActionLoop">
+<em class="property">class </em><code class="descclassname">construct.actionloop.</code><code class="descname">ActionLoop</code><span class="sig-paren">(</span><em>action</em>, <em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.ActionLoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="construct.actionloop.ActionLoop.retry_group">
+<code class="descname">retry_group</code><span class="sig-paren">(</span><em>priority</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.ActionLoop.retry_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionloop.ActionLoop.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.ActionLoop.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.actionloop.ActionLoop.run_group">
+<code class="descname">run_group</code><span class="sig-paren">(</span><em>priority</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.ActionLoop.run_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.actionparams">
+<span id="construct-actionparams-module"></span><h2>construct.actionparams module<a class="headerlink" href="#module-construct.actionparams" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="construct.actionparams.validate">
+<code class="descclassname">construct.actionparams.</code><code class="descname">validate</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionparams.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate Action parameters dict</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>dict</em>) – describes parameters of a callable:</li>
+<li><strong>{</strong> – <dl class="docutils">
+<dt>‘str_param’: {</dt>
+<dd>‘name’: ‘Str Param’,
+‘type’: str,
+‘required’: True,
+‘validator’: lambda x: 1 &lt; len(x) &lt; 36</dd>
+</dl>
+<p>},
+‘int_param’: {</p>
+<blockquote>
+<div>’name’: ‘Int Param’,
+‘type’: int,
+‘required’: False,
+‘default’: 1</div></blockquote>
+</li>
+<li><strong>}</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if parameters are valid</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ParameterError</span></code> – describing invalid parameter</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.actionparams.validate_kwargs">
+<code class="descclassname">construct.actionparams.</code><code class="descname">validate_kwargs</code><span class="sig-paren">(</span><em>parameters</em>, <em>kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionparams.validate_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate kwargs using Action parameters dict:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;arg&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Arg&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;arg&#39;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validate_kwargs</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> (<em>dict</em>) – describes parameters of a callable:</li>
+<li><strong>kwargs</strong> (<em>dict</em>) – function arguments as keyword arguments:</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValidationError</span></code> – describing why kwargs is invalid</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.actionparams.get_defaults">
+<code class="descclassname">construct.actionparams.</code><code class="descname">get_defaults</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionparams.get_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract default values from parameters dict.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;arg&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Arg&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_defaults</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+<span class="go">{&#39;arg&#39;: 1.0}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<em>dict</em>) – describes parameters of a callable:</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Containing name, default value pairs</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.api">
+<span id="construct-api-module"></span><h2>construct.api module<a class="headerlink" href="#module-construct.api" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-construct.compat">
+<span id="construct-compat-module"></span><h2>construct.compat module<a class="headerlink" href="#module-construct.compat" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-construct.constants">
+<span id="construct-constants-module"></span><h2>construct.constants module<a class="headerlink" href="#module-construct.constants" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-construct.construct">
+<span id="construct-construct-module"></span><h2>construct.construct module<a class="headerlink" href="#module-construct.construct" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.construct.Construct">
+<em class="property">class </em><code class="descclassname">construct.construct.</code><code class="descname">Construct</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="construct.construct.Construct.available_actions">
+<code class="descname">available_actions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.available_actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.context_from_path">
+<code class="descname">context_from_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.context_from_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.get_context">
+<code class="descname">get_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.get_context" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.get_path_template">
+<code class="descname">get_path_template</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.get_path_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get one of the current projects templates by name</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.get_path_templates">
+<code class="descname">get_path_templates</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.get_path_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict containining the current projects templates</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.get_plugins">
+<code class="descname">get_plugins</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.get_plugins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.get_template">
+<code class="descname">get_template</code><span class="sig-paren">(</span><em>tag</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.get_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a template by tag and name. A template is a preset folder or
+file stored in your project .data/templates folder. They can be used
+to create new assets, sequences, shots, tasks, and workspaces</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.one">
+<code class="descname">one</code><span class="sig-paren">(</span><em>*tags</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.one" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find one entry matching the provided tags.</p>
+<p>Usage:</p>
+<blockquote>
+<div>cons = Construct()
+cons.one(‘project’, name=’MyProject’)</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>*tags</strong> (<em>str</em>) – List of tags to match [Optional]</li>
+<li><strong>direction</strong> (<em>0</em><em> or </em><em>1</em>) – fsfs.DOWN or fsfs.UP</li>
+<li><strong>root</strong> (<em>str</em>) – Directory to start search from. Defaults to
+<code class="xref py py-attr docutils literal"><span class="pre">context.root</span></code></li>
+<li><strong>name</strong> (<em>str</em>) – Name to search for [Optional]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">fsfs.search()</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>*tags</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield all entries matching the provided tags.</p>
+<p>Usage:</p>
+<blockquote>
+<div>cons = Construct()
+cons.search(‘asset’)</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>*tags</strong> (<em>str</em>) – List of tags to match [Optional]</li>
+<li><strong>direction</strong> (<em>0</em><em> or </em><em>1</em>) – fsfs.DOWN or fsfs.UP</li>
+<li><strong>root</strong> (<em>str</em>) – Directory to start search from. Defaults to
+<code class="xref py py-attr docutils literal"><span class="pre">_ctx.root</span></code></li>
+<li><strong>name</strong> (<em>str</em>) – Name to search for [Optional]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">fsfs.search()</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.set_context">
+<code class="descname">set_context</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.set_context" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.construct.Construct.set_context_from_path">
+<code class="descname">set_context_from_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.set_context_from_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.context">
+<span id="construct-context-module"></span><h2>construct.context module<a class="headerlink" href="#module-construct.context" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="context-class">
+<h3>context class<a class="headerlink" href="#context-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="construct.context.Context">
+<em class="property">class </em><code class="descclassname">construct.context.</code><code class="descname">Context</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="construct.context.Context.get_deepest_entry">
+<code class="descname">get_deepest_entry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context.get_deepest_entry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.context.Context.pop">
+<code class="descname">pop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context.pop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.context.Context.push">
+<code class="descname">push</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context.push" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.context.Context.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>other, exclude=['host']</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.context.from_env">
+<code class="descclassname">construct.context.</code><code class="descname">from_env</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.from_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create new context from environment variables</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.context.from_path">
+<code class="descclassname">construct.context.</code><code class="descname">from_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.from_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract context from file path.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.context.to_env">
+<code class="descclassname">construct.context.</code><code class="descname">to_env</code><span class="sig-paren">(</span><em>context, exclude=['host']</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.to_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push context to environment variables…</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.context.to_env_dict">
+<code class="descclassname">construct.context.</code><code class="descname">to_env_dict</code><span class="sig-paren">(</span><em>context, exclude=['host']</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.to_env_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push context to environment variables…</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-construct.err">
+<span id="construct-err-module"></span><h2>construct.err module<a class="headerlink" href="#module-construct.err" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="errors-and-exceptions">
+<h3>errors and exceptions<a class="headerlink" href="#errors-and-exceptions" title="Permalink to this headline">¶</a></h3>
+<p>All errors and exceptions in Construct are subclasses of ConstructError. This
+allows you to easily catch all exceptions raised by construct like so:</p>
+<blockquote>
+<div><p>from construct import Construct, ConstructError
+construct = Construct()</p>
+<dl class="docutils">
+<dt>try:</dt>
+<dd>construct.new_project(root=’./my_project’)</dd>
+<dt>except ConstructError:</dt>
+<dd># do something
+raise</dd>
+</dl>
+</div></blockquote>
+<dl class="exception">
+<dt id="construct.err.ActionError">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">ActionError</code><a class="headerlink" href="#construct.err.ActionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when an action fails</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.ActionUnavailable">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">ActionUnavailable</code><a class="headerlink" href="#construct.err.ActionUnavailable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when an Action is sent even though it is unavailable in the
+current context</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.ConnectError">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">ConnectError</code><a class="headerlink" href="#construct.err.ConnectError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when <code class="xref py py-meth docutils literal"><span class="pre">ActionHub.connect()</span></code> fails</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.ConstructError">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">ConstructError</code><a class="headerlink" href="#construct.err.ConstructError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+<p>Base class for all Construct exceptions</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.ExtractorError">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">ExtractorError</code><a class="headerlink" href="#construct.err.ExtractorError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when an action_router encounters an error during extraction</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.InjectorError">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">InjectorError</code><a class="headerlink" href="#construct.err.InjectorError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when an action_router encounters an error during injection</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.InvalidIdentifier">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">InvalidIdentifier</code><a class="headerlink" href="#construct.err.InvalidIdentifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when <code class="xref py py-class docutils literal"><span class="pre">ActionHub</span></code> receives an invalid Action identifier</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.InvalidPluginPath">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">InvalidPluginPath</code><a class="headerlink" href="#construct.err.InvalidPluginPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when a plugin path does not exist</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.ParameterError">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">ParameterError</code><a class="headerlink" href="#construct.err.ParameterError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raise when a <code class="xref py py-attr docutils literal"><span class="pre">Action.parameters</span></code> is defined incorrectly</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.RegistrationError">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">RegistrationError</code><a class="headerlink" href="#construct.err.RegistrationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when a plugin raises an exception during registration</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.TimeoutError">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">TimeoutError</code><a class="headerlink" href="#construct.err.TimeoutError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when task times out</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="construct.err.ValidationError">
+<em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">ValidationError</code><a class="headerlink" href="#construct.err.ValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.err.ConstructError" title="construct.err.ConstructError"><code class="xref py py-class docutils literal"><span class="pre">construct.err.ConstructError</span></code></a></p>
+<p>Raised when an <code class="xref py py-class docutils literal"><span class="pre">Action</span></code> is instantiated with arguments that do
+not match the parameters specified in <code class="xref py py-attr docutils literal"><span class="pre">Action.parameters</span></code></p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-construct.plugins">
+<span id="construct-plugins-module"></span><h2>construct.plugins module<a class="headerlink" href="#module-construct.plugins" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="construct.plugins.import_mod">
+<code class="descclassname">construct.plugins.</code><code class="descname">import_mod</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.plugins.import_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import python module by absolute path</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.plugins.import_pkg">
+<code class="descclassname">construct.plugins.</code><code class="descname">import_pkg</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.plugins.import_pkg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import python package by absolute path</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.plugins.is_plugin">
+<code class="descclassname">construct.plugins.</code><code class="descname">is_plugin</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.plugins.is_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if obj is a valid construct plugin.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.plugins.iter_plugins">
+<code class="descclassname">construct.plugins.</code><code class="descname">iter_plugins</code><span class="sig-paren">(</span><em>*paths</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.plugins.iter_plugins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over paths yield plugin modules and packages</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.plugins.discover">
+<code class="descclassname">construct.plugins.</code><code class="descname">discover</code><span class="sig-paren">(</span><em>*paths</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.plugins.discover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dict containing all construct plugins given the paths.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.signal">
+<span id="construct-signal-module"></span><h2>construct.signal module<a class="headerlink" href="#module-construct.signal" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.signal.Channel">
+<em class="property">class </em><code class="descclassname">construct.signal.</code><code class="descname">Channel</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Manages and sends signals by string identifier. Supports fuzzy signal
+subscriptions using fnmatch with *. So you could connect to “new.*” to
+subscribe to all signals that start with “new.”.</p>
+<p class="rubric">Examples</p>
+<p>Basic subscription:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">Channel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">subscriber</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="s1">&#39;HI&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;my.signal&#39;</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;my.signal&#39;</span><span class="p">)</span>
+<span class="go">[&#39;HI&#39;]</span>
+</pre></div>
+</div>
+<p>Fuzzy subscription:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">Channel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@channel</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;foo.*&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">foo_subscriber</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="s1">&#39;FOO&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;foo.bar&#39;</span><span class="p">)</span>
+<span class="go">[&#39;FOO&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;foo.baz&#39;</span><span class="p">)</span>
+<span class="go">[&#39;FOO&#39;]</span>
+</pre></div>
+</div>
+<p>Use a Signal alias:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">Channel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_signal</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="s1">&#39;my.signal&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@my_signal</span><span class="o">.</span><span class="n">route</span><span class="p">()</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">my_subscriber</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="s1">&#39;HI&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_signal</span><span class="p">()</span>
+<span class="go">[&#39;HI&#39;]</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="construct.signal.Channel.chain">
+<code class="descname">chain</code><span class="sig-paren">(</span><em>identifier</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.chain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Chain a signals subscribers. The first subscriber will be passed
+args and kwargs. Then each successive subscriber will be passed the
+return value of the previous subscriber. Unlike <a class="reference internal" href="#construct.signal.send" title="construct.signal.send"><code class="xref py py-meth docutils literal"><span class="pre">send()</span></code></a> this
+returns one value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>identifier</strong> (<em>str</em>) – signal to send</li>
+<li><strong>*args</strong> – args to send</li>
+<li><strong>**kwargs</strong> – kwargs to send</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Final value returned from last subscriber</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Channel.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><em>identifier=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect subscribers from one or all signals</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>identifier</strong> (<em>str</em>) – If passed clear subscribers for just this signal</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Clear all signals’ subscribers:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">Channel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Clear one signal’s subscribers:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">Channel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="s1">&#39;my.signal&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Channel.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>identifier</em>, <em>obj</em>, <em>priority=0</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect an object to a signal. Subscribers are ordered by priority.
+New subscribers are inserted after existing subscribers with the same
+priority.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – Signal identifier</li>
+<li><strong>obj</strong> (<em>callable</em>) – Object to connect to signal</li>
+<li><strong>priority</strong> (<em>int</em>) – priority of obj</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Channel.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><em>identifier</em>, <em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect obj from signal</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – signal to connect obj to</li>
+<li><strong>obj</strong> (<em>callable</em>) – callable obj to connect to signal</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Channel.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwards signals to another channel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference internal" href="#construct.signal.Channel" title="construct.signal.Channel"><em>Channel</em></a>) – Channel to forward to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Channel.route">
+<code class="descname">route</code><span class="sig-paren">(</span><em>identifier</em>, <em>priority=0</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.route" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect an obj to a signal via a decoration. Only works on functions
+and callable class instances at the moment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – Signal identifier</li>
+<li><strong>priority</strong> (<em>int</em>) – obj priority</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">Channel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@channel</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;my.signal&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">subscriber</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">subscriber</span> <span class="ow">in</span> <span class="n">channel</span><span class="o">.</span><span class="n">subscribers</span><span class="p">(</span><span class="s1">&#39;my.signal&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Channel.send">
+<code class="descname">send</code><span class="sig-paren">(</span><em>identifier</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a signal. Calls each subscriber with args and kwargs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>identifier</strong> (<em>str</em>) – signal to send out</li>
+<li><strong>*args</strong> – args to send</li>
+<li><strong>**kwargs</strong> – kwargs to send</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">contains results in order</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Channel.signal">
+<code class="descname">signal</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <a class="reference internal" href="#construct.signal.Signal" title="construct.signal.Signal"><code class="xref py py-class docutils literal"><span class="pre">Signal</span></code></a> alias that forwards all calls to this signal
+channel. Multiple calls to <a class="reference internal" href="#construct.signal.Channel.signal" title="construct.signal.Channel.signal"><code class="xref py py-meth docutils literal"><span class="pre">signal()</span></code></a> with the same identifier will
+return the same <a class="reference internal" href="#construct.signal.Signal" title="construct.signal.Signal"><code class="xref py py-class docutils literal"><span class="pre">Signal</span></code></a> instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.signal.Channel.signals">
+<code class="descname">signals</code><a class="headerlink" href="#construct.signal.Channel.signals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dict containing all signal aliases.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Channel.subscribers">
+<code class="descname">subscribers</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.subscribers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all subscribers in order of priority for a specific signal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>identifier</strong> (<em>str</em>) – Signal identifier</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">subscribers</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Channel.unforward">
+<code class="descname">unforward</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Channel.unforward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops forwarding signals to another channel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>channel</strong> (<a class="reference internal" href="#construct.signal.Channel" title="construct.signal.Channel"><em>Channel</em></a>) – Channel to stop forwarding signals to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.signal.Signal">
+<em class="property">class </em><code class="descclassname">construct.signal.</code><code class="descname">Signal</code><span class="sig-paren">(</span><em>identifier</em>, <em>channel=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Alias for a Signal identifier. Forwards all calls to a parent channel
+sending the aliases identifier with it. Users should not instance Signal
+themselves, instead they should get them from a channel using the
+<code class="xref py py-meth docutils literal"><span class="pre">signal()</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span> <span class="o">=</span> <span class="n">Channel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="s1">&#39;my.signal&#39;</span><span class="p">)</span> 
+<span class="go">Signal(channel=..., identifier=&#39;my.signal&#39;)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="construct.signal.Signal.chain">
+<code class="descname">chain</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Signal.chain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Signal.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Signal.clear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Signal.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>obj</em>, <em>priority=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Signal.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Signal.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><em>obj</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Signal.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Signal.route">
+<code class="descname">route</code><span class="sig-paren">(</span><em>priority=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Signal.route" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Signal.send">
+<code class="descname">send</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Signal.send" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.signal.Signal.subscribers">
+<code class="descname">subscribers</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.Signal.subscribers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.signal.channel">
+<code class="descclassname">construct.signal.</code><code class="descname">channel</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager to temporarily set signal channel</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.signal.get_channel">
+<code class="descclassname">construct.signal.</code><code class="descname">get_channel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.get_channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns global channel</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.signal.set_channel">
+<code class="descclassname">construct.signal.</code><code class="descname">set_channel</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.set_channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets global channel to channel</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.signal.set_channel_to_default">
+<code class="descclassname">construct.signal.</code><code class="descname">set_channel_to_default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.set_channel_to_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets global channel to _default_channel</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.signal.chain">
+<code class="descclassname">construct.signal.</code><code class="descname">chain</code><span class="sig-paren">(</span><em>identifier</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.chain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Chain signal subscribers on global channel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – signal identifier</li>
+<li><strong>channel</strong> (<a class="reference internal" href="#construct.signal.Channel" title="construct.signal.Channel"><em>Channel</em></a>) – Channel to send on, defaults to global channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.signal.route">
+<code class="descclassname">construct.signal.</code><code class="descname">route</code><span class="sig-paren">(</span><em>identifier</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.route" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect function to signal via decorator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – signal identifier</li>
+<li><strong>channel</strong> (<a class="reference internal" href="#construct.signal.Channel" title="construct.signal.Channel"><em>Channel</em></a>) – Channel to send on, defaults to global channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.signal.send">
+<code class="descclassname">construct.signal.</code><code class="descname">send</code><span class="sig-paren">(</span><em>identifier</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send signal on global channel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – signal identifier</li>
+<li><strong>channel</strong> (<a class="reference internal" href="#construct.signal.Channel" title="construct.signal.Channel"><em>Channel</em></a>) – Channel to send on, defaults to global channel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.signal.connect">
+<code class="descclassname">construct.signal.</code><code class="descname">connect</code><span class="sig-paren">(</span><em>identifier</em>, <em>obj</em>, <em>priority=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect function to signal</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – signal identifier</li>
+<li><strong>channel</strong> (<a class="reference internal" href="#construct.signal.Channel" title="construct.signal.Channel"><em>Channel</em></a>) – Channel to send on, defaults to global channel</li>
+<li><strong>priority</strong> (<em>int</em>) – Priority of subscriber</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.signal.disconnect">
+<code class="descclassname">construct.signal.</code><code class="descname">disconnect</code><span class="sig-paren">(</span><em>identifier</em>, <em>obj</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.signal.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect function to signal</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>identifier</strong> (<em>str</em>) – signal identifier</li>
+<li><strong>channel</strong> (<a class="reference internal" href="#construct.signal.Channel" title="construct.signal.Channel"><em>Channel</em></a>) – Channel to send on, defaults to global channel</li>
+<li><strong>priority</strong> (<em>int</em>) – Priority of subscriber</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.tasks">
+<span id="construct-tasks-module"></span><h2>construct.tasks module<a class="headerlink" href="#module-construct.tasks" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="construct.tasks.TIMER">
+<code class="descclassname">construct.tasks.</code><code class="descname">TIMER</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.TIMER" title="Permalink to this definition">¶</a></dt>
+<dd><p>clock() -&gt; floating point number</p>
+<p>Return the CPU time or real time since the start of the process or since
+the first call to clock().  This has as much precision as the system
+records.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.SLEEP">
+<code class="descclassname">construct.tasks.</code><code class="descname">SLEEP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.SLEEP" title="Permalink to this definition">¶</a></dt>
+<dd><p>sleep(seconds)</p>
+<p>Delay execution for a given number of seconds.  The argument may be
+a floating point number for subsecond precision.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.tasks.RequestThread">
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">RequestThread</code><span class="sig-paren">(</span><em>request</em>, <em>retries=0</em>, <em>interval=1</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.RequestThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">threading.Thread</span></code></p>
+<dl class="method">
+<dt id="construct.tasks.RequestThread.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>timeout=None</em>, <em>interval=0.2</em>, <em>propagate=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.RequestThread.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.RequestThread.ready">
+<code class="descname">ready</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.RequestThread.ready" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.RequestThread.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.RequestThread.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.RequestThread.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.RequestThread.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass context through to thread</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.RequestThread.started">
+<code class="descname">started</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.RequestThread.started" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.RequestThread.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.RequestThread.stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.RequestThread.stopped">
+<code class="descname">stopped</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.RequestThread.stopped" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.tasks.AsyncRequest">
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">AsyncRequest</code><span class="sig-paren">(</span><em>task</em>, <em>ctx=None</em>, <em>args=None</em>, <em>kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.AsyncRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.tasks.Request" title="construct.tasks.Request"><code class="xref py py-class docutils literal"><span class="pre">construct.tasks.Request</span></code></a></p>
+<dl class="method">
+<dt id="construct.tasks.AsyncRequest.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>timeout=None</em>, <em>interval=0.2</em>, <em>propagate=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.AsyncRequest.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.tasks.AsyncTask">
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">AsyncTask</code><span class="sig-paren">(</span><em>fn</em>, <em>identifier=None</em>, <em>description=None</em>, <em>priority=0</em>, <em>requires=None</em>, <em>skips=None</em>, <em>extract=None</em>, <em>inject=None</em>, <em>available=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.AsyncTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.tasks.Task" title="construct.tasks.Task"><code class="xref py py-class docutils literal"><span class="pre">construct.tasks.Task</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.tasks.Request">
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">Request</code><span class="sig-paren">(</span><em>task</em>, <em>ctx=None</em>, <em>args=None</em>, <em>kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="construct.tasks.Request.done">
+<code class="descname">done</code><a class="headerlink" href="#construct.tasks.Request.done" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.tasks.Request.enabled">
+<code class="descname">enabled</code><a class="headerlink" href="#construct.tasks.Request.enabled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.tasks.Request.exception">
+<code class="descname">exception</code><a class="headerlink" href="#construct.tasks.Request.exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.tasks.Request.failed">
+<code class="descname">failed</code><a class="headerlink" href="#construct.tasks.Request.failed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Request.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>propagate=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Request.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Request.pop">
+<code class="descname">pop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Request.pop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Request.push">
+<code class="descname">push</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Request.push" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.tasks.Request.ready">
+<code class="descname">ready</code><a class="headerlink" href="#construct.tasks.Request.ready" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Request.set_enabled">
+<code class="descname">set_enabled</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Request.set_enabled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Request.set_exception">
+<code class="descname">set_exception</code><span class="sig-paren">(</span><em>*exc_info</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Request.set_exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Request.set_status">
+<code class="descname">set_status</code><span class="sig-paren">(</span><em>status</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Request.set_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Request.set_value">
+<code class="descname">set_value</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Request.set_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.tasks.Request.status">
+<code class="descname">status</code><a class="headerlink" href="#construct.tasks.Request.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.tasks.Request.success">
+<code class="descname">success</code><a class="headerlink" href="#construct.tasks.Request.success" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="construct.tasks.Request.value">
+<code class="descname">value</code><a class="headerlink" href="#construct.tasks.Request.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.tasks.Task">
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>fn</em>, <em>identifier=None</em>, <em>description=None</em>, <em>priority=0</em>, <em>requires=None</em>, <em>skips=None</em>, <em>extract=None</em>, <em>inject=None</em>, <em>available=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="construct.tasks.Task.available">
+<code class="descname">available</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.available" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Task.extract">
+<code class="descname">extract</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.extract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Task.inject">
+<code class="descname">inject</code><span class="sig-paren">(</span><em>ctx</em>, <em>result</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.inject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Task.ready">
+<code class="descname">ready</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.ready" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Task.request">
+<code class="descname">request</code><span class="sig-paren">(</span><em>ctx=None</em>, <em>args=None</em>, <em>kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Task.skip">
+<code class="descname">skip</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.skip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.task">
+<code class="descclassname">construct.tasks.</code><code class="descname">task</code><span class="sig-paren">(</span><em>identifier=None</em>, <em>priority=None</em>, <em>description=None</em>, <em>cls=&lt;class 'construct.tasks.Task'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator that converts a function to a Task object. The function
+remains callable by normal means, but also receives the additional
+functionality of a Task object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>identifier</strong> (<em>str</em><em> or </em><em>callable</em>) – When a string is passed, return
+a decorator which passes the string to the Task object as it’s
+identifier. If a callable is passed, use the callables name as
+the Task’s identifier.</li>
+<li><strong>priority</strong> (<a class="reference internal" href="#construct.types.Priority" title="construct.types.Priority"><em>Priority</em></a><em> or </em><em>int</em>) – Priority used to order tasks in an action</li>
+<li><strong>description</strong> (<em>str</em>) – Defaults to the decorated functions docstring</li>
+<li><strong>cls</strong> (<em>Object</em>) – Task type to create, defaults to Task</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Task or instance of cls</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.async_task">
+<code class="descclassname">construct.tasks.</code><code class="descname">async_task</code><span class="sig-paren">(</span><em>identifier</em>, <em>priority=None</em>, <em>description=None</em>, <em>cls=&lt;class 'construct.tasks.AsyncTask'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.async_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#construct.tasks.task" title="construct.tasks.task"><code class="xref py py-func docutils literal"><span class="pre">task()</span></code></a> decorator. This returns an AsyncTask which will be run
+in a separate thread when an Action is evaluated. Can still be called
+normally like a standard function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>identifier</strong> (<em>str</em><em> or </em><em>callable</em>) – When a string is passed, return
+a decorator which passes the string to the Task object as it’s
+identifier. If a callable is passed, use the callables name as
+the Task’s identifier.</li>
+<li><strong>priority</strong> (<a class="reference internal" href="#construct.types.Priority" title="construct.types.Priority"><em>Priority</em></a><em> or </em><em>int</em>) – Priority used to order tasks in an action</li>
+<li><strong>description</strong> (<em>str</em>) – Defaults to the decorated functions docstring</li>
+<li><strong>cls</strong> (<em>Object</em>) – Task type to create, defaults to AsyncTask</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">AsyncTask or instance of cls</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.requires">
+<code class="descclassname">construct.tasks.</code><code class="descname">requires</code><span class="sig-paren">(</span><em>*funcs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.requires" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.skips">
+<code class="descclassname">construct.tasks.</code><code class="descname">skips</code><span class="sig-paren">(</span><em>*funcs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.skips" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.extract">
+<code class="descclassname">construct.tasks.</code><code class="descname">extract</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.extract" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.inject">
+<code class="descclassname">construct.tasks.</code><code class="descname">inject</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.inject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.available">
+<code class="descclassname">construct.tasks.</code><code class="descname">available</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.available" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.task_done">
+<code class="descclassname">construct.tasks.</code><code class="descname">task_done</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.task_done" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.task_failed">
+<code class="descclassname">construct.tasks.</code><code class="descname">task_failed</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.task_failed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.task_success">
+<code class="descclassname">construct.tasks.</code><code class="descname">task_success</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.task_success" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.store_key">
+<code class="descclassname">construct.tasks.</code><code class="descname">store_key</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.store_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.artifacts_key">
+<code class="descclassname">construct.tasks.</code><code class="descname">artifacts_key</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.artifacts_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-construct.types">
+<span id="construct-types-module"></span><h2>construct.types module<a class="headerlink" href="#module-construct.types" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.types.ABC">
+<em class="property">class </em><code class="descclassname">construct.types.</code><code class="descname">ABC</code><a class="headerlink" href="#construct.types.ABC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.types.Namespace">
+<em class="property">class </em><code class="descclassname">construct.types.</code><code class="descname">Namespace</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.types.Namespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="construct.types.Namespace.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.types.Namespace.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.types.Namespace.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.types.Namespace.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.types.Namespace.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.types.Namespace.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.types.Namespace.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.types.Namespace.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.types.Stack">
+<em class="property">class </em><code class="descclassname">construct.types.</code><code class="descname">Stack</code><a class="headerlink" href="#construct.types.Stack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">collections.deque</span></code></p>
+<dl class="method">
+<dt id="construct.types.Stack.empty">
+<code class="descname">empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.types.Stack.empty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.types.Stack.push">
+<code class="descname">push</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.types.Stack.push" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.types.Stack.size">
+<code class="descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.types.Stack.size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.types.Stack.top">
+<code class="descname">top</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.types.Stack.top" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.types.Priority">
+<em class="property">class </em><code class="descclassname">construct.types.</code><code class="descname">Priority</code><a class="headerlink" href="#construct.types.Priority" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">int</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.util">
+<span id="construct-util-module"></span><h2>construct.util module<a class="headerlink" href="#module-construct.util" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="construct.util.ensure_callable">
+<code class="descclassname">construct.util.</code><code class="descname">ensure_callable</code><span class="sig-paren">(</span><em>obj</em>, <em>exc_type=&lt;type 'exceptions.TypeError'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.util.ensure_callable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures that an obj is callable</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.util.ensure_instance">
+<code class="descclassname">construct.util.</code><code class="descname">ensure_instance</code><span class="sig-paren">(</span><em>obj</em>, <em>type_</em>, <em>exc_type=&lt;type 'exceptions.TypeError'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.util.ensure_instance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.util.ensure_type">
+<code class="descclassname">construct.util.</code><code class="descname">ensure_type</code><span class="sig-paren">(</span><em>obj</em>, <em>type_</em>, <em>exc_type=&lt;type 'exceptions.TypeError'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.util.ensure_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.util.env_with_default">
+<code class="descclassname">construct.util.</code><code class="descname">env_with_default</code><span class="sig-paren">(</span><em>var</em>, <em>default</em>, <em>converter=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.util.env_with_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an environment variable or a default value.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.util.get_callable_name">
+<code class="descclassname">construct.util.</code><code class="descname">get_callable_name</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.util.get_callable_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get name of obj object or callable</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.util.path_split">
+<code class="descclassname">construct.util.</code><code class="descname">path_split</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.util.path_split" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="construct.util.pop_attr">
+<code class="descclassname">construct.util.</code><code class="descname">pop_attr</code><span class="sig-paren">(</span><em>obj</em>, <em>attr</em>, <em>default</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.util.pop_attr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of an attr then delete it else return default</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.util.update_dict">
+<code class="descclassname">construct.util.</code><code class="descname">update_dict</code><span class="sig-paren">(</span><em>d</em>, <em>u</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.util.update_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a dict recursively.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth">https://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth</a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.util.unipath">
+<code class="descclassname">construct.util.</code><code class="descname">unipath</code><span class="sig-paren">(</span><em>*paths</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.util.unipath" title="Permalink to this definition">¶</a></dt>
+<dd><p>os.path.join with forward slashes only.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-construct" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="guide.html" class="btn btn-neutral" title="Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Dan Bradham.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

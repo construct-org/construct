@@ -1,19 +1,27 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [dev-packages]
+
+
 
 [packages]
 
 sphinx = "*"
-"sphinx-rtd-theme" = "*"
+sphinx-rtd-theme = "*"
 fstrings = "*"
 nose = "*"
 blinker = "*"
-fsfs = "*"
 scandir = "*"
-"sphinxcontrib-napoleon" = "*"
+sphinxcontrib-napoleon = "*"
 werkzeug = "*"
-aenum = "*"
+pyyaml = "*"
+fsfs = {git = "git://github.com/danbradham/fsfs.git"}
+fire = "*"
+gitpython = "*"
+termcolor = "*"
+colorama = "*"
