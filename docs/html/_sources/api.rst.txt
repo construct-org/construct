@@ -2,17 +2,6 @@ API Documentation
 =================
 
 
-Subpackages
------------
-
-.. toctree::
-
-    construct.actions
-    construct.tests
-
-Submodules
-----------
-
 construct\.action module
 ------------------------
 
@@ -129,15 +118,6 @@ construct\.util module
 ----------------------
 
 .. automodule:: construct.util
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: construct
     :members:
     :undoc-members:
     :show-inheritance:

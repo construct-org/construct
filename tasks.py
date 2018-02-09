@@ -26,14 +26,14 @@ def usage_string(component, trace=None, verbose=False):
 
 _usage_string = fire.helputils.UsageString
 fire.helputils.UsageString = usage_string
-
+_print = __builtins__.print
 
 @contextmanager
 def print_prefix(prefix):
     try:
         old_print = __builtins__.print
         def print(*args, **kwargs):
-            old_print(prefix, *args, **kwargs)
+            _print(prefix, *args, **kwargs)
         __builtins__.print = print
         yield
     finally:
@@ -62,10 +62,12 @@ def log_methods(cls):
                     e.popen.stderr.close()
                 if cls._verbose:
                     raise
+                sys.exit(e.popen.returncode)
             except Exception as e:
                 print(f('[{name}]'), colored(e.message, 'red'))
                 if cls._verbose:
                     raise
+                sys.exit()
             else:
                 print(prefix, colored('Success!', 'green'))
                 return return_value
@@ -174,11 +176,13 @@ class Tasks(object):
             Upload to pypi
 
     Pipelines:
-        publish "Commit Message" [--tag (version)] [--remote] [--branch]
-            test | stage | commit | tag | push | upload
 
+        draft "Commit Message" [--tag] [--remote] [--branch]
+            test | stage | commit | tag | push
         publish_docs "Commit Message"
             build_docs | stage | commit | push
+        publish "Commit Message" [--tag] [--remote] [--branch] [--where]
+            test | stage | commit | tag | push | upload
 
     '''
 
@@ -274,8 +278,22 @@ class Tasks(object):
         '''uploading package...not implemented'''
         pass
 
+    def draft(self, message, tag=None, remote=None, branch=None):
+        '''Test, Tag, Push Changes...'''
+
+        # Validate
+        if tag and tag in get_tags:
+            raise Exception('Tag already exists...')
+
+        self.test()
+        self.stage()
+        self.commit(message)
+        if tag:
+            self.tag(tag)
+        self.push(remote, branch)
+
     def publish(self, message, tag=None, remote=None, branch=None, where=None):
-        '''Test and Publish Package...'''
+        '''Test, Tag, Push and Upload Changes...'''
 
         # Validate
         tag = tag or construct.__about__.__version__
