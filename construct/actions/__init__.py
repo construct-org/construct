@@ -7,6 +7,7 @@ from construct.actions.assets import *
 from construct.actions.tasks import *
 from construct.actions.templates import *
 from construct.actions.workspaces import *
+from construct.actions.save import *
 
 
 def available(ctx):
@@ -50,6 +51,13 @@ def register(cons):
     cons.action_hub.connect(NewTemplate.identifier, validate_template)
     cons.action_hub.connect(NewTemplate.identifier, commit_template)
 
+    # Save actions
+    cons.action_hub.register(Save)
+
+    #Publish actions
+    cons.action_hub.register(Publish)
+    cons.action_hub.register(PublishFile)
+
 
 def unregister(cons):
     '''Unregister all default actions'''
@@ -87,3 +95,11 @@ def unregister(cons):
     cons.action_hub.disconnect(NewTemplate.identifier, validate_template)
     cons.action_hub.disconnect(NewTemplate.identifier, commit_template)
     cons.action_hub.unregister(NewTemplate)
+
+
+    # Save actions
+    cons.action_hub.unregister(Save)
+
+    #Publish actions
+    cons.action_hub.unregister(Publish)
+    cons.action_hub.unregister(PublishFile)

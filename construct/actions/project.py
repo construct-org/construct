@@ -22,7 +22,7 @@ class NewProject(Action):
         },
         template={
             'label': 'Project Template',
-            'required': False,
+            'required': True,
             'type': str,
             'help': 'name of a project template',
         }
@@ -36,6 +36,7 @@ class NewProject(Action):
             templates = ctx.construct.get_template('project')
             if templates:
                 params['template']['options'] = [t.name for t in templates]
+                params['template']['default'] = 'vfx_project'
 
         return params
 

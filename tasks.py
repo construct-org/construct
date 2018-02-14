@@ -16,8 +16,9 @@ from colorama import init
 init()
 
 
-# Fuck it
 def usage_string(component, trace=None, verbose=False):
+    '''Monkey patch Fire's UsageString function. Hide usage for main cli'''
+
     if isinstance(component, Tasks):
         # Suppress usage string
         return
@@ -25,11 +26,14 @@ def usage_string(component, trace=None, verbose=False):
 
 
 _usage_string = fire.helputils.UsageString
-fire.helputils.UsageString = usage_string
+fire.helputils.UsageString = usage_string  # Fuck it
 _print = __builtins__.print
+
 
 @contextmanager
 def print_prefix(prefix):
+    '''Context manager that adds a prefix to all contained print calls.'''
+
     try:
         old_print = __builtins__.print
         def print(*args, **kwargs):
@@ -41,6 +45,7 @@ def print_prefix(prefix):
 
 
 def log_methods(cls):
+    '''Class decorator, logs all method calls using print statements.'''
 
     def method_wrapper(method):
         @wraps(method)
@@ -103,6 +108,7 @@ def modify_about(**values):
 
 
 class SubprocessError(Exception):
+    '''Custom exception for run, takes an additional Popen argument'''
 
     def __init__(self, popen, message):
         self.popen = popen
@@ -120,7 +126,7 @@ def run(cmd, **kwargs):
         Popen
 
     Raises:
-
+        SubprocessError: with Popen as an attr when subproc fails
     '''
 
     cmd_kwargs = dict(
@@ -145,6 +151,8 @@ def run(cmd, **kwargs):
 
 
 def get_tags():
+    '''Get a list of git repo tags'''
+
     p = run('git tag', stdout=subprocess.PIPE)
     tags = [line.rstrip('\n') for line in p.stdout.readlines()]
     p.stdout.close()
@@ -244,11 +252,13 @@ class Tasks(object):
 
         import shutil
         docs = join(dirname(__file__), 'docs')
+
         print('Removing old docs...')
         if os.path.isdir(join(docs, 'html')):
             shutil.rmtree(join(docs, 'html'))
         if os.path.isdir(join(docs, 'doctrees')):
             shutil.rmtree(join(docs, 'doctrees'))
+
         print('Building new docs...')
         run('make html', cwd=docs)
 

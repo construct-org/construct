@@ -14,6 +14,7 @@ from construct import plugins, context, actions, signal
 from construct.util import env_with_default, path_split
 from construct.actionhub import ActionHub
 from construct.err import RegistrationError
+from construct.formatters import Template
 
 
 # Decorators and convenience functions used on Construct object
@@ -36,6 +37,8 @@ def contains_project(ctx):
 
 
 class Construct(object):
+
+    active = None
 
     def __init__(self, **kwargs):
 
@@ -68,6 +71,9 @@ class Construct(object):
         self.new_sequence = self.action_hub.alias('new.sequence')
         self.new_shot = self.action_hub.alias('new.shot')
         self.new_workspace = self.action_hub.alias('new.workspace')
+        self.save = self.action_hub.alias('save')
+        self.publish_file = self.action_hub.alias('publish.file')
+        self.publish = self.action_hub.alias('publish')
 
         # Initialize context and discover plugins
         self._ctx = context.from_env()
@@ -117,10 +123,7 @@ class Construct(object):
     def get_path_template(self, name):
         '''Get one of the current projects templates by name'''
 
-        try:
-            return self._ctx.project.read('templates')[name]
-        except:
-            raise KeyError(f('KeyError: no template named {name}'))
+        return Template(self._ctx.project.read('templates')[name])
 
     @check_context(contains_project)
     def get_path_templates(self):
