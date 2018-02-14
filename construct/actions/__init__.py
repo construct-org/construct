@@ -8,6 +8,7 @@ from construct.actions.tasks import *
 from construct.actions.templates import *
 from construct.actions.workspaces import *
 from construct.actions.save import *
+from construct.actions.publish import *
 
 
 def available(ctx):

@@ -36,7 +36,7 @@ class Publish(Action):
                     pub_version = int(publish.name[1:])
                     if pub_version > version:
                         version = pub_version
-            params['version']['default'] = version += 1
+            params['version']['default'] = version + 1
 
         return params
 
@@ -84,7 +84,7 @@ class PublishFile(Action):
                     pub_version = int(publish.name[1:])
                     if pub_version > version:
                         version = pub_version
-            params['version']['default'] = version += 1
+            params['version']['default'] = version + 1
 
         return params
 

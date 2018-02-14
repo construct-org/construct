@@ -45,7 +45,7 @@ def opt_format(tmpl, *args, **kwargs):
         >>> tmpl = 'This is a {opt[adjective][ ]}string.'
         >>> opt_format(tmpl)
         'This is a string.'
-        >>> opt_format(adjective='super')
+        >>> opt_format(tmpl, adjective='super')
         'This is a super string.'
     '''
     kwargs['opt'] = OptToken('', '', kwargs, False)

@@ -715,6 +715,57 @@ new_project, new_asset, new_task, new_sequence, new_shot…</p>
 </div>
 <div class="section" id="module-construct.api">
 <span id="construct-api-module"></span><h2>construct.api module<a class="headerlink" href="#module-construct.api" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="construct.api.get">
+<code class="descclassname">construct.api.</code><code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the active Construct instance</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.api.get_context">
+<code class="descclassname">construct.api.</code><code class="descname">get_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.get_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the active Construct instance’s context</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.api.init">
+<code class="descclassname">construct.api.</code><code class="descname">init</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize Construct, passing args and kwargs to Construct and setting
+the Construct.active attribute</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> – Args to pass to Construct</li>
+<li><strong>kwargs</strong> – Kwargs to pass to Construct</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Construct instance</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code> – When Construct.active already exists</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.api.set">
+<code class="descclassname">construct.api.</code><code class="descname">set</code><span class="sig-paren">(</span><em>inst</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the active Construct instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inst</strong> (<a class="reference internal" href="#construct.construct.Construct" title="construct.construct.Construct"><em>Construct</em></a>) – Instance of Construct</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-construct.compat">
 <span id="construct-compat-module"></span><h2>construct.compat module<a class="headerlink" href="#module-construct.compat" title="Permalink to this headline">¶</a></h2>
@@ -728,6 +779,11 @@ new_project, new_asset, new_task, new_sequence, new_shot…</p>
 <dt id="construct.construct.Construct">
 <em class="property">class </em><code class="descclassname">construct.construct.</code><code class="descname">Construct</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="construct.construct.Construct.active">
+<code class="descname">active</code><em class="property"> = None</em><a class="headerlink" href="#construct.construct.Construct.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="construct.construct.Construct.available_actions">
 <code class="descname">available_actions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.available_actions" title="Permalink to this definition">¶</a></dt>

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
+import __builtin__
 import os
 import subprocess
 import sys
@@ -27,7 +28,7 @@ def usage_string(component, trace=None, verbose=False):
 
 _usage_string = fire.helputils.UsageString
 fire.helputils.UsageString = usage_string  # Fuck it
-_print = __builtins__.print
+_print = __builtin__.print
 
 
 @contextmanager
@@ -35,13 +36,13 @@ def print_prefix(prefix):
     '''Context manager that adds a prefix to all contained print calls.'''
 
     try:
-        old_print = __builtins__.print
+        old_print = __builtin__.print
         def print(*args, **kwargs):
             _print(prefix, *args, **kwargs)
-        __builtins__.print = print
+        __builtin__.print = print
         yield
     finally:
-        __builtins__.print = old_print
+        __builtin__.print = old_print
 
 
 def log_methods(cls):
@@ -59,15 +60,13 @@ def log_methods(cls):
                     return_value = method(self, *args, **kwargs)
                 except SubprocessError as e:
                     print(colored(e.message, 'red'))
-                    if e.popen.stdout:
-                        print(e.popen.stdout.read())
-                        e.popen.stdout.close()
-                    if e.popen.stderr:
-                        print(e.popen.stderr.read())
-                        e.popen.stderr.close()
+                    if e.stdout:
+                        print(e.stdout)
+                    if e.stderr:
+                        print(e.stderr)
                     if cls._verbose:
                         raise
-                    sys.exit(e.popen.returncode)
+                    sys.exit(e.process.returncode)
                 except Exception as e:
                     print(colored(e.message, 'red'))
                     if cls._verbose:
@@ -110,8 +109,10 @@ def modify_about(**values):
 class SubprocessError(Exception):
     '''Custom exception for run, takes an additional Popen argument'''
 
-    def __init__(self, popen, message):
-        self.popen = popen
+    def __init__(self, process, stdout, stderr, message):
+        self.process = process
+        self.stdout = stdout
+        self.stderr = stderr
         super(SubprocessError, self).__init__(message)
 
 
@@ -139,15 +140,15 @@ def run(cmd, **kwargs):
         stderr=subprocess.PIPE,
     )
     cmd_kwargs.update(kwargs)
-    proc = subprocess.Popen(cmd, **cmd_kwargs)
-    code = proc.wait()
-    if code != 0:
+    process = subprocess.Popen(cmd, **cmd_kwargs)
+    out, err = process.communicate()
+    if process.returncode != 0:
         if isinstance(cmd, list):
             msg = 'Subprocess Failed: ' + ' '.join(cmd)
         else:
             msg = 'Subprocess Failed: ' + cmd
-        raise SubprocessError(proc, msg)
-    return proc
+        raise SubprocessError(process, out, err, msg)
+    return process
 
 
 def get_tags():
@@ -205,7 +206,6 @@ class Tasks(object):
     def test(self):
         '''Run Test Suite...'''
         run([
-            'pipenv', 'run',
             'nosetests', '-v', '--with-doctest', '--doctest-extension=.rst'
         ])
 
