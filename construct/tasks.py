@@ -589,7 +589,7 @@ def process_arguments(arguments):
         tuple - just arguments
         dict(args=tuple, kwargs=dict) - dict with args and dict keys
         dict(**kwargs) - just a dict with keyword arguments
-        dict(args, **kwrags) a dict with args and keyword arguments
+        dict(args=tuple, **kwrags) a dict with args and keyword arguments
 
     Parameters:
         arguments: tuple or dict containing args and kwargs
@@ -623,10 +623,11 @@ def process_arguments(arguments):
             'Invalid return value signature:',
             f('Got: {arguments}'),
             'Expected:',
-            '    ((...), {...})',
-            '    {...}',
             '    (...)',
+            '    {...}',
+            '    ((...), {...})',
             '    {"args": (...), "kwargs": {...}}',
+            '    {"args": (...), **kwargs}'
         ]
         raise ExtractorError('\n'.join(msg))
     return args, kwargs
