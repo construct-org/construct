@@ -4,8 +4,18 @@ import os
 import shutil
 from fstrings import f
 from construct.action import Action
-from construct.tasks import task, extract, inject, requires, task_success
-from construct.context import context
+from construct.tasks import (
+    task,
+    pass_kwargs,
+    requires,
+    success,
+    pass_context,
+    store,
+    kwarg,
+    artifact,
+    returns,
+    params
+)
 from construct import types
 import fsfs
 
@@ -64,13 +74,14 @@ class NewWorkspace(Action):
 
 
 @task(priority=types.STAGE)
-@extract(lambda ctx: ctx.kwargs)
-@inject(lambda ctx, result: setattr(ctx.store, 'workspace_item', result))
-def stage_workspace(parent, name=None, template=None):
+@pass_context
+@pass_kwargs
+@returns(store('workspace_item'))
+def stage_workspace(ctx, parent, name=None, template=None):
     '''Stage a workspace for creation'''
 
     name = name or template
-    construct = context.construct
+    construct = ctx.construct
     if template:
         template = construct.get_template('workspace', name=template)
 
@@ -85,8 +96,8 @@ def stage_workspace(parent, name=None, template=None):
 
 
 @task(priority=types.VALIDATE)
-@requires(task_success('stage_workspace'))
-@extract(lambda ctx: (ctx.store.workspace_item,))
+@params(store('workspace_item'))
+@requires(success('stage_workspace'))
 def validate_workspace(workspace_item):
     '''Validate workspace'''
 
@@ -96,9 +107,9 @@ def validate_workspace(workspace_item):
 
 
 @task(priority=types.COMMIT)
-@requires(task_success('validate_workspace'))
-@extract(lambda ctx: (ctx.store.workspace_item,))
-@inject(lambda ctx, result: setattr(ctx.artifacts, 'workspace', result))
+@requires(success('validate_workspace'))
+@params(store('workspace_item'))
+@returns(artifact('workspace'))
 def commit_workspace(workspace_item):
     '''Make new workspace'''
 

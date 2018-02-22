@@ -3,9 +3,8 @@ from __future__ import absolute_import
 import os
 import shutil
 from construct.action import Action
-from construct.tasks import task, extract, inject, requires
+from construct.tasks import task, pass_context, pass_kwargs, returns, artifact
 import fsfs
-from construct.context import context
 
 
 class NewSequence(Action):
@@ -39,15 +38,16 @@ class NewSequence(Action):
 
 
 @task
-@extract(lambda ctx: ctx.kwargs)
-@inject(lambda ctx, result: setattr(ctx.artifacts, 'sequence', result))
-def make_new_sequence(name, template):
+@pass_context
+@pass_kwargs
+@returns(artifact('sequence'))
+def make_new_sequence(ctx, name, template):
     '''Make new sequence'''
 
-    construct = context.construct
+    construct = ctx.construct
     path_template = construct.get_path_template('sequence')
     sequence_path = path_template.format(
-        project=context.project.path,
+        project=ctx.project.path,
         sequence=name
     )
 

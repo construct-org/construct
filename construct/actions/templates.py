@@ -4,11 +4,21 @@ import os
 import shutil
 from construct.action import Action
 from construct.err import ActionError
-from construct.tasks import task, extract, requires, task_success
+from construct.tasks import (
+    task,
+    pass_kwargs,
+    requires,
+    success,
+    pass_context,
+    store,
+    kwarg,
+    artifact,
+    params,
+    returns
+)
 from construct.types import STAGE, COMMIT, VALIDATE
 from construct.util import unipath
 import fsfs
-from construct.context import context
 
 
 class NewTemplate(Action):
@@ -58,39 +68,41 @@ class NewTemplate(Action):
 
 
 @task(priority=STAGE)
-def stage_template_data():
+@pass_context
+@pass_kwargs
+def stage_template_data(ctx, **kwargs):
     '''Stage template data'''
 
-    name = context.kwargs['name']
-    entry = context.kwargs['entry']
+    name = kwargs['name']
+    entry = kwargs['entry']
     if isinstance(entry, basestring):
         if not os.path.exists(entry):
             raise ActionError('Entry path does not exist: ' + entry)
         entry = fsfs.get_entry(entry)
 
-    templates_path = unipath(context.project.data.path, 'templates')
+    templates_path = unipath(ctx.project.data.path, 'templates')
     template_path = unipath(templates_path, name)
 
-    context.store.entry = entry
-    context.store.template_path = template_path
+    ctx.store.entry = entry
+    ctx.store.template_path = template_path
 
 
 @task(priority=VALIDATE)
-@requires(task_success('stage_template_data'))
-def validate_template():
+@requires(success('stage_template_data'))
+@params(kwarg('name'), store('template_path'))
+def validate_template(name, template_path):
     '''Make sure template does not already exist'''
 
-    if os.path.exists(context.store.template_path):
-        raise ActionError('Template already exists: ' + context.kwargs['name'])
+    if os.path.exists(template_path):
+        raise ActionError('Template already exists: ' + name)
 
 
 @task(priority=COMMIT)
-@requires(task_success('validate_template'))
-def commit_template():
+@requires(success('validate_template'))
+@params(store('entry'), store('template_path'), kwarg('include_files'))
+@returns(artifact('template'))
+def commit_template(entry, template_path, include_files):
     '''Commit template'''
 
-    entry = context.store.entry
-    template_path = context.store.template_path
-    only_data = not context.kwargs['include_files']
-    new_template = entry.copy(template_path, only_data=only_data)
-    context.artifacts.template = new_template
+    new_template = entry.copy(template_path, only_data=not include_files)
+    return new_template

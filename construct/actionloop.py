@@ -134,16 +134,13 @@ class ActionLoop(object):
                 self._waiting.push(request)
 
             elif task.ready(self.ctx):
-
                 self._ready.push(request)
 
             elif task.skip(self.ctx):
-
                 request.set_status(SKIPPED)
                 self._skipped.push(request)
 
             else:
-
                 self._waiting.push(request)
 
     def _process_ready(self):
@@ -184,8 +181,6 @@ class ActionLoop(object):
                 self._success.push(request)
                 self.ctx.results[task.identifier] = result
 
-                request.task.inject(self.ctx, result)
-
             finally:
 
                 pass
@@ -223,12 +218,14 @@ class ActionLoop(object):
             self._process_skipped()
 
     def retry_group(self, priority):
+        '''Retry TaskGroup of priority'''
 
         group = self._get_group(priority)
         group.reset()
         self.run_group(priority)
 
     def run_group(self, priority):
+        '''Run TaskGroup of priority'''
 
         group = self._get_group(priority)
 
@@ -256,6 +253,8 @@ class ActionLoop(object):
 
 
     def run(self):
+        '''Run all TaskGroups of the action sequentially'''
+
         signal.send('action.before', self.ctx)
 
         try:

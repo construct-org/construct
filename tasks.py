@@ -61,9 +61,9 @@ def log_methods(cls):
                 except SubprocessError as e:
                     print(colored(e.message, 'red'))
                     if e.stdout:
-                        print(e.stdout)
+                        _print(e.stdout)
                     if e.stderr:
-                        print(e.stderr)
+                        _print(e.stderr)
                     if cls._verbose:
                         raise
                     sys.exit(e.process.returncode)
@@ -91,7 +91,7 @@ def log_methods(cls):
 def modify_about(**values):
     '''Modify dunder values of the about file...'''
 
-    about = join(dirname(__file__), 'construct', '__about__.py')
+    about = join(dirname(__file__), 'construct', '__init__.py')
 
     with open(about, 'r') as file:
         about_lines = file.readlines()
@@ -104,6 +104,16 @@ def modify_about(**values):
 
     with open(about, 'w') as file:
         file.writelines(about_lines)
+
+
+class SubprocessError(Exception):
+    '''Custom exception for run, takes an additional Popen argument'''
+
+    def __init__(self, process, stdout, stderr, message):
+        self.process = process
+        self.stdout = stdout
+        self.stderr = stderr
+        super(SubprocessError, self).__init__(message)
 
 
 class SubprocessError(Exception):
@@ -130,6 +140,9 @@ def run(cmd, **kwargs):
         SubprocessError: with Popen as an attr when subproc fails
     '''
 
+    check_stdout = kwargs.pop('check_stdout', None)
+    check_stderr = kwargs.pop('check_stderr', None)
+
     cmd_kwargs = dict(
         env=os.environ.copy(),
         shell=True,
@@ -140,9 +153,17 @@ def run(cmd, **kwargs):
         stderr=subprocess.PIPE,
     )
     cmd_kwargs.update(kwargs)
+
     process = subprocess.Popen(cmd, **cmd_kwargs)
     out, err = process.communicate()
-    if process.returncode != 0:
+
+    process_failed = (
+        process.returncode != 0
+     or (check_stdout and not check_stdout(out))
+     or (check_stderr and not check_stderr(err))
+    )
+
+    if process_failed:
         if isinstance(cmd, list):
             msg = 'Subprocess Failed: ' + ' '.join(cmd)
         else:
@@ -205,9 +226,9 @@ class Tasks(object):
 
     def test(self):
         '''Run Test Suite...'''
-        run([
-            'nosetests', '-v', '--with-doctest', '--doctest-extension=.rst'
-        ])
+        run('nosetests -v --with-doctest --doctest-extension=rst')
+        print('Run Doctests...')
+        run('nosetests -v --with-doctest --doctest-extension=rst', cwd='docs')
 
     def increment(self, major=False, minor=False, patch=True):
         '''Increment package version'''
@@ -260,7 +281,7 @@ class Tasks(object):
             shutil.rmtree(join(docs, 'doctrees'))
 
         print('Building new docs...')
-        run('make html', cwd=docs)
+        run('make html', cwd=docs, check_stderr=lambda e: 'Traceback' not in e)
 
     def stage(self):
         '''Stage changes...'''

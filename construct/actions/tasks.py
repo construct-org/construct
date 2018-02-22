@@ -4,8 +4,17 @@ import os
 import shutil
 from fstrings import f
 from construct.action import Action
-from construct.tasks import task, extract, inject, requires, task_success
-from construct.context import context
+from construct.tasks import (
+    task,
+    requires,
+    success,
+    pass_context,
+    pass_kwargs,
+    params,
+    store,
+    artifact,
+    returns,
+)
 from construct import types
 import fsfs
 
@@ -72,12 +81,14 @@ class NewTask(Action):
 
 
 @task(priority=types.STAGE)
-@extract(lambda ctx: ctx.kwargs)
-@inject(lambda ctx, result: setattr(ctx.store, 'task_item', result))
-def stage_task(parent, type, name=None, template=None):
+@pass_context
+@pass_kwargs
+@returns(store('task_item'))
+def stage_task(ctx, parent, type, name=None, template=None):
 
     name = name or type
-    construct = context.construct
+    construct = ctx.construct
+
     if template:
         template = construct.get_template('task', name=template)
 
@@ -90,8 +101,8 @@ def stage_task(parent, type, name=None, template=None):
 
 
 @task(priority=types.VALIDATE)
-@requires(task_success('stage_task'))
-@extract(lambda ctx: (ctx.store.task_item,))
+@requires(success('stage_task'))
+@params(store('task_item'))
 def validate_task(task_item):
     if os.path.exists(task_item['path']):
         raise OSError('Task already exists: ' + task_item['name'])
@@ -99,9 +110,9 @@ def validate_task(task_item):
 
 
 @task(priority=types.COMMIT)
-@requires(task_success('validate_task'))
-@extract(lambda ctx: (ctx.store.task_item,))
-@inject(lambda ctx, result: setattr(ctx.artifacts, 'task', result))
+@requires(success('validate_task'))
+@params(store('task_item'))
+@returns(artifact('task'))
 def commit_task(task_item):
     '''Make new task'''
 

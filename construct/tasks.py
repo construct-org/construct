@@ -13,26 +13,28 @@ __all__ = [
     'async_task',
     'requires',
     'skips',
-    'extract',
-    'inject',
+    'pass_context',
+    'pass_kwargs',
+    'params',
     'available',
-    'task_done',
-    'task_failed',
-    'task_success',
-    'store_key',
-    'artifacts_key',
+    'done',
+    'failure',
+    'success',
+    'store',
+    'artifact',
+    'returns',
+    'kwarg',
 ]
 
 import threading
 import time
 import timeit
 import sys
+import inspect
 from fstrings import f
 from construct.constants import *
 from construct.context import (
-    context,
     _ctx_stack,
-    request,
     _req_stack
 )
 from construct.util import (
@@ -81,16 +83,20 @@ class RequestThread(threading.Thread):
 
             while True:
 
-                self.request.set_status(RUNNING)
-
                 try:
-                    self.request._before_get()
+                    # Setup task
+                    self.request.set_status(RUNNING)
+                    self.request._before_task()
+
+                    # Run task
                     result = self.request.task(
                         *self.request.args,
                         **self.request.kwargs
                     )
-                    self.request._after_get()
+
+                    # Finish task
                     self.request.set_value(result)
+                    self.request._after_task()
                     break
 
                 except:
@@ -222,13 +228,13 @@ class Request(object):
     def ready(self):
         return self._status in DONE_STATUSES
 
-    def _before_get(self):
+    def _before_task(self):
         if self.ctx is not None:
-            self.args, self.kwargs = self.task.extract(self.ctx)
+            self.args, self.kwargs = self.task.get_params(self.ctx)
 
-    def _after_get(self):
+    def _after_task(self):
         if self.ctx is not None:
-            self.task.inject(self.ctx, self._value)
+            self.task.run_callbacks(self.ctx, self._value)
 
     def get(self, propagate=True):
 
@@ -240,16 +246,20 @@ class Request(object):
                 raise self._exc[0], self._exc[1], self._exc[2]
             return self._exc
 
-        self._before_get()
-        self.set_status(RUNNING)
-
         try:
 
+            # Setup task
+            self.set_status(RUNNING)
+            self._before_task()
             self.push()
+
+            # Run task
             result = self.task(*self.args, **self.kwargs)
-            self._after_get()
+
+            # Finish task
             self.set_value(result)
-            return self._value
+            self._after_task()
+            return result
 
         except:
 
@@ -293,7 +303,8 @@ class Task(object):
 
     def __init__(self, fn, identifier=None, description=None,
                  priority=DEFAULT_PRIORITY, requires=None, skips=None,
-                 extract=None, inject=None, available=True):
+                 arg_getters=None, kwarg_getters=None, callbacks=None,
+                 available=True):
         self.fn = fn
         if not isinstance(priority, Priority):
             priority = Priority(priority)
@@ -302,18 +313,18 @@ class Task(object):
         self.description = description
         self.requires = requires or []
         self.skips = skips or []
-        self._extract = extract
-        self._inject = inject
+        self.arg_getters = arg_getters or []
+        self.kwarg_getters = kwarg_getters or {}
+        self.callbacks = callbacks or []
         self._available = available
 
     def __repr__(self):
         return (
-            'Task(identifier={}, fn={}, requires={}, skips={})'
+            'Task(identifier={}, fn={}, requires={})'
         ).format(
             repr(self.identifier),
             self.fn,
             self.requires,
-            self.skips
         )
 
     def __call__(self, *args, **kwargs):
@@ -341,17 +352,26 @@ class Task(object):
 
         return False
 
-    def extract(self, ctx):
+    def get_params(self, ctx):
 
-        if self._extract is None:
-            return (), {}
+        args, kwargs = [], {}
 
-        return process_arguments(self._extract(ctx))
+        for getter in self.arg_getters:
+            args.append(getter(ctx))
 
-    def inject(self, ctx, result):
+        for name, getter in self.kwarg_getters.items():
+            if name == 'kwargs':
+                more = getter(ctx)
+                kwargs.update(more)
+            else:
+                kwargs[name] = getter(ctx)
 
-        if self._inject:
-            self._inject(ctx, result)
+        return tuple(args), kwargs
+
+    def run_callbacks(self, ctx, result):
+
+        for callback in self.callbacks:
+            callback(ctx, result)
 
     def available(self, ctx):
 
@@ -390,36 +410,31 @@ def task(identifier=None, priority=None, description=None, cls=Task):
         Task or instance of cls
     '''
 
-    if callable(identifier):
-        fn = identifier
+    def make_task(fn, identifier):
         return cls(
             fn,
             identifier=get_callable_name(fn),
             description=description or fn.__doc__,
-            requires=pop_attr(fn, '__task_requires__', []),
-            skips=pop_attr(fn, '__task_skips__', []),
-            extract=pop_attr(fn, '__task_extract__', None),
-            inject=pop_attr(fn, '__task_inject__', None),
+            requires=pop_attr(fn, '__task_requires__', None),
+            skips=pop_attr(fn, '__task_skips__', None),
+            arg_getters=pop_attr(fn, '__task_arg_getters__', None),
+            kwarg_getters=pop_attr(fn, '__task_kwarg_getters__', None),
+            callbacks=pop_attr(fn, '__task_callbacks__', None),
+            available=pop_attr(fn, '__task_available__', None),
             priority=priority if priority is not None else DEFAULT_PRIORITY
         )
 
-    if isinstance(identifier, basestring) or identifier is None:
-        identifier = identifier
+    if callable(identifier):
+        fn = identifier
+        identifier = get_callable_name(fn)
+        return make_task(fn, identifier)
 
+    if isinstance(identifier, basestring) or identifier is None:
         def wrapper(fn):
-            return cls(
-                fn,
-                identifier or get_callable_name(fn),
-                description=description or fn.__doc__,
-                requires=pop_attr(fn, '__task_requires__', []),
-                skips=pop_attr(fn, '__task_skips__', []),
-                extract=pop_attr(fn, '__task_extract__', None),
-                inject=pop_attr(fn, '__task_inject__', None),
-                priority=priority if priority is not None else DEFAULT_PRIORITY
-            )
+            return make_task(fn, identifier)
         return wrapper
 
-    raise TypeError("Argument must be: Union[str, Callable[...]]")
+    raise TypeError("Argument must be: str or callable")
 
 
 def async_task(identifier, priority=None, description=None, cls=AsyncTask):
@@ -469,41 +484,134 @@ def skips(*funcs):
     return skips
 
 
-def extract(func):
+def pass_context(fn):
+    '''Task decorator that passes Context object as first argument to task'''
 
-    ensure_callable(func)
+    def pass_ctx(ctx):
+        return ctx
 
-    def extract(fn):
-        fn.__task_extract__ = func
+    if not hasattr(fn, '__task_arg_getters__'):
+        fn.__task_arg_getters__ = []
+
+    if len(fn.__task_arg_getters__):
+        for getter in fn.__task_arg_getters__:
+            if getattr(getter, '__name__', None) == 'pass_ctx':
+                return fn
+
+    fn.__task_arg_getters__.insert(0, pass_ctx)
+    return fn
+
+
+def pass_kwargs(fn):
+    '''Task decorator that passes all action kwargs to the task'''
+
+    def pass_kwargs(ctx):
+        return ctx.kwargs
+
+    if not hasattr(fn, '__task_kwarg_getters__'):
+        fn.__task_kwarg_getters__ = {}
+    fn.__task_kwarg_getters__['kwargs'] = pass_kwargs
+    return fn
+
+
+def params(*args, **kwargs):
+    '''Task decorator used to describe how to get args and kwargs to pass to
+    the task. This should have the same signature as the task itself, but,
+    each argument and keyword argument should be a function accepting one
+    argument, ctx, that returns a value to pass to the task.
+
+    Examples:
+
+        >>> @task
+        ... @params(store('a'), b=store('b'))
+        ... def plus(a, b):
+        ...     return a + b
+
+        # pass_context provides ctx, so we describe the remaining args
+        >>> @task
+        ... @pass_context
+        ... @params(store('a'), store('b'))
+        ... def plus2(ctx, a, b):
+        ...     value = a + b
+        ...     ctx.store['plus_result'] = value
+        ...     return value
+
+    '''
+
+    def to_getter(arg):
+        if callable(arg):
+            spec = inspect.getargspec(arg)
+            if not spec.args or len(args) != 1:
+                raise TypeError(
+                    arg.__name__ +
+                    ' must accept one argument: ctx'
+                )
+            return arg
+        elif isinstance(arg, CtxAction):
+            if not arg.gets:
+                raise TypeError(
+                    type(arg).__name__ +
+                    ' can not be used as an argument to params()...'
+                )
+            return arg.get
+        else:
+            raise TypeError(
+                'params received unsupported type: ' + type(cb).__name__
+            )
+
+    def describe_params(fn):
+        if not hasattr(fn, '__task_arg_getters__'):
+            fn.__task_arg_getters__ = []
+        if not hasattr(fn, '__task_kwarg_getters__'):
+            fn.__task_kwarg_getters__ = {}
+
+        for arg in args:
+            getter = to_getter(arg)
+            fn.__task_arg_getters__.append(getter)
+
+        for name, arg in kwargs.items():
+            getter = to_getter(arg)
+            fn.__task_kwarg_getters__[name] = getter
+
         return fn
 
-    return extract
+    return describe_params
 
 
-def pass_kwargs(keys_or_fn):
-    if callable(keys_or_fn):
-        fn = keys_or_fn
-        fn.__task_extract__ = lambda ctx: ctx.kwargs
+def returns(*callbacks):
+    '''Add callbacks to run when the task successfully returns. Also accepts
+    CtxAction objects like artifact(key), store(key), and kwarg(key).'''
+
+    def returns(fn):
+        fn.__task_callbacks__ = []
+
+        for cb in callbacks:
+            if callable(cb):
+                spec = inspect.getargspec(cb)
+                if spec.args and len(args) == 2:
+                    fn.__task_callbacks__.append(cb)
+                else:
+                    return TypeError(
+                        'Callback must accept two arguments: ctx and value'
+                    )
+            elif isinstance(cb, CtxAction):
+                if not cb.sets:
+                    raise TypeError(
+                        type(cb).__name__ +
+                        ' can not be used as an argument to returns()...'
+                    )
+                fn.__task_callbacks__.append(cb.set)
+            else:
+                raise TypeError(
+                    'returns received unsupported type: ' + type(cb).__name__
+                )
         return fn
 
-    keys_or_fn = keys
-    def pass_kwargs(fn):
-        fn.__task_extract__ = lambda ctx: {k: ctx.kwargs[k] for k in keys}
-        return fn
-
-
-def inject(func):
-
-    ensure_callable(func)
-
-    def inject(fn):
-        fn.__task_inject__ = func
-        return fn
-
-    return inject
+    return returns
 
 
 def available(value):
+    '''Task available when value is True or value() is True'''
 
     def available(fn):
         fn.__task_available__ = value
@@ -512,36 +620,10 @@ def available(value):
     return available
 
 
-def artifacts_key(key):
+def success(identifier):
+    '''Check if a task succeeded'''
 
-    def artifacts_key(ctx):
-        '''Returns True when ctx.artifacts contains the key'''
-        return key in ctx.artifacts
-
-    return artifacts_key
-
-
-def store_key(key):
-
-    def store_key(ctx):
-        '''Returns True when ctx.store contains the key'''
-        return key in ctx.store
-
-    return store_key
-
-
-def kwargs_key(key):
-
-    def kwargs_key(ctx):
-        '''Returns True when key in ctx.kwargs'''
-        return key in ctx.kwargs
-
-    return kwargs_key
-
-
-def task_success(identifier):
-
-    def task_success(ctx):
+    def success(ctx):
         '''Returns True if the task has succeeded'''
         try:
             request = ctx.requests[identifier]
@@ -549,12 +631,13 @@ def task_success(identifier):
         except KeyError:
             return False
 
-    return task_success
+    return success
 
 
-def task_done(identifier):
+def done(identifier):
+    '''Check if a task is done'''
 
-    def task_done(ctx):
+    def done(ctx):
         '''Returns True if the task is done'''
         try:
             request = ctx.requests[identifier]
@@ -565,18 +648,131 @@ def task_done(identifier):
     return task_success
 
 
-def task_failed(identifier):
+def failure(identifier):
+    '''Check if a task failed'''
 
-    def task_failed(ctx):
-        '''Returns True if the task has succeeded'''
+    def failure(ctx):
+        '''Returns True if the task has failed'''
         try:
             request = ctx.requests[identifier]
             return request.failed
         except KeyError:
             return False
 
-    return task_failed
+    return failure
 
+
+class CtxAction(object):
+
+    section = ''
+    sep = ':'
+    actions = 'store', 'append', 'count'
+    gets = True
+    sets = True
+
+    def __init__(self, key, action='store'):
+        self.key = key
+        self.action = action
+
+    def split_key(self):
+        if self.sep in self.key:
+            keys = self.key.split()
+            return keys[:-1], keys[-1]
+        return [], self.key
+
+    def get_section_key(self, ctx):
+        keys, key = self.split_key()
+        section = getattr(ctx, self.section)
+        if keys:
+            for key in keys:
+                section = section.get(key)
+        return section, key
+
+    def get(self, ctx):
+        section, key = self.get_section_key(ctx)
+        return section[key]
+
+    def set(self, ctx, value):
+        section, key = self.get_section_key(ctx)
+        if self.action == 'store':
+            section[key] = value
+        elif self.action == 'append':
+            if key not in section:
+                section[key] = []
+            section[key].append(value)
+        else:
+            if key in section and type(section[key], (float, int)):
+                section[key] += value
+
+
+class artifact(CtxAction):
+    '''Use as an argument for :func:`params` or :func:`returns`.
+    When used with :func:`params`, artifact will get the value of the key
+    from the context's "artifacts" dict and supply it as an arg or kwarg for
+    the task. If used with :func:`returns`, artifact will inject the return
+    value of the task into the specified key of the context's "artifacts" dict.
+    You can specify a nested key using : as a separator.
+
+    Examples:
+
+        # Set ctx.artifacts['funky'] to return value of task
+        >>> @task
+        ... @returns(artifact('funky'))
+        ... def funky_func():
+        ...    return {}
+
+        # Set ctx.artifacts['funky']['monkey'] to return value of task
+        >>> @task
+        ... @returns(artifact('funky:monkey'))
+        ... def funky_monkey_func():
+        ...    return 'Super Funky Monkey'
+    '''
+    section = 'artifacts'
+
+
+class store(CtxAction):
+    '''Use as an argument for :func:`params` or :func:`returns`.
+    When used with :func:`params`, store will get the value of the key
+    from the context's "store" dict and supply it as an arg or kwarg for
+    the task. If used with :func:`returns`, store will inject the return
+    value of the task into the specified key of the context's "store" dict.
+    You can specify a nested key using : as a separator.
+
+    Examples:
+
+        # Pass ctx.store['x'] as an arg and ctx.store['y'] as kwarg to add
+        # Set ctx.store['sum'] to the return value of add
+        >>> @task
+        ... @params(store('x'), b=store('y'))
+        ... @returns(store('sum'))
+        ... def add(a, b):
+        ...    return a + b
+    '''
+    section = 'store'
+
+
+class kwarg(CtxAction):
+    '''Use as an argument for :func:`params`. When used with :func:`params`,
+    kwarg will get the value of the key from the context's "kwargs" dict and
+    supply it as an arg or kwarg for the task. This action can not be used with
+    :func:`returns`.
+
+    You can specify a nested key using : as a separator.
+
+    Examples:
+
+        # Pass ctx.store['x'] as an arg and ctx.store['y'] as kwarg to add
+        # Set ctx.store['sum'] to the return value of add
+        >>> @task
+        ... @params(store('x'), b=store('y'))
+        ... @returns(store('sum'))
+        ... def add(a, b):
+        ...    return a + b
+    '''
+    section = 'kwargs'
+
+    def set(self, ctx, value):
+        raise NotImplementedError('Can not use kwarg with the returns deco')
 
 # Utility Functions
 

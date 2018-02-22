@@ -3,9 +3,8 @@ from __future__ import absolute_import
 import os
 import shutil
 from construct.action import Action
-from construct.tasks import task, extract, inject, requires
+from construct.tasks import task, pass_context, pass_kwargs, returns, artifact
 import fsfs
-from construct.context import context
 
 
 class NewProject(Action):
@@ -50,12 +49,13 @@ class NewProject(Action):
 
 
 @task
-@extract(lambda ctx: ctx.kwargs)
-@inject(lambda ctx, result: setattr(ctx.artifacts, 'project', result))
-def make_new_project(root, template):
+@pass_context
+@pass_kwargs
+@returns(artifact('project'))
+def make_new_project(ctx, root, template):
     '''Make a new project'''
 
-    construct = context.construct
+    construct = ctx.construct
     if os.path.exists(root):
         raise OSError('Root already exists: ' + root)
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function
 
 __all__ = ['Construct']
 
@@ -152,7 +152,7 @@ class Construct(object):
         # Lookup templates in project first
 
         search = chain(*(
-            fsfs.search(path, tag, depth=1)
+            fsfs.search(path, depth=1).tags(tag)
             for path in self._template_search_paths()
         ))
 
@@ -175,73 +175,6 @@ class Construct(object):
                 near_match = template
 
         return near_match
-
-    def search(self, *tags, **kwargs):
-        '''Yield all entries matching the provided tags.
-
-        Usage:
-
-            cons = Construct()
-            cons.search('asset')
-
-        Arguments:
-            *tags (str): List of tags to match [Optional]
-            direction (0 or 1): fsfs.DOWN or fsfs.UP
-            root (str): Directory to start search from. Defaults to
-                :attr:`_ctx.root`
-            name (str): Name to search for [Optional]
-
-        See also:
-            :meth:`fsfs.search`
-        '''
-
-        name = kwargs.pop('name', None)
-        kwargs.setdefault('root', self._ctx.root or os.getcwd())
-        kwargs.setdefault('tags', args or None)
-
-        for entry in fsfs.search(**kwargs):
-            if name:
-                if name in entry.name:
-                    yield entry
-            else:
-                yield entry
-
-
-    def one(self, *tags, **kwargs):
-        '''Find one entry matching the provided tags.
-
-        Usage:
-
-            cons = Construct()
-            cons.one('project', name='MyProject')
-
-        Arguments:
-            *tags (str): List of tags to match [Optional]
-            direction (0 or 1): fsfs.DOWN or fsfs.UP
-            root (str): Directory to start search from. Defaults to
-                :attr:`context.root`
-            name (str): Name to search for [Optional]
-
-        See also:
-            :meth:`fsfs.search`
-        '''
-
-        name = kwargs.get('name', None)
-
-        # If name is None just return the first search result or None
-        if name is None:
-            for entry in self.search(*args, **kwargs):
-                return entry
-            return
-
-        # If name is not None return the entry whose name matches best
-        best_match = None
-        for entry in self.search(*tags, **kwargs):
-            if name == entry.name:
-                return entry
-            if name in entry.name:
-                best_match = entry
-        return best_match
 
     def _register_builtins(self):
         '''Register builtin actions'''

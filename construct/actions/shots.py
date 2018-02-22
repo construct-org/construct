@@ -4,8 +4,7 @@ import os
 import shutil
 import fsfs
 from construct.action import Action
-from construct.tasks import task, extract, inject, requires
-from construct.context import context
+from construct.tasks import task, pass_context, pass_kwargs, returns, artifact
 
 
 class NewShot(Action):
@@ -53,15 +52,16 @@ class NewShot(Action):
 
 
 @task
-@extract(lambda ctx: ctx.kwargs)
-@inject(lambda ctx, result: setattr(ctx.artifacts, 'shot', result))
-def make_new_shot(sequence, name, template):
+@pass_context
+@pass_kwargs
+@returns(artifact('shot'))
+def make_new_shot(ctx, sequence, name, template):
     '''Make new shot'''
 
-    construct = context.construct
+    construct = ctx.construct
     sequence_path_template = construct.get_path_template('sequence')
     sequence_path = sequence_path_template.format(
-        project=context.project.path,
+        project=ctx.project.path,
         sequence=sequence
     )
 
@@ -70,7 +70,7 @@ def make_new_shot(sequence, name, template):
 
     shot_path_template = construct.get_path_template('shot')
     shot_path = shot_path_template.format(
-        project=context.project.path,
+        project=ctx.project.path,
         sequence=sequence,
         shot=name
     )

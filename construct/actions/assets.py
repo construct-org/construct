@@ -3,9 +3,16 @@ from __future__ import absolute_import
 import os
 import shutil
 from construct.action import Action
-from construct.tasks import task, extract, inject, requires
+from construct.tasks import (
+    task,
+    requires,
+    pass_context,
+    pass_kwargs,
+    params,
+    returns,
+    artifact
+)
 import fsfs
-from construct.context import context
 
 
 class NewAsset(Action):
@@ -60,15 +67,16 @@ class NewAsset(Action):
 
 
 @task
-@extract(lambda ctx: ctx.kwargs)
-@inject(lambda ctx, result: setattr(ctx.artifacts, 'asset', result))
-def make_new_asset(type, name, template):
+@pass_context
+@pass_kwargs
+@returns(artifact('asset'))
+def make_new_asset(ctx, type, name, template):
     '''Make new asset'''
 
-    construct = context.construct
+    construct = ctx.construct
     path_template = construct.get_path_template('asset')
     asset_path = path_template.format(
-        project=context.project.path,
+        project=ctx.project.path,
         asset_type=type,
         asset=name
     )
