@@ -234,7 +234,7 @@ class Tasks(object):
         '''Increment package version'''
 
         import construct
-        cmajor, cminor, cpatch = construct.__about__.__version__.split('.')
+        cmajor, cminor, cpatch = construct.__version__.split('.')
 
         if major:
             major = str(int(cmajor) + 1)
@@ -253,7 +253,7 @@ class Tasks(object):
         '''Decrement package version...'''
 
         import construct
-        cmajor, cminor, cpatch = construct.__about__.__version__.split('.')
+        cmajor, cminor, cpatch = construct.__version__.split('.')
 
         if major:
             major = str(int(cmajor) - 1)
@@ -327,7 +327,7 @@ class Tasks(object):
         '''Test, Tag, Push and Upload Changes...'''
 
         # Validate
-        tag = tag or construct.__about__.__version__
+        tag = tag or construct.__version__
         if tag in get_tags():
             raise Exception('Tag already exists...')
 

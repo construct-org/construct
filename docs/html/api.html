@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Documentation &mdash; construct 0.0.2 documentation</title>
+  <title>API Documentation &mdash; construct 0.0.3 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="construct 0.0.2 documentation" href="index.html"/>
+    <link rel="top" title="construct 0.0.3 documentation" href="index.html"/>
         <link rel="prev" title="Guide" href="guide.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.0.2
+                0.0.3
               </div>
             
           
@@ -101,14 +101,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-construct.compat">construct.compat module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-construct.constants">construct.constants module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-construct.construct">construct.construct module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-construct.context">construct.context module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#context-class">context class</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#module-construct.err">construct.err module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#errors-and-exceptions">errors and exceptions</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.context">construct.context module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.err">construct.err module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-construct.plugins">construct.plugins module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-construct.signal">construct.signal module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-construct.tasks">construct.tasks module</a></li>
@@ -603,17 +597,20 @@ new_project, new_asset, new_task, new_sequence, new_shot…</p>
 <dl class="method">
 <dt id="construct.actionloop.ActionLoop.retry_group">
 <code class="descname">retry_group</code><span class="sig-paren">(</span><em>priority</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.ActionLoop.retry_group" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Retry TaskGroup of priority</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="construct.actionloop.ActionLoop.run">
 <code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.ActionLoop.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run all TaskGroups of the action sequentially</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="construct.actionloop.ActionLoop.run_group">
 <code class="descname">run_group</code><span class="sig-paren">(</span><em>priority</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.actionloop.ActionLoop.run_group" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run TaskGroup of priority</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -716,22 +713,11 @@ new_project, new_asset, new_task, new_sequence, new_shot…</p>
 <div class="section" id="module-construct.api">
 <span id="construct-api-module"></span><h2>construct.api module<a class="headerlink" href="#module-construct.api" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="construct.api.get">
-<code class="descclassname">construct.api.</code><code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the active Construct instance</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="construct.api.get_context">
-<code class="descclassname">construct.api.</code><code class="descname">get_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.get_context" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the active Construct instance’s context</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="construct.api.init">
 <code class="descclassname">construct.api.</code><code class="descname">init</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.init" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize Construct, passing args and kwargs to Construct and setting
-the Construct.active attribute</p>
+<dd><p>Initialize Construct.</p>
+<p>Create a new Construct instance and make it the active instance. You can
+then retrieve Construct from anywhere using <code class="xref py py-func docutils literal"><span class="pre">construct.get()</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -753,6 +739,12 @@ the Construct.active attribute</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="construct.api.get">
+<code class="descclassname">construct.api.</code><code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the active Construct instance</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="construct.api.set">
 <code class="descclassname">construct.api.</code><code class="descname">set</code><span class="sig-paren">(</span><em>inst</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the active Construct instance</p>
@@ -764,6 +756,30 @@ the Construct.active attribute</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.api.get_context">
+<code class="descclassname">construct.api.</code><code class="descname">get_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.get_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the active Construct instance’s context</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.api.get_request">
+<code class="descclassname">construct.api.</code><code class="descname">get_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.get_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the active Construct request object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.api.search">
+<code class="descclassname">construct.api.</code><code class="descname">search</code><span class="sig-paren">(</span><em>name=None</em>, <em>tags=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for Construct Entries by name or tag</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.api.one">
+<code class="descclassname">construct.api.</code><code class="descname">one</code><span class="sig-paren">(</span><em>name=None</em>, <em>tags=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.one" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return first result of search</p>
 </dd></dl>
 
 </div>
@@ -825,64 +841,6 @@ to create new assets, sequences, shots, tasks, and workspaces</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="construct.construct.Construct.one">
-<code class="descname">one</code><span class="sig-paren">(</span><em>*tags</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.one" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find one entry matching the provided tags.</p>
-<p>Usage:</p>
-<blockquote>
-<div>cons = Construct()
-cons.one(‘project’, name=’MyProject’)</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>*tags</strong> (<em>str</em>) – List of tags to match [Optional]</li>
-<li><strong>direction</strong> (<em>0</em><em> or </em><em>1</em>) – fsfs.DOWN or fsfs.UP</li>
-<li><strong>root</strong> (<em>str</em>) – Directory to start search from. Defaults to
-<code class="xref py py-attr docutils literal"><span class="pre">context.root</span></code></li>
-<li><strong>name</strong> (<em>str</em>) – Name to search for [Optional]</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">fsfs.search()</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="construct.construct.Construct.search">
-<code class="descname">search</code><span class="sig-paren">(</span><em>*tags</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.search" title="Permalink to this definition">¶</a></dt>
-<dd><p>Yield all entries matching the provided tags.</p>
-<p>Usage:</p>
-<blockquote>
-<div>cons = Construct()
-cons.search(‘asset’)</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>*tags</strong> (<em>str</em>) – List of tags to match [Optional]</li>
-<li><strong>direction</strong> (<em>0</em><em> or </em><em>1</em>) – fsfs.DOWN or fsfs.UP</li>
-<li><strong>root</strong> (<em>str</em>) – Directory to start search from. Defaults to
-<code class="xref py py-attr docutils literal"><span class="pre">_ctx.root</span></code></li>
-<li><strong>name</strong> (<em>str</em>) – Name to search for [Optional]</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">fsfs.search()</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="method">
 <dt id="construct.construct.Construct.set_context">
 <code class="descname">set_context</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.construct.Construct.set_context" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -897,8 +855,6 @@ cons.search(‘asset’)</div></blockquote>
 </div>
 <div class="section" id="module-construct.context">
 <span id="construct-context-module"></span><h2>construct.context module<a class="headerlink" href="#module-construct.context" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="context-class">
-<h3>context class<a class="headerlink" href="#context-class" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="construct.context.Context">
 <em class="property">class </em><code class="descclassname">construct.context.</code><code class="descname">Context</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context" title="Permalink to this definition">¶</a></dt>
@@ -950,24 +906,8 @@ cons.search(‘asset’)</div></blockquote>
 </dd></dl>
 
 </div>
-</div>
 <div class="section" id="module-construct.err">
 <span id="construct-err-module"></span><h2>construct.err module<a class="headerlink" href="#module-construct.err" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="errors-and-exceptions">
-<h3>errors and exceptions<a class="headerlink" href="#errors-and-exceptions" title="Permalink to this headline">¶</a></h3>
-<p>All errors and exceptions in Construct are subclasses of ConstructError. This
-allows you to easily catch all exceptions raised by construct like so:</p>
-<blockquote>
-<div><p>from construct import Construct, ConstructError
-construct = Construct()</p>
-<dl class="docutils">
-<dt>try:</dt>
-<dd>construct.new_project(root=’./my_project’)</dd>
-<dt>except ConstructError:</dt>
-<dd># do something
-raise</dd>
-</dl>
-</div></blockquote>
 <dl class="exception">
 <dt id="construct.err.ActionError">
 <em class="property">exception </em><code class="descclassname">construct.err.</code><code class="descname">ActionError</code><a class="headerlink" href="#construct.err.ActionError" title="Permalink to this definition">¶</a></dt>
@@ -1054,7 +994,6 @@ current context</p>
 not match the parameters specified in <code class="xref py py-attr docutils literal"><span class="pre">Action.parameters</span></code></p>
 </dd></dl>
 
-</div>
 </div>
 <div class="section" id="module-construct.plugins">
 <span id="construct-plugins-module"></span><h2>construct.plugins module<a class="headerlink" href="#module-construct.plugins" title="Permalink to this headline">¶</a></h2>
@@ -1577,7 +1516,7 @@ a floating point number for subsecond precision.</p>
 
 <dl class="class">
 <dt id="construct.tasks.AsyncTask">
-<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">AsyncTask</code><span class="sig-paren">(</span><em>fn</em>, <em>identifier=None</em>, <em>description=None</em>, <em>priority=0</em>, <em>requires=None</em>, <em>skips=None</em>, <em>extract=None</em>, <em>inject=None</em>, <em>available=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.AsyncTask" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">AsyncTask</code><span class="sig-paren">(</span><em>fn</em>, <em>identifier=None</em>, <em>description=None</em>, <em>priority=0</em>, <em>requires=None</em>, <em>skips=None</em>, <em>arg_getters=None</em>, <em>kwarg_getters=None</em>, <em>callbacks=None</em>, <em>available=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.AsyncTask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#construct.tasks.Task" title="construct.tasks.Task"><code class="xref py py-class docutils literal"><span class="pre">construct.tasks.Task</span></code></a></p>
 </dd></dl>
 
@@ -1664,7 +1603,7 @@ a floating point number for subsecond precision.</p>
 
 <dl class="class">
 <dt id="construct.tasks.Task">
-<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>fn</em>, <em>identifier=None</em>, <em>description=None</em>, <em>priority=0</em>, <em>requires=None</em>, <em>skips=None</em>, <em>extract=None</em>, <em>inject=None</em>, <em>available=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>fn</em>, <em>identifier=None</em>, <em>description=None</em>, <em>priority=0</em>, <em>requires=None</em>, <em>skips=None</em>, <em>arg_getters=None</em>, <em>kwarg_getters=None</em>, <em>callbacks=None</em>, <em>available=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="construct.tasks.Task.available">
@@ -1672,13 +1611,8 @@ a floating point number for subsecond precision.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="construct.tasks.Task.extract">
-<code class="descname">extract</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.extract" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="construct.tasks.Task.inject">
-<code class="descname">inject</code><span class="sig-paren">(</span><em>ctx</em>, <em>result</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.inject" title="Permalink to this definition">¶</a></dt>
+<dt id="construct.tasks.Task.get_params">
+<code class="descname">get_params</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.get_params" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1689,6 +1623,11 @@ a floating point number for subsecond precision.</p>
 <dl class="method">
 <dt id="construct.tasks.Task.request">
 <code class="descname">request</code><span class="sig-paren">(</span><em>ctx=None</em>, <em>args=None</em>, <em>kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.Task.run_callbacks">
+<code class="descname">run_callbacks</code><span class="sig-paren">(</span><em>ctx</em>, <em>result</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.Task.run_callbacks" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1765,44 +1704,153 @@ the Task’s identifier.</li>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="construct.tasks.extract">
-<code class="descclassname">construct.tasks.</code><code class="descname">extract</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.extract" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="construct.tasks.pass_context">
+<code class="descclassname">construct.tasks.</code><code class="descname">pass_context</code><span class="sig-paren">(</span><em>fn</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.pass_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Task decorator that passes Context object as first argument to task</p>
+</dd></dl>
 
 <dl class="function">
-<dt id="construct.tasks.inject">
-<code class="descclassname">construct.tasks.</code><code class="descname">inject</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.inject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="construct.tasks.pass_kwargs">
+<code class="descclassname">construct.tasks.</code><code class="descname">pass_kwargs</code><span class="sig-paren">(</span><em>fn</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.pass_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Task decorator that passes all action kwargs to the task</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.tasks.params">
+<code class="descclassname">construct.tasks.</code><code class="descname">params</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Task decorator used to describe how to get args and kwargs to pass to
+the task. This should have the same signature as the task itself, but,
+each argument and keyword argument should be a function accepting one
+argument, ctx, that returns a value to pass to the task.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@task</span>
+<span class="gp">... </span><span class="nd">@params</span><span class="p">(</span><span class="n">store</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">),</span> <span class="n">b</span><span class="o">=</span><span class="n">store</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">))</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">plus</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+</div>
+<p># pass_context provides ctx, so we describe the remaining args
+&gt;&gt;&gt; &#64;task
+… &#64;pass_context
+… &#64;params(store(‘a’), store(‘b’))
+… def plus2(ctx, a, b):
+…     value = a + b
+…     ctx.store[‘plus_result’] = value
+…     return value</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="construct.tasks.available">
 <code class="descclassname">construct.tasks.</code><code class="descname">available</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.available" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Task available when value is True or value() is True</p>
+</dd></dl>
 
 <dl class="function">
-<dt id="construct.tasks.task_done">
-<code class="descclassname">construct.tasks.</code><code class="descname">task_done</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.task_done" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="construct.tasks.done">
+<code class="descclassname">construct.tasks.</code><code class="descname">done</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a task is done</p>
+</dd></dl>
 
 <dl class="function">
-<dt id="construct.tasks.task_failed">
-<code class="descclassname">construct.tasks.</code><code class="descname">task_failed</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.task_failed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="construct.tasks.failure">
+<code class="descclassname">construct.tasks.</code><code class="descname">failure</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.failure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a task failed</p>
+</dd></dl>
 
 <dl class="function">
-<dt id="construct.tasks.task_success">
-<code class="descclassname">construct.tasks.</code><code class="descname">task_success</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.task_success" title="Permalink to this definition">¶</a></dt>
+<dt id="construct.tasks.success">
+<code class="descclassname">construct.tasks.</code><code class="descname">success</code><span class="sig-paren">(</span><em>identifier</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.success" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a task succeeded</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.tasks.store">
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">store</code><span class="sig-paren">(</span><em>key</em>, <em>action='store'</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">construct.tasks.CtxAction</span></code></p>
+<p>Use as an argument for <a class="reference internal" href="#construct.tasks.params" title="construct.tasks.params"><code class="xref py py-func docutils literal"><span class="pre">params()</span></code></a> or <a class="reference internal" href="#construct.tasks.returns" title="construct.tasks.returns"><code class="xref py py-func docutils literal"><span class="pre">returns()</span></code></a>.
+When used with <a class="reference internal" href="#construct.tasks.params" title="construct.tasks.params"><code class="xref py py-func docutils literal"><span class="pre">params()</span></code></a>, store will get the value of the key
+from the context’s “store” dict and supply it as an arg or kwarg for
+the task. If used with <a class="reference internal" href="#construct.tasks.returns" title="construct.tasks.returns"><code class="xref py py-func docutils literal"><span class="pre">returns()</span></code></a>, store will inject the return
+value of the task into the specified key of the context’s “store” dict.
+You can specify a nested key using : as a separator.</p>
+<p class="rubric">Examples</p>
+<p># Pass ctx.store[‘x’] as an arg and ctx.store[‘y’] as kwarg to add
+# Set ctx.store[‘sum’] to the return value of add
+&gt;&gt;&gt; &#64;task
+… &#64;params(store(‘x’), b=store(‘y’))
+… &#64;returns(store(‘sum’))
+… def add(a, b):
+…    return a + b</p>
+<dl class="attribute">
+<dt id="construct.tasks.store.section">
+<code class="descname">section</code><em class="property"> = 'store'</em><a class="headerlink" href="#construct.tasks.store.section" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="construct.tasks.store_key">
-<code class="descclassname">construct.tasks.</code><code class="descname">store_key</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.store_key" title="Permalink to this definition">¶</a></dt>
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.tasks.artifact">
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">artifact</code><span class="sig-paren">(</span><em>key</em>, <em>action='store'</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.artifact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">construct.tasks.CtxAction</span></code></p>
+<p>Use as an argument for <a class="reference internal" href="#construct.tasks.params" title="construct.tasks.params"><code class="xref py py-func docutils literal"><span class="pre">params()</span></code></a> or <a class="reference internal" href="#construct.tasks.returns" title="construct.tasks.returns"><code class="xref py py-func docutils literal"><span class="pre">returns()</span></code></a>.
+When used with <a class="reference internal" href="#construct.tasks.params" title="construct.tasks.params"><code class="xref py py-func docutils literal"><span class="pre">params()</span></code></a>, artifact will get the value of the key
+from the context’s “artifacts” dict and supply it as an arg or kwarg for
+the task. If used with <a class="reference internal" href="#construct.tasks.returns" title="construct.tasks.returns"><code class="xref py py-func docutils literal"><span class="pre">returns()</span></code></a>, artifact will inject the return
+value of the task into the specified key of the context’s “artifacts” dict.
+You can specify a nested key using : as a separator.</p>
+<p class="rubric">Examples</p>
+<p># Set ctx.artifacts[‘funky’] to return value of task
+&gt;&gt;&gt; &#64;task
+… &#64;returns(artifact(‘funky’))
+… def funky_func():
+…    return {}</p>
+<p># Set ctx.artifacts[‘funky’][‘monkey’] to return value of task
+&gt;&gt;&gt; &#64;task
+… &#64;returns(artifact(‘funky:monkey’))
+… def funky_monkey_func():
+…    return ‘Super Funky Monkey’</p>
+<dl class="attribute">
+<dt id="construct.tasks.artifact.section">
+<code class="descname">section</code><em class="property"> = 'artifacts'</em><a class="headerlink" href="#construct.tasks.artifact.section" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
 <dl class="function">
-<dt id="construct.tasks.artifacts_key">
-<code class="descclassname">construct.tasks.</code><code class="descname">artifacts_key</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.artifacts_key" title="Permalink to this definition">¶</a></dt>
+<dt id="construct.tasks.returns">
+<code class="descclassname">construct.tasks.</code><code class="descname">returns</code><span class="sig-paren">(</span><em>*callbacks</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.returns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add callbacks to run when the task successfully returns. Also accepts
+CtxAction objects like artifact(key), store(key), and kwarg(key).</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.tasks.kwarg">
+<em class="property">class </em><code class="descclassname">construct.tasks.</code><code class="descname">kwarg</code><span class="sig-paren">(</span><em>key</em>, <em>action='store'</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.kwarg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">construct.tasks.CtxAction</span></code></p>
+<p>Use as an argument for <a class="reference internal" href="#construct.tasks.params" title="construct.tasks.params"><code class="xref py py-func docutils literal"><span class="pre">params()</span></code></a>. When used with <a class="reference internal" href="#construct.tasks.params" title="construct.tasks.params"><code class="xref py py-func docutils literal"><span class="pre">params()</span></code></a>,
+kwarg will get the value of the key from the context’s “kwargs” dict and
+supply it as an arg or kwarg for the task. This action can not be used with
+<a class="reference internal" href="#construct.tasks.returns" title="construct.tasks.returns"><code class="xref py py-func docutils literal"><span class="pre">returns()</span></code></a>.</p>
+<p>You can specify a nested key using : as a separator.</p>
+<p class="rubric">Examples</p>
+<p># Pass ctx.store[‘x’] as an arg and ctx.store[‘y’] as kwarg to add
+# Set ctx.store[‘sum’] to the return value of add
+&gt;&gt;&gt; &#64;task
+… &#64;params(store(‘x’), b=store(‘y’))
+… &#64;returns(store(‘sum’))
+… def add(a, b):
+…    return a + b</p>
+<dl class="attribute">
+<dt id="construct.tasks.kwarg.section">
+<code class="descname">section</code><em class="property"> = 'kwargs'</em><a class="headerlink" href="#construct.tasks.kwarg.section" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="construct.tasks.kwarg.set">
+<code class="descname">set</code><span class="sig-paren">(</span><em>ctx</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.tasks.kwarg.set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
 
 </div>
 <div class="section" id="module-construct.types">
@@ -1974,7 +2022,7 @@ the Task’s identifier.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.0.2',
+            VERSION:'0.0.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

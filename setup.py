@@ -1,21 +1,36 @@
+# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
+import re
 
-about = {}
-with open('./construct/__about__.py', 'r') as f:
-    exec(f.read(), about)
 
-with open('README.rst', 'r') as f:
-    readme = f.read()
+def get_meta(pyfile, readme):
+    meta = {}
+
+    # Get dunder values from python file
+    pattern = re.compile(r"^__(\w+)__ = ['\"](.*)['\"]")
+    with open(pyfile, 'r') as f:
+        for line in f.readlines():
+            match = pattern.search(line)
+            if match:
+                meta[match.group(1)] = match.group(2)
+
+    # Get contents of readme
+    with open(readme, 'r') as f:
+        meta['readme'] = f.read()
+
+    return meta
+
+meta = get_meta('./construct/__init__.py', 'README.rst')
 
 
 setup(
-    name=about['__title__'],
-    version=about['__version__'],
-    author=about['__author__'],
-    author_email=about['__email__'],
-    description=about['__description__'],
-    url=about['__url__'],
-    long_description=readme,
+    name=meta['title'],
+    version=meta['version'],
+    author=meta['author'],
+    author_email=meta['email'],
+    description=meta['description'],
+    url=meta['url'],
+    long_description=meta['readme'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',

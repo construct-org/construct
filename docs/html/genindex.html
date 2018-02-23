@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; construct 0.0.2 documentation</title>
+  <title>Index &mdash; construct 0.0.3 documentation</title>
   
 
   
@@ -36,7 +36,7 @@
         <link rel="index" title="Index"
               href="#"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="construct 0.0.2 documentation" href="index.html"/> 
+    <link rel="top" title="construct 0.0.3 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.0.2
+                0.0.3
               </div>
             
           
@@ -205,7 +205,7 @@
 </li>
       <li><a href="api.html#construct.actionhub.ActionHub.aliases">aliases (construct.actionhub.ActionHub attribute)</a>
 </li>
-      <li><a href="api.html#construct.tasks.artifacts_key">artifacts_key() (in module construct.tasks)</a>
+      <li><a href="api.html#construct.tasks.artifact">artifact (class in construct.tasks)</a>
 </li>
       <li><a href="api.html#construct.tasks.async_task">async_task() (in module construct.tasks)</a>
 </li>
@@ -335,6 +335,8 @@
         <li><a href="api.html#construct.tasks.Request.done">(construct.tasks.Request attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api.html#construct.tasks.done">done() (in module construct.tasks)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -349,20 +351,14 @@
 </li>
       <li><a href="api.html#construct.util.ensure_instance">ensure_instance() (in module construct.util)</a>
 </li>
-      <li><a href="api.html#construct.util.ensure_type">ensure_type() (in module construct.util)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#construct.util.ensure_type">ensure_type() (in module construct.util)</a>
+</li>
       <li><a href="api.html#construct.util.env_with_default">env_with_default() (in module construct.util)</a>
 </li>
       <li><a href="api.html#construct.tasks.Request.exception">exception (construct.tasks.Request attribute)</a>
 </li>
-      <li><a href="api.html#construct.tasks.Task.extract">extract() (construct.tasks.Task method)</a>
-
-      <ul>
-        <li><a href="api.html#construct.tasks.extract">(in module construct.tasks)</a>
-</li>
-      </ul></li>
       <li><a href="api.html#construct.err.ExtractorError">ExtractorError</a>
 </li>
   </ul></td>
@@ -377,6 +373,8 @@
         <li><a href="api.html#construct.tasks.Request.failed">(construct.tasks.Request attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api.html#construct.tasks.failure">failure() (in module construct.tasks)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#construct.signal.Channel.forward">forward() (construct.signal.Channel method)</a>
@@ -423,11 +421,15 @@
 </li>
       <li><a href="api.html#construct.actionloop.TaskGroup.get_exception">get_exception() (construct.actionloop.TaskGroup method)</a>
 </li>
+      <li><a href="api.html#construct.tasks.Task.get_params">get_params() (construct.tasks.Task method)</a>
+</li>
       <li><a href="api.html#construct.construct.Construct.get_path_template">get_path_template() (construct.construct.Construct method)</a>
 </li>
       <li><a href="api.html#construct.construct.Construct.get_path_templates">get_path_templates() (construct.construct.Construct method)</a>
 </li>
       <li><a href="api.html#construct.construct.Construct.get_plugins">get_plugins() (construct.construct.Construct method)</a>
+</li>
+      <li><a href="api.html#construct.api.get_request">get_request() (in module construct.api)</a>
 </li>
       <li><a href="api.html#construct.actionloop.TaskGroup.get_status">get_status() (construct.actionloop.TaskGroup method)</a>
 </li>
@@ -449,16 +451,10 @@
 </li>
       <li><a href="api.html#construct.api.init">init() (in module construct.api)</a>
 </li>
-      <li><a href="api.html#construct.tasks.Task.inject">inject() (construct.tasks.Task method)</a>
-
-      <ul>
-        <li><a href="api.html#construct.tasks.inject">(in module construct.tasks)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#construct.err.InjectorError">InjectorError</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#construct.err.InvalidIdentifier">InvalidIdentifier</a>
 </li>
       <li><a href="api.html#construct.err.InvalidPluginPath">InvalidPluginPath</a>
@@ -476,6 +472,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#construct.types.Namespace.keys">keys() (construct.types.Namespace method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#construct.tasks.kwarg">kwarg (class in construct.tasks)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -499,7 +499,7 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#construct.construct.Construct.one">one() (construct.construct.Construct method)</a>
+      <li><a href="api.html#construct.api.one">one() (in module construct.api)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -512,17 +512,25 @@
       <li><a href="api.html#construct.action.Action.parameters">parameters (construct.action.Action attribute)</a>, <a href="api.html#construct.action.Action.parameters">[1]</a>
 </li>
       <li><a href="api.html#construct.action.Action.params">params() (construct.action.Action class method)</a>
+
+      <ul>
+        <li><a href="api.html#construct.tasks.params">(in module construct.tasks)</a>
+</li>
+      </ul></li>
+      <li><a href="api.html#construct.tasks.pass_context">pass_context() (in module construct.tasks)</a>
+</li>
+      <li><a href="api.html#construct.tasks.pass_kwargs">pass_kwargs() (in module construct.tasks)</a>
 </li>
       <li><a href="api.html#construct.util.path_split">path_split() (in module construct.util)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#construct.context.Context.pop">pop() (construct.context.Context method)</a>
 
       <ul>
         <li><a href="api.html#construct.tasks.Request.pop">(construct.tasks.Request method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#construct.util.pop_attr">pop_attr() (in module construct.util)</a>
 </li>
       <li><a href="api.html#construct.types.Priority">Priority (class in construct.types)</a>
@@ -567,11 +575,13 @@
 </li>
       <li><a href="api.html#construct.tasks.requires">requires() (in module construct.tasks)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#construct.actionloop.TaskGroup.reset">reset() (construct.actionloop.TaskGroup method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#construct.actionloop.ActionLoop.retry_group">retry_group() (construct.actionloop.ActionLoop method)</a>
+</li>
+      <li><a href="api.html#construct.tasks.returns">returns() (in module construct.tasks)</a>
 </li>
       <li><a href="api.html#construct.signal.Channel.route">route() (construct.signal.Channel method)</a>
 
@@ -589,6 +599,8 @@
         <li><a href="api.html#construct.tasks.RequestThread.run">(construct.tasks.RequestThread method)</a>
 </li>
       </ul></li>
+      <li><a href="api.html#construct.tasks.Task.run_callbacks">run_callbacks() (construct.tasks.Task method)</a>
+</li>
       <li><a href="api.html#construct.action.Action.run_group">run_group() (construct.action.Action method)</a>
 
       <ul>
@@ -605,8 +617,16 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#construct.construct.Construct.search">search() (construct.construct.Construct method)</a>
+      <li><a href="api.html#construct.api.search">search() (in module construct.api)</a>
 </li>
+      <li><a href="api.html#construct.tasks.artifact.section">section (construct.tasks.artifact attribute)</a>
+
+      <ul>
+        <li><a href="api.html#construct.tasks.kwarg.section">(construct.tasks.kwarg attribute)</a>
+</li>
+        <li><a href="api.html#construct.tasks.store.section">(construct.tasks.store attribute)</a>
+</li>
+      </ul></li>
       <li><a href="api.html#construct.signal.Channel.send">send() (construct.signal.Channel method)</a>
 
       <ul>
@@ -615,8 +635,12 @@
         <li><a href="api.html#construct.signal.send">(in module construct.signal)</a>
 </li>
       </ul></li>
-      <li><a href="api.html#construct.api.set">set() (in module construct.api)</a>
+      <li><a href="api.html#construct.tasks.kwarg.set">set() (construct.tasks.kwarg method)</a>
+
+      <ul>
+        <li><a href="api.html#construct.api.set">(in module construct.api)</a>
 </li>
+      </ul></li>
       <li><a href="api.html#construct.signal.set_channel">set_channel() (in module construct.signal)</a>
 </li>
       <li><a href="api.html#construct.signal.set_channel_to_default">set_channel_to_default() (in module construct.signal)</a>
@@ -641,10 +665,10 @@
       </ul></li>
       <li><a href="api.html#construct.tasks.Request.set_value">set_value() (construct.tasks.Request method)</a>
 </li>
-      <li><a href="api.html#construct.signal.Signal">Signal (class in construct.signal)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#construct.signal.Signal">Signal (class in construct.signal)</a>
+</li>
       <li><a href="api.html#construct.signal.Channel.signal">signal() (construct.signal.Channel method)</a>
 </li>
       <li><a href="api.html#construct.signal.Channel.signals">signals (construct.signal.Channel attribute)</a>
@@ -669,7 +693,7 @@
 </li>
       <li><a href="api.html#construct.tasks.RequestThread.stopped">stopped() (construct.tasks.RequestThread method)</a>
 </li>
-      <li><a href="api.html#construct.tasks.store_key">store_key() (in module construct.tasks)</a>
+      <li><a href="api.html#construct.tasks.store">store (class in construct.tasks)</a>
 </li>
       <li><a href="api.html#construct.signal.Channel.subscribers">subscribers() (construct.signal.Channel method)</a>
 
@@ -683,6 +707,8 @@
         <li><a href="api.html#construct.tasks.Request.success">(construct.tasks.Request attribute)</a>
 </li>
       </ul></li>
+      <li><a href="api.html#construct.tasks.success">success() (in module construct.tasks)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -693,18 +719,12 @@
 </li>
       <li><a href="api.html#construct.tasks.task">task() (in module construct.tasks)</a>
 </li>
-      <li><a href="api.html#construct.tasks.task_done">task_done() (in module construct.tasks)</a>
-</li>
-      <li><a href="api.html#construct.tasks.task_failed">task_failed() (in module construct.tasks)</a>
-</li>
-      <li><a href="api.html#construct.tasks.task_success">task_success() (in module construct.tasks)</a>
-</li>
       <li><a href="api.html#construct.actionloop.TaskGroup">TaskGroup (class in construct.actionloop)</a>
+</li>
+      <li><a href="api.html#construct.actionhub.ActionAlias.tasks">tasks() (construct.actionhub.ActionAlias method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#construct.actionhub.ActionAlias.tasks">tasks() (construct.actionhub.ActionAlias method)</a>
-</li>
       <li><a href="api.html#construct.err.TimeoutError">TimeoutError</a>
 </li>
       <li><a href="api.html#construct.tasks.TIMER">TIMER() (in module construct.tasks)</a>
@@ -802,7 +822,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.0.2',
+            VERSION:'0.0.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

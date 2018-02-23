@@ -8,11 +8,11 @@ lib_root = os.path.dirname(docs_root)
 sys.path.insert(1, lib_root)
 import construct
 
-project = construct.__about__.__title__
-copyright = '2018, ' + construct.__about__.__author__
-author = construct.__about__.__author__
-version = construct.__about__.__version__
-release = construct.__about__.__version__
+project = construct.__title__
+copyright = '2018, ' + construct.__author__
+author = construct.__author__
+version = construct.__version__
+release = construct.__version__
 language = None
 
 extensions = [
