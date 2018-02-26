@@ -8,21 +8,21 @@ Creative project and asset management written in pure python. Highly customizabl
 Core Packages
 =============
 
-+----------------------+---------------------------------------------------+
-| package              | description                                       |
-+======================+===================================================+
-| construct_cli_       | command line interface                            |
-+----------------------+---------------------------------------------------+
-| construct_ui_        | graphical user interface                          |
-+----------------------+---------------------------------------------------+
-| construct_launcher_  | application launcher                              |
-+----------------------+---------------------------------------------------+
-| construct_maya_      | Autodesk Maya integration                         |
-+----------------------+---------------------------------------------------+
-| construct_nuke_      | The Foundry Nuke integration                      |
-+----------------------+---------------------------------------------------+
-| construct_templates_ | default templates for projects, shots, and assets |
-+----------------------+---------------------------------------------------+
++----------------------+------------------------------------------------+
+| package              | description                                    |
++======================+================================================+
+| construct_cli_       | Command line interface                         |
++----------------------+------------------------------------------------+
+| construct_launcher_  | Application launcher                           |
++----------------------+------------------------------------------------+
+| construct_maya_      | Autodesk Maya integration                      |
++----------------------+------------------------------------------------+
+| construct_nuke_      | The Foundry Nuke integration                   |
++----------------------+------------------------------------------------+
+| construct_templates_ | Basic templates for project, shots, and assets |
++----------------------+------------------------------------------------+
+| construct_ui_        | Graphical user interface                       |
++----------------------+------------------------------------------------+
 
 
 Environment Variables
@@ -59,12 +59,14 @@ Installation
    guide
    api
 
+
 .. _construct_cli: https://github.com/construct-org/construct_cli
-.. _construct_templates: https://github.com/construct-org/construct_cli
+.. _construct_templates: https://github.com/construct-org/construct_templates
 .. _construct_launcher: https://github.com/construct-org/construct_launcher
 .. _construct_maya: https://github.com/construct-org/construct_maya
 .. _construct_nuke: https://github.com/construct-org/construct_nuke
 .. _construct_ui: https://github.com/construct-org/construct_ui
+
 
 * :ref:`genindex`
 * :ref:`modindex`

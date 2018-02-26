@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
+import sys
 import re
 
 
@@ -32,7 +33,7 @@ setup(
     url=meta['url'],
     long_description=meta['readme'],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
@@ -44,5 +45,5 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['werkzeug'],
+    install_requires=['werkzeug', 'scrim', 'fstrings'],
 )
