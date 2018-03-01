@@ -484,6 +484,24 @@ def skips(*funcs):
     return skips
 
 
+def pass_construct(fn):
+    '''Task decorator that passes Construct object as first argument to task'''
+
+    def pass_construct(ctx):
+        return ctx.construct
+
+    if not hasattr(fn, '__task_arg_getters'):
+        fn.__task_arg_getters__ = []
+
+    if len(fn.__task_arg_getters__):
+        for getter in fn.__task_arg_getters__:
+            if getattr(getter, '__name__', None) == 'pass_construct':
+                return fn
+
+    fn.__task_arg_getters__.insert(0, pass_construct)
+    return fn
+
+
 def pass_context(fn):
     '''Task decorator that passes Context object as first argument to task'''
 

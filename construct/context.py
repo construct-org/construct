@@ -21,16 +21,8 @@ from werkzeug.local import LocalStack, LocalProxy
 
 
 _cons_stack = LocalStack()
-current_cons = LocalProxy(_cons_stack, 'top')
-
 _ctx_stack = LocalStack()
-context = LocalProxy(_ctx_stack, 'top')
-
 _req_stack = LocalStack()
-request = LocalProxy(_req_stack, 'top')
-
-_action_stack = LocalStack()
-action = LocalProxy(_action_stack, 'top')
 
 
 class Context(object):

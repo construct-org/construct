@@ -36,11 +36,11 @@ def init(*args, **kwargs):
 def get():
     '''Get the active Construct instance'''
 
-    if not Construct.active:
+    cons = _cons_stack.top or Construct.active
+    if not cons:
         raise RuntimeError('Construct has not been initialized.')
 
-    return Construct.active
-
+    return cons
 
 
 def set(inst):

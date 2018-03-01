@@ -1,6 +1,11 @@
 API Documentation
 =================
 
+.. automodule:: construct.api
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 construct\.action module
 ------------------------
@@ -34,13 +39,6 @@ construct\.actionparams module
     :undoc-members:
     :show-inheritance:
 
-construct\.api module
----------------------
-
-.. automodule:: construct.api
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 construct\.compat module
 ------------------------
