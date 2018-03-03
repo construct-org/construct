@@ -77,7 +77,11 @@ class Channel(object):
         self._channels = []
 
     def __repr__(self):
-        return f('<Channel>(name={self.name}, uuid={self.uuid})')
+        return (
+            '{}(name={!r}, uuid={!r})'
+        ).format(
+            self.__class__.__name__, self.name, self.uuid
+        )
 
     def __call__(self, identifier, *args, **kwargs):
         '''Shorthand for :meth:`send`'''
@@ -319,7 +323,7 @@ class Signal(object):
 
         >>> channel = Channel()
         >>> channel.signal('my.signal') # doctest: +ELLIPSIS
-        Signal(channel=..., identifier='my.signal')
+        Signal(..., identifier='my.signal')
     '''
 
     def __init__(self, identifier, channel=None):
@@ -328,8 +332,12 @@ class Signal(object):
 
     def __repr__(self):
         return (
-            self.__class__.__name__ + '(channel={channel}, identifier={identifier})'
-        ).format(channel=self.channel, identifier=repr(self.identifier))
+            '{}(channel={}, identifier={!r})'
+        ).format(
+            self.__class__.__name__,
+            self.channel,
+            self.identifier
+        )
 
     def __call__(self, *args, **kwargs):
         channel = kwargs.pop('channel', self.channel)
@@ -359,7 +367,7 @@ class Signal(object):
         channel = kwargs.pop('channel', self.channel)
         return channel.send(self.identifier, *args, **kwargs)
 
-    def clear(self):
+    def clear(self, **kwargs):
         channel = kwargs.pop('channel', self.channel)
         return channel.clear(self.identifier)
 

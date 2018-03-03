@@ -3,9 +3,10 @@ from __future__ import absolute_import, division, print_function
 
 __all__ = ['init', 'get', 'set', 'get_context', 'get_request', 'search', 'one']
 
-from construct.construct import Construct
-from construct.context import _ctx_stack, _req_stack
+import os
 import fsfs
+from construct.construct import Construct
+from construct.context import _ctx_stack, _req_stack, _cons_stack
 
 
 def init(*args, **kwargs):
@@ -30,6 +31,11 @@ def init(*args, **kwargs):
 
     inst = Construct(*args, **kwargs)
     Construct.active = inst
+
+    # Setup fsfs entry factory
+    from construct.models import factory
+    fsfs.set_entry_factory(factory)
+
     return inst
 
 
@@ -105,3 +111,10 @@ def one(name=None, tags=None, **kwargs):
     if tags:
         entries = entries.tags(tags)
     return entries.one()
+
+
+# TODO: Expose Construct builtin actions here
+# new_project, new_sequence, new_shot, new_asset, new_task, new_workspace
+
+# TODO: Expose Construct methods
+# set_context, context_from_path

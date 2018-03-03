@@ -5,11 +5,11 @@ __all__ = [
     'Context',
     'from_env',
     'from_path',
-    'current_cons',
-    'context',
-    'request',
     'to_env',
     'to_env_dict',
+    '_cons_stack',
+    '_ctx_stack',
+    '_req_stack',
 ]
 
 import os
@@ -93,7 +93,7 @@ class Context(object):
 
         if isinstance(other, Mapping):
             if exclude:
-                other = {k:v for k, v in other.items() if k not in exclude}
+                other = {k: v for k, v in other.items() if k not in exclude}
             self.__dict__.update(other)
         else:
             raise TypeError('Not a Mapping or Context: ', other)
@@ -129,7 +129,6 @@ def to_env(context, exclude=['host']):
 
 def from_env():
     '''Create new context from environment variables'''
-
 
     ctx = dict(
         root=os.environ.get('CONSTRUCT_ROOT', os.getcwd()),

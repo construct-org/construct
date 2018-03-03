@@ -28,14 +28,12 @@ def test_discover_multiple_paths():
     )
     assert 'plugin1' in plugins
     assert (
-        os.path.normpath(plugins['plugin1'].__file__)
-        ==
+        os.path.normpath(plugins['plugin1'].__file__) ==
         os.path.normpath(data_path('plugin_path1', 'plugin1', '__init__.pyc'))
     )
     assert 'plugin2' in plugins
     assert (
-        os.path.normpath(plugins['plugin2'].__file__)
-        ==
+        os.path.normpath(plugins['plugin2'].__file__) ==
         os.path.normpath(data_path('plugin_path1', 'plugin2.py'))
     )
     assert 'plugin3' in plugins
@@ -54,13 +52,13 @@ def test_construct_discover_paths():
     plugins = cons.get_plugins()
     assert 'plugin1' in plugins
     assert (
-        os.path.normpath(plugins['plugin1'].__file__)
-     == os.path.normpath(data_path('plugin_path1', 'plugin1', '__init__.pyc'))
+        os.path.normpath(plugins['plugin1'].__file__) ==
+        os.path.normpath(data_path('plugin_path1', 'plugin1', '__init__.pyc'))
     )
     assert 'plugin2' in plugins
     assert (
-        os.path.normpath(plugins['plugin2'].__file__)
-     == os.path.normpath(data_path('plugin_path1', 'plugin2.py'))
+        os.path.normpath(plugins['plugin2'].__file__) ==
+        os.path.normpath(data_path('plugin_path1', 'plugin2.py'))
     )
     assert 'plugin3' in plugins
     assert 'plugin4' in plugins

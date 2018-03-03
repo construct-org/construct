@@ -222,7 +222,7 @@ class Request(object):
 
     @property
     def done(self):
-        return self.ready()
+        return self._status in DONE_STATUSES
 
     @property
     def ready(self):
@@ -574,7 +574,7 @@ def params(*args, **kwargs):
             return arg.get
         else:
             raise TypeError(
-                'params received unsupported type: ' + type(cb).__name__
+                'params received unsupported type: ' + type(arg).__name__
             )
 
     def describe_params(fn):
@@ -606,7 +606,7 @@ def returns(*callbacks):
         for cb in callbacks:
             if callable(cb):
                 spec = inspect.getargspec(cb)
-                if spec.args and len(args) == 2:
+                if spec.args and len(spec.args) == 2:
                     fn.__task_callbacks__.append(cb)
                 else:
                     return TypeError(
@@ -663,7 +663,7 @@ def done(identifier):
         except KeyError:
             return False
 
-    return task_success
+    return done
 
 
 def failure(identifier):
@@ -817,9 +817,9 @@ def process_arguments(arguments):
     '''
     if isinstance(arguments, tuple):
         if (
-            len(arguments) == 2
-            and isinstance(arguments[0], tuple)
-            and isinstance(arguments[1], dict)
+            len(arguments) == 2 and
+            isinstance(arguments[0], tuple) and
+            isinstance(arguments[1], dict)
         ):
             args = arguments[0]
             kwargs = arguments[1]

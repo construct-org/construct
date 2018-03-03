@@ -7,21 +7,15 @@ name = "pypi"
 
 [dev-packages]
 
+sphinx = "*"
+sphinx-rtd-theme = "*"
+sphinxcontrib-napoleon = "*"
+nose = "*"
 
 
 [packages]
 
-sphinx = "*"
-sphinx-rtd-theme = "*"
 fstrings = "*"
-nose = "*"
-blinker = "*"
 scandir = "*"
-sphinxcontrib-napoleon = "*"
 werkzeug = "*"
-pyyaml = "*"
 fsfs = {git = "git://github.com/danbradham/fsfs.git"}
-fire = "*"
-gitpython = "*"
-termcolor = "*"
-colorama = "*"

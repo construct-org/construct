@@ -94,9 +94,7 @@ class ActionLoop(object):
         self._failed = Stack()
         self._success = Stack()
         self._skipped = Stack()
-
-    def _remove_from_stacks(self, request):
-        stacks = [
+        self._stacks = [
             self._waiting,
             self._ready,
             self._failed,
@@ -104,7 +102,8 @@ class ActionLoop(object):
             self._skipped
         ]
 
-        for stack in stacks:
+    def _remove_from_stacks(self, request):
+        for stack in self._stacks:
             try:
                 stack.remove(request)
             except ValueError:
@@ -125,7 +124,7 @@ class ActionLoop(object):
         '''Process waiting tasks'''
 
         nwaiting = len(self._waiting)
-        for i in range(nwaiting):
+        for _ in range(nwaiting):
 
             request = self._waiting.pop()
             task = request.task
@@ -147,7 +146,7 @@ class ActionLoop(object):
         '''Process ready tasks'''
 
         nready = len(self._ready)
-        for i in range(nready):
+        for _ in range(nready):
 
             request = self._ready.pop()
             task = request.task
@@ -194,12 +193,12 @@ class ActionLoop(object):
             if task.ready(self.ctx):
                 self._ready.push(request)
             else:
-                self._skipped.push()
+                self._skipped.push(request)
 
     def _skip_waiting(self):
 
         nwaiting = len(self._waiting)
-        for i in range(nwaiting):
+        for _ in range(nwaiting):
             request = self._waiting.pop()
             request.set_status(SKIPPED)
             self._skipped.push(request)
@@ -235,7 +234,6 @@ class ActionLoop(object):
             group.push()
             group.set_status(RUNNING)
 
-
             try:
 
                 self._run_once()
@@ -250,7 +248,6 @@ class ActionLoop(object):
         else:
 
             raise Exception(f('Task Group already ran: {priority}'))
-
 
     def run(self):
         '''Run all TaskGroups of the action sequentially'''

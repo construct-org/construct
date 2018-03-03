@@ -67,3 +67,11 @@ class ActionError(ConstructError):
 
 class TimeoutError(ConstructError):
     '''Raised when task times out'''
+
+
+class ContextError(ConstructError):
+    '''Raised when an error in Context is encountered'''
+
+
+class ConfigurationError(ConstructError):
+    '''Raised when an Entry or Construct is misconfigured'''
