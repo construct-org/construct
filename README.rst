@@ -13,6 +13,8 @@ Core Packages
 +======================+================================================+
 | construct_cli_       | Command line interface                         |
 +----------------------+------------------------------------------------+
+| construct_cpenv_     | Cpenv Integration for env management           |
++----------------------+------------------------------------------------+
 | construct_launcher_  | Application launcher                           |
 +----------------------+------------------------------------------------+
 | construct_maya_      | Autodesk Maya integration                      |
@@ -53,6 +55,7 @@ Installation
 
 
 .. _construct_cli: https://github.com/construct-org/construct_cli
+.. _construct_cpenv: https://github.com/construct-org/construct_cpenv
 .. _construct_templates: https://github.com/construct-org/construct_templates
 .. _construct_launcher: https://github.com/construct-org/construct_launcher
 .. _construct_maya: https://github.com/construct-org/construct_maya
