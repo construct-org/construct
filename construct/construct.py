@@ -91,7 +91,7 @@ class Construct(object):
     def _setup_context(self, ctx):
         '''Injects current Contstruct Context into action context'''
 
-        ctx.update(self._ctx)
+        ctx.update(self._ctx, exclude=[])
         return ctx
 
     def available_actions(self):
