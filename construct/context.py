@@ -17,7 +17,7 @@ import sys
 import fsfs
 from fstrings import f
 from collections import Mapping
-from werkzeug.local import LocalStack, LocalProxy
+from werkzeug.local import LocalStack
 
 
 _cons_stack = LocalStack()

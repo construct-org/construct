@@ -61,7 +61,10 @@ class Construct(object):
 
         # Create action and event hub
         self.action_hub = ActionHub()
-        self.action_hub.channel.connect('setup.context', self._setup_context)
+        self.action_hub.channel.connect(
+            'setup.context',
+            self._inject_action_context
+        )
 
         # Action aliases
         # Forward calls to action_hub
@@ -88,14 +91,14 @@ class Construct(object):
         self._register_builtins()
         self._discover_plugins()
 
-    def _setup_context(self, ctx):
+    def _inject_action_context(self, ctx):
         '''Injects current Contstruct Context into action context'''
 
         ctx.update(self._ctx, exclude=[])
         return ctx
 
-    def available_actions(self):
-        return self.action_hub.get_actions(self._ctx)
+    def available_actions(self, ctx=None):
+        return self.action_hub.get_actions(ctx or self._ctx)
 
     def get_plugins(self):
         return self._plugins

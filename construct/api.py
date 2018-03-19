@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-__all__ = ['init', 'get', 'set', 'get_context', 'get_request', 'search', 'one']
+# __all__ = ['init', 'get', 'set', 'get_context', 'get_request', 'search', 'one']
 
 import os
 import fsfs
@@ -59,6 +59,10 @@ def set(inst):
     Construct.active = inst
 
 
+def set_context(entity):
+    Construct.active.set_context_from_path(entity.path)
+
+
 def get_context():
     '''Get the active Construct instance's context'''
 
@@ -109,8 +113,27 @@ def one(name=None, tags=None, **kwargs):
     if name:
         entries = entries.name(name)
     if tags:
-        entries = entries.tags(tags)
+        tags = fsfs.util.tupilize(tags)
+        entries = entries.tags(*tags)
     return entries.one()
+
+
+def get_version_path(task, version, ext, workspace, suffix=None):
+    cons = Construct.active
+    tmpl = cons.get_path_template('version')
+    parent = task.parent()
+    fields = dict(
+        parent=parent,
+        task=task,
+        version=version,
+        workspace=workspace,
+        ext=ext
+    )
+
+    if suffix:
+        fields['suffix'] = suffix
+
+    return tmpl.format(**fields)
 
 
 # TODO: Expose Construct builtin actions here

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-__all__ = ['OptToken', 'opt_format']
+__all__ = ['OptToken', 'opt_format', 'Template']
 
 
 class OptToken(object):
@@ -36,6 +36,30 @@ class Template(str):
     def format(self, *args, **kwargs):
         kwargs['opt'] = OptToken('', '', kwargs, False)
         return super(Template, self).format(*args, **kwargs)
+
+    def fields(self):
+        tokens = []
+        for token in self._formatter_parser():
+            if not token[1]:
+                continue
+
+            name = token[1]
+            if name.startswith('opt'):
+                insq = False
+                chars = ''
+                for char in name:
+                    if insq and char not in '[]':
+                        chars += char
+                    if char == '[':
+                        insq = True
+                    if char == ']':
+                        insq = False
+                        if len(chars) > 1:
+                            tokens.append(chars)
+                        chars = ''
+            else:
+                tokens.append(name)
+        return tokens
 
 
 def opt_format(tmpl, *args, **kwargs):

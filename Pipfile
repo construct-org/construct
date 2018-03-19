@@ -7,8 +7,8 @@ name = "pypi"
 
 [dev-packages]
 
-sphinx = "*"
-sphinx-rtd-theme = "*"
+Sphinx = "*"
+sphinx_rtd_theme = "*"
 sphinxcontrib-napoleon = "*"
 nose = "*"
 
@@ -17,5 +17,5 @@ nose = "*"
 
 fstrings = "*"
 scandir = "*"
-werkzeug = "*"
+Werkzeug = "*"
 fsfs = {git = "git://github.com/danbradham/fsfs.git"}

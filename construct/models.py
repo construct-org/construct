@@ -71,6 +71,13 @@ class Entry(factory.Entry):
     def set_status(self, status):
         '''Set status of Entry'''
 
+        if 'project' in self.tags:
+            statuses = self.read('statuses')
+        else:
+            project = self.parent('project')
+            statuses = project.read('statuses')
+        if status not in statuses:
+            raise ValueError('Status must be one of: ' + str(statuses))
         self.write(status=status)
 
 
