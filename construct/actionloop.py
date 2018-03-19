@@ -6,7 +6,7 @@ __all__ = ['TaskGroup', 'ActionLoop']
 from construct.types import Stack
 from construct import signal
 from construct.constants import *
-from construct.err import TimeoutError
+from construct.errors import TimeoutError
 from construct.tasks import AsyncRequest
 from fstrings import f
 

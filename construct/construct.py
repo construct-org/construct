@@ -13,7 +13,7 @@ from itertools import chain
 from construct import plugins, context, actions, signal
 from construct.util import env_with_default, path_split
 from construct.actionhub import ActionHub
-from construct.err import RegistrationError, ContextError
+from construct.errors import RegistrationError, ContextError
 from construct.formatters import Template
 
 

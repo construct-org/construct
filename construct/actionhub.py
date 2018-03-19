@@ -17,7 +17,7 @@ from construct.signal import Channel
 from construct.constants import *
 from construct.compat import basestring
 from construct.util import ensure_type, ensure_instance
-from construct.err import (
+from construct.errors import (
     RegistrationError, ConnectError, ActionUnavailable
 )
 

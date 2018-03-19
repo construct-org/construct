@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import, division
 import getpass
 import datetime
 import fsfs
-from construct.err import ConfigurationError
+from construct.errors import ConfigurationError
 
 
 factory = fsfs.EntryFactory()

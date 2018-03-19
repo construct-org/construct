@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function
 __all__ = ['validate', 'validate_kwargs', 'get_defaults']
 
 import string
-from construct.err import ParameterError, ValidationError
+from construct.errors import ParameterError, ValidationError
 from fstrings import f
 
 REQUIRED_OPTIONS = ['type', 'label']
