@@ -2,7 +2,8 @@
 from __future__ import absolute_import, division, print_function
 import time
 from timeit import default_timer
-from construct import Task, AsyncTask, TimeoutError
+from construct.tasks import Task, AsyncTask
+from construct.errors import TimeoutError
 from construct.constants import *
 from nose.tools import raises
 

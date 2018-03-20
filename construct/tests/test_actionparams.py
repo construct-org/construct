@@ -2,7 +2,7 @@
 from __future__ import absolute_import, division, print_function
 from nose.tools import raises
 from construct import actionparams
-from construct.err import ValidationError
+from construct.errors import ValidationError
 
 
 params_0 = dict()

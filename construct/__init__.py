@@ -10,7 +10,7 @@ __license__ = 'MIT'
 __url__ = 'https://github.com/construct-org/construct'
 
 from construct import compat
-from construct.err import *
+from construct.errors import *
 from construct.construct import Construct
 from construct.action import *
 from construct.actionhub import *

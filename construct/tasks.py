@@ -44,7 +44,7 @@ from construct.util import (
     ensure_instance
 )
 from construct.types import Priority
-from construct.err import TimeoutError, ExtractorError
+from construct.errors import TimeoutError, ExtractorError
 from construct import signal
 
 

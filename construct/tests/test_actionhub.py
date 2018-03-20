@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from nose.tools import raises
 from construct.constants import *
-from construct.err import RegistrationError
+from construct.errors import RegistrationError
 from construct.actionhub import ActionHub
 from construct.action import Action
 from construct.tasks import task

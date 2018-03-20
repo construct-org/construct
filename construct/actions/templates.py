@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import shutil
 from construct.action import Action
-from construct.err import ActionError
+from construct.errors import ActionError
 from construct.tasks import (
     task,
     pass_kwargs,

@@ -3,7 +3,8 @@ from __future__ import absolute_import, print_function
 import os
 from types import ModuleType
 from nose.tools import raises
-from construct import Construct, RegistrationError
+from construct import Construct
+from construct.errors import RegistrationError
 from construct.plugins import discover
 from construct.tests import data_path
 
