@@ -15,12 +15,16 @@ __all__ = [
     'VALIDATE',
     'REPAIR',
     'COMMIT',
-    'INTEGRATE'
+    'INTEGRATE',
+    'weakset',
+    'weakmeth',
 ]
 
 import abc
+import inspect
+import weakref
 from collections import Mapping, deque
-from construct.util import update_dict
+from construct.utils import update_dict
 
 
 ABC = abc.ABCMeta('ABC', (object,), {})
@@ -129,3 +133,64 @@ DEFAULTS = {
     (4, None, None): STAGE4,
 }
 Priority._instances.update(DEFAULTS)
+
+
+class weakset(object):
+    '''Like WeakSet but works with bound methods'''
+
+    def __init__(self):
+        self._ids = []
+        self._refs = []
+
+    def __repr__(self):
+        return (
+            '<{}>(_ids={}, _refs={})'
+        ).format(
+            self.__class__.__name__,
+            self._ids,
+            self._refs
+        )
+
+    def __iter__(self):
+        for i in range(len(self._refs)):
+            id_ = self._ids.pop(0)
+            ref = self._refs.pop(0)
+            obj = ref()
+            if obj is not None:
+                yield obj
+                self._refs.append(ref)
+                self._ids.append(id_)
+
+    def discard(self, obj):
+        if obj not in self._refs:
+            return
+
+        index = self._refs.index(obj)
+        self._ids.pop(index)
+        self._refs.pop(index)
+
+    def add(self, obj):
+        id_ = id(obj)
+        if id_ in self._ids:
+            return
+
+        self._ids.append(id_)
+
+        if inspect.ismethod(obj):
+            self._refs.append(weakmeth(obj, self.discard))
+        else:
+            self._refs.append(weakref.ref(obj, self.discard))
+
+
+class weakmeth(object):
+    '''Like weakref but for bound methods'''
+
+    def __init__(self, meth, callback=None):
+        self.name = meth.__name__
+        self.ref = weakref.ref(meth.__self__, callback)
+
+    def __call__(self):
+        obj = self.ref()
+        if obj is None:
+            return
+        return getattr(obj, self.name, None)

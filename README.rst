@@ -2,7 +2,7 @@
 construct
 =========
 
-Creative project and asset management written in pure python. Highly customizable through the use of plugins, actions and templates.
+Creative project and asset management.
 
 
 Core Packages

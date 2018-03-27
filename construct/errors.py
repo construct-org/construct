@@ -1,21 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-
 '''
 errors and exceptions
 =====================
-All errors and exceptions in Construct are subclasses of ConstructError. This
-allows you to easily catch all exceptions raised by construct like so:
-
-    from construct import Construct, ConstructError
-    construct = Construct()
-
-    try:
-        construct.new_project(root='./my_project')
-    except ConstructError:
-        # do something
-        raise
-
+All errors and exceptions in Construct are subclasses of ConstructError.
+Errors that modify Action execution are subclasses of ActionControlFlowError.
 '''
 
 
@@ -27,11 +15,6 @@ class InvalidPluginPath(ConstructError):
     '''Raised when a plugin path does not exist'''
 
 
-class ValidationError(ConstructError):
-    '''Raised when an :class:`Action` is instantiated with arguments that do
-    not match the parameters specified in :attr:`Action.parameters`'''
-
-
 class ParameterError(ConstructError):
     '''Raise when a :attr:`Action.parameters` is defined incorrectly'''
 
@@ -40,12 +23,12 @@ class RegistrationError(ConstructError):
     '''Raised when a plugin raises an exception during registration'''
 
 
-class ConnectError(ConstructError):
-    '''Raised when :meth:`ActionHub.connect` fails'''
+class ContextError(ConstructError):
+    '''Raised when an error in Context is encountered'''
 
 
-class InvalidIdentifier(ConstructError):
-    '''Raised when :class:`ActionHub` receives an invalid Action identifier'''
+class ConfigurationError(ConstructError):
+    '''Raised when an Entry or Construct is misconfigured'''
 
 
 class ActionUnavailable(ConstructError):
@@ -53,25 +36,60 @@ class ActionUnavailable(ConstructError):
     current context'''
 
 
-class ExtractorError(ConstructError):
-    '''Raised when an action_router encounters an error during extraction'''
-
-
-class InjectorError(ConstructError):
-    '''Raised when an action_router encounters an error during injection'''
-
-
 class ActionError(ConstructError):
     '''Raised when an action fails'''
 
 
-class TimeoutError(ConstructError):
-    '''Raised when task times out'''
+class ActionControlFlowError(ConstructError):
+    '''
+    Raised by Tasks to control Action execution...
+    '''
+
+    def __init__(self, *args, **kwargs):
+        import construct
+        self.ctx = construct.get_context()
+        self.request = construct.get_request()
+        super(ActionControlFlowError, self).__init__(*args, **kwargs)
 
 
-class ContextError(ConstructError):
-    '''Raised when an error in Context is encountered'''
+class ValidationError(ActionControlFlowError):
+    '''Raised when an :class:`Action` is instantiated with arguments that do
+    not match the parameters specified in :attr:`Action.parameters`'''
+
+    def __init__(self, *args, **kwargs):
+        self.selection = kwargs.pop('selection', [])
+        super(ValidationError, self).__init__(*args, **kwargs)
 
 
-class ConfigurationError(ConstructError):
-    '''Raised when an Entry or Construct is misconfigured'''
+class TimeoutError(ActionControlFlowError):
+    '''Raised when a request times out'''
+
+
+class Abort(ActionControlFlowError):
+    '''
+    Raised by a Task to notify the ActionRunner that a critical error has
+    occured. The ActionRunner will stop executing tasks and raise the error.
+    '''
+
+
+class Fail(ActionControlFlowError):
+    '''
+    Raised by a Task to notify the ActionRunner that the Task has failed, but,
+    the ActionRunner should continue.
+    '''
+
+
+class Pause(ActionControlFlowError):
+    '''
+    Raised by a Task to pause the ActionRunner.
+    '''
+
+
+class Confirm(ActionControlFlowError):
+    '''
+    Raised by a Task to request confirmation of specific items from user.
+    '''
+
+    def __init__(self, items, *args, **kwargs):
+        self.items = items
+        super(Confirm, self).__init__(*args, **kwargs)

@@ -1,0 +1,128 @@
+
+ROOT: '~/projects'
+EXTENSION_PATHS:
+    - '~/.construct'
+EVENT_STREAM_DB: '~/.construct/eventstream.sqlite'
+DISABLE_EXTENSIONS: []
+
+LOGGING:
+    version: 1
+    formatters:
+        simple:
+            format: '%(levelname).1s:%(name)s> %(message)s'
+    handlers:
+        console:
+            formatter: simple
+            class: logging.StreamHandler
+    loggers:
+        construct:
+            level: DEBUG
+            handlers: [console]
+
+
+STATUSES:
+    - 'waiting'
+    - 'in progress'
+    - 'rendering'
+    - 'pending'
+    - 'rejected'
+    - 'complete'
+
+
+PATH_TEMPLATES:
+    asset: '{project}/assets/{asset_type}/{asset}'
+    sequence: '{project}/sequences/{sequence}'
+    shot: '{sequence}/{shot}'
+    task: '{parent}/{task}'
+    publish: '{task}/publish/{task}_{asset}{opt[_][suffix]}_v{:0>3d}'
+    publish_file: '{task}_{asset}{opt[_][suffix]}_v{:0>3d}.{ext}'
+    workspace: '{task}/work/{workspace}'
+    workspace_file: '{task}_{asset}{opt[_][suffix]}_v{:0>3d}.{ext}'
+
+
+ASSET_TYPES:
+    - prop
+    - character
+    - environment
+    - product
+
+
+SOFTWARE:
+    maya2017:
+        host: 'maya'
+        identifier: 'launch.maya2017'
+        description: 'Launch Autodesk Maya2017'
+        icon: './icons/maya.png'
+        cmd:
+            win:
+                path: C:/Program Files/Autodesk/Maya2017/bin/maya.exe
+                args: []
+            linux:
+                path: /usr/autodesk/maya2017/bin/maya
+                args: []
+            mac:
+                path: /Applications/Autodesk/maya2017/bin/maya
+                args: []
+    maya2018:
+        host: 'maya'
+        identifier: 'launch.maya2018'
+        description: 'Launch Autodesk Maya2018'
+        icon: './icons/maya.png'
+        extensions: ['.ma', '.mb', '.fbx', '.obj', '.abc']
+        cmd:
+            win:
+                path: C:/Program Files/Autodesk/Maya2018/bin/maya.exe
+                args: []
+            linux:
+                path: /usr/autodesk/maya2018/bin/maya
+                args: []
+            mac:
+                path: /Applications/Autodesk/maya2018/bin/maya
+                args: []
+    nuke11.0v2:
+        host: 'nuke'
+        identifier: 'launch.nuke11.0v2'
+        description: 'Launch The Foundry Nuke11.0v2'
+        icon: './icons/nuke.png'
+        extensions: ['.nk']
+        cmd:
+            win:
+                path: C:/Program Files/Nuke11.0v2/Nuke11.0.exe
+                args: []
+            linux:
+                path: /usr/local/Nuke11.0v2/Nuke11.0
+                args: []
+            mac:
+                path: /Applications/Nuke11.0v2/Nuke11.0v2.app/Nuke11.0
+                args: []
+    sublime:
+        host: 'sublime'
+        identifier: 'launch.sublimetext'
+        description: 'Launch Sublimt Text 3'
+        icon: './icons/sublime.png'
+        extensions: ['.txt', '.py', '.mel']
+        cmd:
+            win:
+                path: C:/Program Files/Sublime Text 3//subl.exe
+                args: []
+            linux:
+                path: /usr/bin/subl
+                args: []
+            mac:
+                path: /Applications/Sublime Text.app/Contents/SharedSupport/bin/subl
+                args: []
+
+
+FILE_TYPES:
+    alembic:
+        extensions: ['.abc']
+    maya:
+        extensions: ['.ma', '.mb']
+    nuke:
+        extensions: ['.nk']
+    c4d:
+        extensions: ['.c4d']
+    photoshop:
+        extensions: ['.psd', '.psb']
+    illustrator:
+        extensions: ['.ai']

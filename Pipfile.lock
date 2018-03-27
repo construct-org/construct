@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1bf1543a07fd5501f34dbbfdb7763f13f4582525031eed040403fbf0ded45e66"
+            "sha256": "69073aacbda120a04d3c8cd484264421b76da6b9e6ab0da950c024caa2cb9499"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -27,6 +27,21 @@
         ]
     },
     "default": {
+        "chainmap": {
+            "hashes": [
+                "sha256:b13329fca4a46a458dd5d5de8ee1ae94f034a2c13a17f9149478941d043eef8b",
+                "sha256:405da3bce9913bfb33e6e497803b447b60d12ab44031ca357626143e087e0526",
+                "sha256:6c0dcc83ee2523b74705d1d0a1f2981f8918378f8b8b023f8765520df709fc57"
+            ],
+            "version": "==1.0.2"
+        },
+        "click": {
+            "hashes": [
+                "sha256:29f99fc6125fbc931b758dc053b3114e55c77a6e4c6c3a2674a2dc986016381d",
+                "sha256:f15516df478d5a56180fbf80e68f206010e6d160fc39fa508b65e035fd75130b"
+            ],
+            "version": "==6.7"
+        },
         "fsfs": {
             "git": "git://github.com/danbradham/fsfs.git"
         },
@@ -36,6 +51,26 @@
                 "sha256:ee7f7d552ec6f83c74a0d6d93459d906cb470f2f57539bf4186c7c6534789198"
             ],
             "version": "==0.1.0"
+        },
+        "lucidity": {
+            "hashes": [
+                "sha256:071912a17a8af53081c52e2854358abb9574f5bcb34a1ef55a7b052ba0232be8"
+            ],
+            "version": "==1.5.0"
+        },
+        "psutil": {
+            "hashes": [
+                "sha256:82a06785db8eeb637b349006cc28a92e40cd190fefae9875246d18d0de7ccac8",
+                "sha256:4152ae231709e3e8b80e26b6da20dc965a1a589959c48af1ed024eca6473f60d",
+                "sha256:230eeb3aeb077814f3a2cd036ddb6e0f571960d327298cc914c02385c3e02a63",
+                "sha256:a3286556d4d2f341108db65d8e20d0cd3fcb9a91741cb5eb496832d7daf2a97c",
+                "sha256:94d4e63189f2593960e73acaaf96be235dd8a455fe2bcb37d8ad6f0e87f61556",
+                "sha256:c91eee73eea00df5e62c741b380b7e5b6fdd553891bee5669817a3a38d036f13",
+                "sha256:779ec7e7621758ca11a8d99a1064996454b3570154277cc21342a01148a49c28",
+                "sha256:8a15d773203a1277e57b1d11a7ccdf70804744ef4a9518a87ab8436995c31a4b",
+                "sha256:e2467e9312c2fa191687b89ff4bc2ad8843be4af6fb4dc95a7cc5f7d7a327b18"
+            ],
+            "version": "==5.4.3"
         },
         "scandir": {
             "hashes": [
@@ -52,6 +87,20 @@
                 "sha256:b2d55be869c4f716084a19b1e16932f0769711316ba62de941320bf2be84763d"
             ],
             "version": "==1.7"
+        },
+        "scrim": {
+            "hashes": [
+                "sha256:ef9c7abec2f1dc1db677bfddd9c57a2fc715276a24d121f582573ce1c014c421",
+                "sha256:ce5b00742ea9245cb712e46b524ee81dc7b742636b4f89ee56e1547b080c05c9"
+            ],
+            "version": "==0.1.0"
+        },
+        "six": {
+            "hashes": [
+                "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb",
+                "sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
+            ],
+            "version": "==1.11.0"
         },
         "werkzeug": {
             "hashes": [
@@ -211,10 +260,10 @@
         },
         "sphinx": {
             "hashes": [
-                "sha256:41ae26acc6130ccf6ed47e5cca73742b80d55a134f0ab897c479bba8d3640b8e",
-                "sha256:da987de5fcca21a4acc7f67a86a363039e67ac3e8827161e61b91deb131c0ee8"
+                "sha256:7a606d77618a753adb79e13605166e3cf6a0e5678526e044236fc1ac43650910",
+                "sha256:5a1c9a0fec678c24b9a2f5afba240c04668edb7f45c67ce2ed008996b3f21ae2"
             ],
-            "version": "==1.7.1"
+            "version": "==1.7.2"
         },
         "sphinx-rtd-theme": {
             "hashes": [

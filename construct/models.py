@@ -146,3 +146,15 @@ class Workspace(Entry):
 
     def get_latest_version(self):
         pass
+
+    @property
+    def publishes(self):
+        pass
+
+    def get_latest_publish(self):
+        pass
+
+
+def is_entry(obj):
+    '''Returns True if obj is an instance of Entry or EntryProxy'''
+    return isinstance(obj, (factory.Entry, factory.EntryProxy))

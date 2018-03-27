@@ -2,8 +2,6 @@
 from __future__ import absolute_import, division, print_function
 
 __all__ = [
-    'TIMER',
-    'SLEEP',
     'RequestThread',
     'AsyncRequest',
     'AsyncTask',
@@ -11,6 +9,8 @@ __all__ = [
     'Task',
     'task',
     'async_task',
+    'sort_tasks',
+    'group_tasks',
     'requires',
     'skips',
     'pass_context',
@@ -27,33 +27,23 @@ __all__ = [
 ]
 
 import threading
-import time
-import timeit
 import sys
 import inspect
-from fstrings import f
+from operator import attrgetter
+from collections import OrderedDict
 from construct.constants import *
-from construct.context import (
-    _ctx_stack,
-    _req_stack
-)
-from construct.util import (
+from construct.context import _ctx_stack, _req_stack
+from construct.utils import (
     get_callable_name,
     pop_attr,
     ensure_callable,
-    ensure_instance
 )
 from construct.types import Priority
-from construct.errors import TimeoutError, ExtractorError
-from construct import signal
+from construct.errors import TimeoutError
+from construct import signals
 
 
-# Globals
 DEFAULT_PRIORITY = Priority(0)
-
-# Dependencies
-TIMER = timeit.default_timer
-SLEEP = time.sleep
 
 
 class RequestThread(threading.Thread):
@@ -202,7 +192,7 @@ class Request(object):
 
         last_status = status
         self._status = status
-        signal.send('request.status.changed', self, last_status, status)
+        signals.send('request.status.changed', self, last_status, status)
 
     @property
     def enabled(self):
@@ -210,7 +200,7 @@ class Request(object):
 
     def set_enabled(self, value):
         self._enabled = value
-        signal.send('request.enabled', self, self._enabled)
+        signals.send('request.enabled', self, self._enabled)
 
     @property
     def success(self):
@@ -299,7 +289,7 @@ class AsyncRequest(Request):
 
 class Task(object):
 
-    _request_cls = Request
+    request_cls = Request
 
     def __init__(self, fn, identifier=None, description=None,
                  priority=DEFAULT_PRIORITY, requires=None, skips=None,
@@ -329,6 +319,21 @@ class Task(object):
 
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
+
+    def clone(self, **kwargs):
+        '''Create a new Task instance, overriding any kwargs you need to'''
+
+        kwargs.setdefault('fn', self.fn)
+        kwargs.setdefault('identifier', self.identifier)
+        kwargs.setdefault('description', self.description)
+        kwargs.setdefault('priority', self.priority)
+        kwargs.setdefault('requires', self.requires)
+        kwargs.setdefault('skips', self.skips)
+        kwargs.setdefault('arg_getters', self.arg_getters)
+        kwargs.setdefault('kwarg_getters', self.kwarg_getters)
+        kwargs.setdefault('callbacks', self.callbacks)
+        kwargs.setdefault('available', self._available)
+        return self.__class__(**kwargs)
 
     def ready(self, ctx):
 
@@ -381,15 +386,15 @@ class Task(object):
         return self._available
 
     def request(self, ctx=None, args=None, kwargs=None):
-        return self._request_cls(self, ctx, args, kwargs)
+        return self.request_cls(self, ctx, args, kwargs)
 
 
 class AsyncTask(Task):
 
-    _request_cls = AsyncRequest
+    request_cls = AsyncRequest
 
 
-# Decorator interface for creating tasks
+# Decorator interface
 
 
 def task(identifier=None, priority=None, description=None, cls=Task):
@@ -420,7 +425,7 @@ def task(identifier=None, priority=None, description=None, cls=Task):
             arg_getters=pop_attr(fn, '__task_arg_getters__', None),
             kwarg_getters=pop_attr(fn, '__task_kwarg_getters__', None),
             callbacks=pop_attr(fn, '__task_callbacks__', None),
-            available=pop_attr(fn, '__task_available__', None),
+            available=pop_attr(fn, '__task_available__', True),
             priority=priority if priority is not None else DEFAULT_PRIORITY
         )
 
@@ -459,6 +464,25 @@ def async_task(identifier, priority=None, description=None, cls=AsyncTask):
 
 
 def requires(*funcs):
+    '''Task decorator describing a tasks's requirements.
+
+    Each requirement must be a callable accepting ctx as an argument. Once all
+    requirements are met, the task is ready to run. The ActionRunner will move
+    the task from the waiting queue to the ready queue and execute it in the
+    next loop.
+
+    Require the success of another task:
+        >>> @task
+        ... @requires(success('other.task'))
+        ... def my_task():
+        ...     pass
+
+    Require failure of another task:
+        >>> @task
+        ... @requires(failure('other.task'))
+        ... def my_task():
+        ...     pass
+    '''
 
     [ensure_callable(func) for func in funcs]
 
@@ -482,24 +506,6 @@ def skips(*funcs):
         return fn
 
     return skips
-
-
-def pass_construct(fn):
-    '''Task decorator that passes Construct object as first argument to task'''
-
-    def pass_construct(ctx):
-        return ctx.construct
-
-    if not hasattr(fn, '__task_arg_getters'):
-        fn.__task_arg_getters__ = []
-
-    if len(fn.__task_arg_getters__):
-        for getter in fn.__task_arg_getters__:
-            if getattr(getter, '__name__', None) == 'pass_construct':
-                return fn
-
-    fn.__task_arg_getters__.insert(0, pass_construct)
-    return fn
 
 
 def pass_context(fn):
@@ -597,31 +603,34 @@ def params(*args, **kwargs):
 
 
 def returns(*callbacks):
-    '''Add callbacks to run when the task successfully returns. Also accepts
-    CtxAction objects like artifact(key), store(key), and kwarg(key).'''
+    '''Task decorator that adds callbacks to run when the task successfully
+    returns. Also accepts CtxAction objects like artifact(key) and store(key)
+    '''
 
     def returns(fn):
-        fn.__task_callbacks__ = []
+        if not hasattr(fn, '__task_callbacks__'):
+            fn.__task_callbacks__ = []
 
-        for cb in callbacks:
-            if callable(cb):
-                spec = inspect.getargspec(cb)
+        for callback in callbacks:
+            if callable(callback):
+                spec = inspect.getargspec(callback)
                 if spec.args and len(spec.args) == 2:
-                    fn.__task_callbacks__.append(cb)
+                    fn.__task_callbacks__.append(callback)
                 else:
                     return TypeError(
                         'Callback must accept two arguments: ctx and value'
                     )
-            elif isinstance(cb, CtxAction):
-                if not cb.sets:
+            elif isinstance(callback, CtxAction):
+                if not callback.sets:
                     raise TypeError(
-                        type(cb).__name__ +
+                        type(callback).__name__ +
                         ' can not be used as an argument to returns()...'
                     )
-                fn.__task_callbacks__.append(cb.set)
+                fn.__task_callbacks__.append(callback.set)
             else:
                 raise TypeError(
-                    'returns received unsupported type: ' + type(cb).__name__
+                    'returns received unsupported type: ' +
+                    type(callback).__name__
                 )
         return fn
 
@@ -792,56 +801,20 @@ class kwarg(CtxAction):
     def set(self, ctx, value):
         raise NotImplementedError('Can not use kwarg with the returns deco')
 
-# Utility Functions
+
+# Sort methods
+
+def sort_tasks(tasks):
+    '''Sort the given tasks by priority'''
+
+    return sorted(tasks, key=attrgetter('priority'))
 
 
-def process_arguments(arguments):
-    '''Process arguments returning args and kwargs.
+def group_tasks(tasks):
+    '''Group sorted tasks by priority'''
 
-    Acceptable arguments:
-        tuple(tuple, dict) - args and kwargs
-        tuple - just arguments
-        dict(args=tuple, kwargs=dict) - dict with args and dict keys
-        dict(**kwargs) - just a dict with keyword arguments
-        dict(args=tuple, **kwrags) a dict with args and keyword arguments
-
-    Parameters:
-        arguments: tuple or dict containing args and kwargs
-
-    Returns:
-        tuple, dict: args and kwargs
-
-    Raises:
-        ExtractorError: when arguments does not match one of the above
-            signatures
-    '''
-    if isinstance(arguments, tuple):
-        if (
-            len(arguments) == 2 and
-            isinstance(arguments[0], tuple) and
-            isinstance(arguments[1], dict)
-        ):
-            args = arguments[0]
-            kwargs = arguments[1]
-        else:
-            args = arguments
-            kwargs = {}
-    elif isinstance(arguments, dict):
-        args = arguments.pop('args', ())
-        if 'kwargs' in arguments:
-            kwargs = arguments['kwargs']
-        else:
-            kwargs = arguments
-    else:
-        msg = [
-            'Invalid return value signature:',
-            f('Got: {arguments}'),
-            'Expected:',
-            '    (...)',
-            '    {...}',
-            '    ((...), {...})',
-            '    {"args": (...), "kwargs": {...}}',
-            '    {"args": (...), **kwargs}'
-        ]
-        raise ExtractorError('\n'.join(msg))
-    return args, kwargs
+    groups = OrderedDict()
+    for task in tasks:
+        groups.setdefault(task.priority, [])
+        groups[task.priority].append(task)
+    return groups

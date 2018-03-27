@@ -20,13 +20,13 @@ def validate(parameters):
 
         {
             'str_param': {
-                'name': 'Str Param',
+                'label': 'Str Param',
                 'type': str,
                 'required': True,
                 'validator': lambda x: 1 < len(x) < 36
             },
             'int_param': {
-                'name': 'Int Param',
+                'label': 'Int Param',
                 'type': int,
                 'required': False,
                 'default': 1

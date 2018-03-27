@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
 
 __all__ = [
     'Context',
-    'from_env',
-    'from_path',
-    'to_env',
-    'to_env_dict',
-    '_cons_stack',
     '_ctx_stack',
     '_req_stack',
 ]
@@ -15,21 +10,24 @@ __all__ = [
 import os
 import sys
 import fsfs
+from getpass import getuser
 from fstrings import f
 from collections import Mapping
 from werkzeug.local import LocalStack
+from construct.constants import DEFAULT_ROOT, DEFAULT_HOST
+from construct.utils import platform
 
 
-_cons_stack = LocalStack()
 _ctx_stack = LocalStack()
 _req_stack = LocalStack()
 
 
 class Context(object):
 
-    _keys = [
+    keys = [
         'host',
         'root',
+        'user',
         'project',
         'sequence',
         'shot',
@@ -38,7 +36,7 @@ class Context(object):
         'workspace',
         'platform'
     ]
-    _entry_order = [
+    entry_keys = [
         'project',
         'sequence',
         'shot',
@@ -46,15 +44,16 @@ class Context(object):
         'task',
         'workspace'
     ]
-    _defaults = {k: None for k in _keys}
-    _defaults['platform'] = sys.platform.rstrip('0123456789').lower()
+    defaults = {k: None for k in keys}
+    defaults['platform'] = platform
+    defaults['user'] = getuser()
 
     def __init__(self, **kwargs):
-        kwargs = dict(self._defaults, **kwargs)
+        kwargs = dict(self.defaults, **kwargs)
         self.__dict__.update(kwargs)
 
     def __repr__(self):
-        kwargs = ', '.join([f('{k}={v}') for k, v in self.__dict__.items()])
+        kwargs = ', '.join([f('{k}={v!r}') for k, v in self.__dict__.items()])
         return f('{self.__class__.__name__}({kwargs})')
 
     def __enter__(self):
@@ -82,7 +81,7 @@ class Context(object):
             _ctx_stack.pop()
 
     def get_deepest_entry(self):
-        for key in reversed(self._entry_order):
+        for key in reversed(self.entry_keys):
             entry = self.__dict__.get(key, None)
             if entry:
                 return entry
@@ -98,65 +97,65 @@ class Context(object):
         else:
             raise TypeError('Not a Mapping or Context: ', other)
 
+    def to_env_dict(self, exclude=None):
+        '''Push context to environment variables...'''
 
-def to_env_dict(context, exclude=['host']):
-    '''Push context to environment variables...'''
+        exclude = exclude or ['host']
+        data = {}
+        for key in self.keys:
 
-    d = {}
-    for key in context._keys:
+            if key in exclude:
+                continue
 
-        if key in exclude:
-            continue
+            value = getattr(self, key)
+            if value is not None:
+                data['CONSTRUCT_' + key.upper()] = str(value)
+        return data
 
-        value = getattr(context, key)
-        if value is not None:
-            d['CONSTRUCT_' + key.upper()] = str(value)
-    return d
+    def to_env(self, exclude=None):
+        '''Push context to environment variables...'''
 
+        exclude = exclude or ['host']
 
-def to_env(context, exclude=['host']):
-    '''Push context to environment variables...'''
+        for key in self.keys:
 
-    for key in context._keys:
+            if key in exclude:
+                continue
 
-        if key in exclude:
-            continue
+            value = getattr(self, key)
+            if value is not None:
+                os.environ['CONSTRUCT_' + key.upper()] = str(value)
 
-        value = getattr(context, key)
-        if value is not None:
-            os.environ['CONSTRUCT_' + key.upper()] = str(value)
+    @classmethod
+    def from_env(cls, exclude=None):
+        '''Create new context from environment variables'''
 
+        data = dict(
+            root=os.environ.get('CONSTRUCT_ROOT', DEFAULT_ROOT),
+            host=os.environ.get('CONSTRUCT_HOST', DEFAULT_HOST),
+        )
+        for entry in cls.entry_keys:
+            env_var = 'CONSTRUCT_' + entry.upper()
+            value = os.environ.get(env_var, None)
+            if value:
+                value = fsfs.get_entry(value)
+            data[entry] = value
 
-def from_env():
-    '''Create new context from environment variables'''
+        return cls(**data)
 
-    ctx = dict(
-        root=os.environ.get('CONSTRUCT_ROOT', os.getcwd()),
-        host=os.environ.get('CONSTRUCT_HOST', None),
-    )
-    entries = ['project', 'asset', 'sequence', 'shot', 'task', 'workspace']
-    for entry in entries:
-        env_var = 'CONSTRUCT_' + entry.upper()
-        value = os.environ.get(env_var, None)
-        if value:
-            value = fsfs.get_entry(value)
-        ctx[entry] = value
+    @classmethod
+    def from_path(cls, path):
+        '''Extract context from file path'''
 
-    return Context(**ctx)
+        ctx = Context.from_env()
 
+        if os.path.isfile(path):
+            path = os.path.dirname(path)
 
-def from_path(path):
-    '''Extract context from file path.'''
+        for entry in fsfs.search(path, direction=fsfs.UP):
+            tags = entry.tags
+            for key in Context._keys:
+                if key in tags:
+                    setattr(ctx, key, entry)
 
-    ctx = from_env()
-
-    if os.path.isfile(path):
-        path = os.path.dirname(path)
-
-    for entry in fsfs.search(path, direction=fsfs.UP):
-        tags = entry.tags
-        for key in Context._keys:
-            if key in tags:
-                setattr(ctx, key, entry)
-
-    return ctx
+        return ctx

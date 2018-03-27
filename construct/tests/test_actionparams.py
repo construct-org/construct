@@ -55,6 +55,3 @@ def test_missing_required():
         params_1,
         {'str_arg': 'str', 'dict_arg': {}}
     )
-
-
-# TODO: Test larger variety of parameter dicts
