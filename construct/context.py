@@ -154,7 +154,7 @@ class Context(object):
 
         for entry in fsfs.search(path, direction=fsfs.UP):
             tags = entry.tags
-            for key in Context._keys:
+            for key in Context.entry_keys:
                 if key in tags:
                     setattr(ctx, key, entry)
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from construct.extension import Extension
+from construct.utils import package_path
 from construct.builtins import (
     projects,
     sequences,
@@ -23,17 +24,28 @@ class Builtins(Extension):
         return True
 
     def load(self):
+
+        self.add_template_path(package_path('builtins/templates'))
+
         self.add_action(projects.NewProject)
-        self.add_task(projects.NewProject, projects.make_new_project)
+        self.add_task(projects.NewProject, projects.stage_project)
+        self.add_task(projects.NewProject, projects.validate_project)
+        self.add_task(projects.NewProject, projects.commit_project)
 
         self.add_action(sequences.NewSequence)
-        self.add_task(sequences.NewSequence, sequences.make_new_sequence)
+        self.add_task(sequences.NewSequence, sequences.stage_sequence)
+        self.add_task(sequences.NewSequence, sequences.validate_sequence)
+        self.add_task(sequences.NewSequence, sequences.commit_sequence)
 
         self.add_action(shots.NewShot)
-        self.add_task(shots.NewShot, shots.make_new_shot)
+        self.add_task(shots.NewShot, shots.stage_shot)
+        self.add_task(shots.NewShot, shots.validate_shot)
+        self.add_task(shots.NewShot, shots.commit_shot)
 
         self.add_action(assets.NewAsset)
-        self.add_task(assets.NewAsset, assets.make_new_asset)
+        self.add_task(assets.NewAsset, assets.stage_asset)
+        self.add_task(assets.NewAsset, assets.validate_asset)
+        self.add_task(assets.NewAsset, assets.commit_asset)
 
         self.add_action(tasks.NewTask)
         self.add_task(tasks.NewTask, tasks.stage_task)
@@ -53,3 +65,4 @@ class Builtins(Extension):
         self.add_action(files.Save)
         self.add_action(files.Publish)
         self.add_action(files.PublishFile)
+        self.add_action(files.Open)

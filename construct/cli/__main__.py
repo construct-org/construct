@@ -98,9 +98,10 @@ def logging_config(level):
 def setup_parser():
     '''Build the root parser'''
 
-    usage = styled('{bright}construct'
-        ' {fg.blue}<command|action>{fg.reset}'
-        ' {fg.yellow}[options]{reset}'
+    usage = styled(
+        '{bright}construct '
+        '{fg.blue}<command|action>{fg.reset} '
+        '{fg.yellow}[options]{reset}'
     )
     parser = argparse.ArgumentParser(
         'construct',
@@ -133,6 +134,7 @@ def setup_parser():
 
 
 def main():
+    '''CLI Entry Point'''
 
     # Enable ansi console colors
     colorama.init()
@@ -170,7 +172,7 @@ def main():
 
     command = subcommands[command_name]
     args = command.parser.parse_args(command_args)
-    args.__dict__.pop('verbose') # We already used the verbose flag
+    args.__dict__.pop('verbose')  # We already used the verbose flag
     command.run(args)
 
 

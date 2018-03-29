@@ -12,4 +12,4 @@ install:
   - "pipenv install --dev --skip-lock --system"
 
 script:
-  - nosetests -v -s --with-doctest --doctest-extension=rst
+  - nosetests -v -s --logging-clear-handlers --with-doctest

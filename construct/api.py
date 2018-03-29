@@ -14,9 +14,10 @@ from construct.config import Config
 from construct.extension import ExtensionCollector, Extension
 from construct.action import Action, ActionCollector, ActionProxy
 from construct.actioncontext import ActionContext
-from construct.utils import unipath
+from construct.utils import unipath, ensure_instance
+from construct.stats import log_call
 
-__all__ = [ # Public facing API
+__all__ = [
     'Context',
     'config',
     'Config',
@@ -27,6 +28,7 @@ __all__ = [ # Public facing API
     'ActionContext',
     'ActionProxy',
     'init',
+    'uninit',
     'set_context',
     'set_context_from_entry',
     'set_context_from_path',
@@ -60,6 +62,7 @@ extensions = ExtensionCollector()
 actions = ActionCollector(extensions)
 
 
+@log_call
 def init(root=None, host=None, extension_paths=None, logging=None):
     '''Initialize Construct'''
 
@@ -107,6 +110,33 @@ def init(root=None, host=None, extension_paths=None, logging=None):
     _initialized = True
 
 
+@log_call
+def uninit():
+    '''Uninitialize Construct...'''
+
+    global _initialized
+    if not _initialized:
+        raise RuntimeError('Construct has not been initialized yet...')
+
+    global config
+    _log.debug('Setting default config...')
+    config = Config()
+
+    global _context
+    _log.debug('Clearing context...')
+    _context = None
+
+    _log.debug('Removing all extensions...')
+    extensions.clear()
+
+    _log.debug('Restoring default fsfs policy...')
+    fsfs.set_default_policy()
+
+    _log.debug('Uninitialized!')
+    _initialized = False
+
+
+@log_call
 def set_context(ctx):
     '''Manually set the current context to the specified :class:`Context`'''
     ensure_instance(ctx, Context)
@@ -115,6 +145,7 @@ def set_context(ctx):
     _context = ctx
 
 
+@log_call
 def set_context_from_entry(entry):
     '''Extract and set the current context from the specified entry'''
 
@@ -123,6 +154,7 @@ def set_context_from_entry(entry):
     _context.update(new_context, exclude=['host'])
 
 
+@log_call
 def set_context_from_path(path):
     '''Extract and set the current context from the specified path'''
 
@@ -131,31 +163,36 @@ def set_context_from_path(path):
     _context.update(new_context, exclude=['host'])
 
 
+@log_call
 def get_context():
     '''Get current :class:`Context`'''
 
     return _ctx_stack.top or _context
 
 
+@log_call
 def get_request():
     '''Get current task :class:`Request`'''
 
     return _req_stack.top
 
 
+@log_call
 def get_path_template(name):
     '''Get one of the current projects templates by name'''
 
-    return lucidity.Template(config['PATH_TEMPLATES'][name], anchor=None)
+    return lucidity.Template(name, config['PATH_TEMPLATES'][name], anchor=None)
 
 
+@log_call
 def get_path_templates():
     '''Get a dict containining the current projects templates'''
 
-    return {k: lucidity.Template(v, anchor=None)
+    return {k: lucidity.Template(k, v, anchor=None)
             for k, v in config['PATH_TEMPLATES']}
 
 
+@log_call
 def get_template_search_paths():
 
     ctx = get_context()
@@ -170,6 +207,7 @@ def get_template_search_paths():
     return [p for p in paths if os.path.isdir(p)]
 
 
+@log_call
 def get_template(name, *tags):
     '''Get a template by tag and name'''
 
@@ -185,16 +223,17 @@ def get_template(name, *tags):
     raise KeyError('{} not found...did you mean "{}"?'.format(name, alt))
 
 
+@log_call
 def get_templates(*tags):
     '''Get all templates matching a set of tags.'''
 
-    search = chain(*(
+    entries = chain(*(
         fsfs.search(path, depth=1).tags(*tags)
         for path in get_template_search_paths()
     ))
 
     templates = {}
-    for template in search:
+    for template in entries:
         if template.name in templates:
             continue
         templates[template.name] = template
@@ -202,6 +241,7 @@ def get_templates(*tags):
     return templates
 
 
+@log_call
 def search(name=None, tags=None, **kwargs):
     '''Search for Construct Entries by name or tag'''
 
@@ -224,7 +264,7 @@ def search(name=None, tags=None, **kwargs):
     return entries
 
 
-# Builtins action aliases
+# Builtin Action Aliases
 
 new_project = ActionProxy('new.project')
 new_sequence = ActionProxy('new.sequence')

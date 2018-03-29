@@ -5,10 +5,15 @@ import os
 import sys
 from textwrap import dedent
 from scrim import get_scrim
+import logging
 import construct
+from construct.errors import ActionControlFlowError
 from construct.cli.formatters import new_formatter, Contextual, format_section
 from construct.cli.constants import OPTIONS_TITLE, ARGUMENTS_TITLE
 from construct.cli.utils import styled, error, abort
+
+
+_log = logging.getLogger(__name__)
 
 
 class Command(object):
@@ -37,11 +42,12 @@ class Command(object):
 
     @classmethod
     def _available(cls):
-        return cls.name is not None
+        return cls.name and cls.available()
 
-    @staticmethod
-    def available():
-        True
+    @classmethod
+    def available(cls):
+        '''Implement this to set when a command is available.'''
+        return True
 
     @property
     def arguments(self):
@@ -66,7 +72,7 @@ class Command(object):
         parts = self.__doc__.split('\n')
         short = parts[0]
         body = dedent('\n'.join(parts[1:]))
-        text = '\n'.join([parts[0], body])
+        text = '\n'.join([short, body])
         return text
 
     def setup_parser(self, parser):
@@ -95,19 +101,19 @@ class Version(Command):
         print(section)
 
 
-class ScrimCommand(Command):
-    '''Commands only available when scrim is enabled
+def requires_scrim(command):
+    '''Command becomes available only when cli run by scrim script...
 
-    see also:
+    See also:
         https://github.com/danbradham/scrim
     '''
 
-    @staticmethod
-    def available():
-        return get_scrim().path is not None
+    command.available = staticmethod(lambda: get_scrim().shell)
+    return command
 
 
-class Home(ScrimCommand):
+@requires_scrim
+class Home(Command):
     '''Go to root directory'''
 
     name = 'home'
@@ -116,10 +122,10 @@ class Home(ScrimCommand):
         ctx = construct.get_context()
         scrim = get_scrim()
         scrim.pushd(os.path.abspath(ctx.root))
-        print(scrim.to_cmd())
 
 
-class Pop(ScrimCommand):
+@requires_scrim
+class Pop(Command):
     '''Go back to last location'''
 
     name = 'pop'
@@ -127,10 +133,10 @@ class Pop(ScrimCommand):
     def run(self, args):
         scrim = get_scrim()
         scrim.popd()
-        print(scrim.to_cmd())
 
 
-class Push(ScrimCommand):
+@requires_scrim
+class Push(Command):
     '''Go to first search result'''
 
     name = 'push'
@@ -168,7 +174,7 @@ class Push(ScrimCommand):
             tags=args.tags,
             direction=args.direction
         )
-        entry = construct.one(**query)
+        entry = construct.search(**query).one()
 
         if not entry:
             error('Could not find entry for query...')
@@ -176,7 +182,6 @@ class Push(ScrimCommand):
 
         scrim = get_scrim()
         scrim.pushd(os.path.abspath(entry.path))
-        print(scrim.to_cmd())
 
 
 class Search(Command):
@@ -227,10 +232,11 @@ class Search(Command):
         entries = list(construct.search(**query))
 
         if not entries:
-            print('Found 0 result.')
+            print(('Found 0 result.'))
             sys.exit(1)
 
         for entry in entries:
+            # TODO: Highlight parts of path matching query
             print(entry)
 
 
@@ -249,7 +255,7 @@ class Read(Command):
 
     def run(self, args):
         import fsfs
-        data = fsfs.read(root, *keys)
+        data = fsfs.read(args.root, *args.keys)
         print(fsfs.encode_data(data))
 
 
@@ -283,13 +289,13 @@ class Write(Command):
     def run(self, args):
 
         import fsfs
-        from fsfs.cli import literal_eval
+        from fsfs.cli import safe_eval
 
-        entry = fsfs.get_entry(root)
+        entry = fsfs.get_entry(args.root)
         if args.delkeys:
             entry.remove(*args.delkeys)
 
-        data = {k: literal_eval(v) for k, v in args.data}
+        data = {k: safe_eval(v) for k, v in args.data}
 
         try:
             entry.write(**data)
@@ -344,7 +350,7 @@ class Untag(Command):
             default=os.getcwd(),
             help='Directory to tag'
         )
-        parser.add_argument('tags', nargs=-1, help='List of tags to add')
+        parser.add_argument('tags', nargs='*', help='List of tags to remove')
 
     def run(self, args):
         import fsfs
@@ -355,6 +361,7 @@ class ActionCommand(Command):
     ''':class:`Action` CLI command class'''
 
     def __init__(self, action, parent):
+        _log.debug('Initializing ActionCommand for %s' % self.name)
         self.action = action
         self.name = action.identifier
         super(ActionCommand, self).__init__(parent)
@@ -365,43 +372,57 @@ class ActionCommand(Command):
         text = '\n'.join([parts[0], dedent('\n'.join(parts[1:]))])
         return text
 
-    def custom_validator(self, name, type, validator):
+    def custom_validator(self, name, cast, *validators):
         def check_value(value):
-            value = type(value)
-            if not validator(value):
+            value = cast(value)
+            if not all([v(value) for v in validators]):
                 msg = '%s: invalid value: %r' % (name, value)
-                raise self.parser.error(msg)
+                raise abort(msg)
             return value
         return check_value
 
     def add_option(self, parser, param_name, param_options):
         '''Add an argument to parser from an action parameter'''
         param_flag = '--' + param_name
-        data = {
-            'dest': param_name,
-            'type': param_options['type'],
-            'help': param_options['help'],
-            'required': param_options.get('required', False)
-        }
-        if param_options['type'] is bool:
-            data['action'] = 'store_true'
-        else:
-            data['action'] = 'store'
 
-        if 'validator' in param_options:
-            data['type'] = self.custom_validator(
+        # Handle bool options
+        if param_options['type'] is bool:
+            arg_spec = dict(
+                action='store_true',
+                dest=param_name,
+                help=param_options.get('help', None),
+                default=param_options.get('default', False),
+            )
+            return parser.add_argument(param_flag, **arg_spec)
+
+        # Handle all other options
+        arg_spec = dict(
+            action=('store', 'store_true')[param_options['type'] is bool],
+            type=param_options.get('type', str),
+            dest=param_name,
+            help=param_options.get('help', None),
+            required=param_options.get('required', False),
+            default=param_options.get('default', None),
+            choices=param_options.get('options', None)
+        )
+
+        # Build a validator if we get a tuple of types, argparse calls
+        # type(arg), so our validator casts the argument first, then
+        # validates it.
+        cast = arg_spec['type']
+        validators = param_options.get('validator', [])
+        if isinstance(param_options['type'], tuple):
+            cast = param_options['type'][0]
+            validators.append(lambda x: isinstance(x, param_options['type']))
+
+        if validators:
+            arg_spec['type'] = self.custom_validator(
                 param_flag,
-                param_options['type'],
-                param_options['validator']
+                cast,
+                *validators
             )
 
-        if 'default' in param_options:
-            data['default'] = param_options['default']
-
-        if 'options' in param_options:
-            data['choices'] = param_options['options']
-
-        parser.add_argument(param_flag, **data)
+        parser.add_argument(param_flag, **arg_spec)
 
     def setup_parser(self, parser):
         ctx = construct.get_context()
@@ -410,10 +431,12 @@ class ActionCommand(Command):
             self.add_option(parser, param_name, param_options)
 
     def run(self, args):
+        print(args)
         try:
             action = self.action(**args.__dict__)
             action.run()
         except ActionControlFlowError as e:
             print(styled('{fg.red}{}{reset}', e.message))
+
 
 commands = [c for c in Command.__subclasses__() if c._available()]

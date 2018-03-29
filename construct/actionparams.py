@@ -9,6 +9,8 @@ from fstrings import f
 
 REQUIRED_OPTIONS = ['type', 'label']
 OPTIONS = ['type', 'label', 'default', 'required', 'options']
+# TODO: Add an additional option to handle coercions?
+#       coercions=[(TYPE, CONVERTER)...]
 VALID_CHARACTERS = string.ascii_lowercase + string.digits + '_'
 
 
@@ -23,13 +25,15 @@ def validate(parameters):
                 'label': 'Str Param',
                 'type': str,
                 'required': True,
-                'validator': lambda x: 1 < len(x) < 36
+                'validator': lambda x: 1 < len(x) < 36,
+                'help': 'This is a required string parameter'
             },
             'int_param': {
                 'label': 'Int Param',
                 'type': int,
                 'required': False,
-                'default': 1
+                'default': 1,
+                'help': 'This is an unrequired int parameter'
             },
             ...
         }

@@ -26,7 +26,22 @@ import weakref
 from collections import Mapping, deque
 from construct.utils import update_dict
 
+# Use for type checking with isinstance
+from construct.models import Entry  # Bring this in for api convenience
+Number = (int, float)
 
+# Alias some six types
+import six
+Binary = six.binary_type
+Integer = six.integer_types
+Object = six.class_types
+Text = six.text_type
+if six.PY2:
+    String = (str, unicode)
+else:
+    String = str
+
+# py2-3 compatible ABCMeta
 ABC = abc.ABCMeta('ABC', (object,), {})
 
 
@@ -119,10 +134,10 @@ STAGE2 = Priority(2, 'Stage-2', 'Third stage')
 STAGE3 = Priority(3, 'Stage-3', 'Fourth stage')
 STAGE4 = Priority(4, 'Stage-4', 'Fifth stage')
 
-STAGE = Priority(0, 'Stage', 'Stage data')
-VALIDATE = Priority(1, 'Validate', 'Validate data')
-REPAIR = Priority(2, 'Repair', 'Repair data')
-COMMIT = Priority(3, 'Commit', 'Commit new artifacts')
+STAGE = Priority(0, 'Stage', 'Stage')
+VALIDATE = Priority(1, 'Validate', 'Validate')
+REPAIR = Priority(2, 'Repair', 'Repair')
+COMMIT = Priority(3, 'Commit', 'Commit')
 INTEGRATE = Priority(4, 'Integrate', 'Integrate artifacts')
 
 DEFAULTS = {

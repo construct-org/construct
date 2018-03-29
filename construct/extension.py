@@ -5,9 +5,8 @@ import os
 import inspect
 import logging
 from pkg_resources import iter_entry_points
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 from fnmatch import fnmatch
-from operator import attrgetter
 from construct.constants import EXTENSIONS_ENTRY_POINT
 from construct.types import ABC
 from construct.utils import iter_modules, ensure_type, missing, unipath
@@ -53,20 +52,6 @@ class Extension(ABC):
         self._actions = {}
         self._tasks = defaultdict(list)
         self._template_paths = []
-        template_path = unipath(self._package(), 'templates')
-        if os.path.isdir(template_path):
-            self._template_paths.append(template_path)
-
-    def add_template_path(self, path):
-        self._template_paths.append(unipath(path))
-
-    def remote_template_path(self, path):
-        p = unipath(path)
-        if p in self._template_paths:
-            self._template_paths.remove(p)
-
-    def _package(self):
-        return os.path.dirname(inspect.getfile(self.__class__))
 
     def _available(self, ctx=missing):
         if ctx is not missing:
@@ -98,6 +83,17 @@ class Extension(ABC):
         necessary teardown.
         '''
 
+    def add_template_path(self, path):
+        self._template_paths.append(unipath(path))
+
+    def remote_template_path(self, path):
+        p = unipath(path)
+        if p in self._template_paths:
+            self._template_paths.remove(p)
+
+    def get_template_paths(self):
+        return list(self._template_paths)
+
     def add_action(self, action):
         '''Add an action to this extension'''
         ensure_type(action, Action)
@@ -112,6 +108,18 @@ class Extension(ABC):
         if action.identifier in self._actions:
             self._actions.pop(action.identifier)
 
+    def get_actions(self, ctx=missing):
+        '''Get all actions for the specified ctx'''
+
+        if ctx is missing:
+            return dict(self._actions)
+
+        return {
+            identifier: action
+            for identifier, action in self._actions.items()
+            if action._available(ctx)
+        }
+
     def add_task(self, action_or_identifier, task):
         '''Add a task to the specified action'''
 
@@ -124,18 +132,6 @@ class Extension(ABC):
         identifier = get_action_identifier(action_or_identifier)
         if task in self._tasks[identifier]:
             self._tasks.remove(task)
-
-    def get_actions(self, ctx=missing):
-        '''Get all actions for the specified ctx'''
-
-        if ctx is missing:
-            return dict(self._actions)
-
-        return {
-            identifier: action
-            for identifier, action in self._actions.items()
-            if action.available(ctx)
-        }
 
     def get_tasks(self, identifier, ctx=missing):
         '''Get all tasks for the spcified action '''
@@ -159,9 +155,6 @@ class ExtensionCollector(object):
     up extensions via attribute access.'''
 
     def __init__(self):
-        self.action_providers = {}
-        self.template_extensions = {}
-        self.host_extensions = {}
         self.by_name = {}
         self.by_attr = {}
 
@@ -203,10 +196,14 @@ class ExtensionCollector(object):
     def unregister(self, extension):
         '''Unregister an extension'''
 
+        if not is_extension_type(extension):
+            raise RuntimeError('Not an extension: %s' % extension)
+
         registered_extension = self.by_name.get(extension.name, None)
         is_same_extension = (
             registered_extension is extension or
-            isinstance(registered_extension, extension)
+            isinstance(registered_extension, extension) or
+            registered_extension.name == extension.name
         )
         if is_same_extension:
             self.by_name.pop(extension.name)

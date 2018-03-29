@@ -1,89 +1,133 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
-import fsfs
+from construct import api
 from construct.action import Action
-from construct.tasks import task, pass_context, pass_kwargs, returns, artifact
+from construct.tasks import (
+    task,
+    pass_kwargs,
+    returns,
+    artifact,
+    store,
+    params,
+    success,
+    requires
+)
+from construct import types
+from construct.errors import Abort
+import fsfs
 
 
 class NewShot(Action):
 
     label = 'New Shot'
     identifier = 'new.shot'
-    description = 'Create a new Construct Shot'
+    description = 'Create a new Shot'
 
     @staticmethod
     def parameters(ctx):
         params = dict(
+            project={
+                'label': 'Project',
+                'help': 'Project Entry',
+                'required': True,
+                'type': types.Entry,
+            },
             sequence={
                 'label': 'Sequence',
                 'required': True,
-                'type': str,
+                'type': types.Entry,
                 'help': 'Name of sequence',
             },
             name={
-                'label': 'Shot',
+                'label': 'Shot Name',
                 'required': True,
-                'type': str,
+                'type': types.String,
                 'help': 'Name of shot'
             },
             template={
                 'label': 'Shot Template',
                 'required': False,
-                'type': str,
+                'type': types.String,
                 'help': 'Name of shot template'
             }
         )
 
-        if ctx and ctx.sequence:
-            params['sequence']['default'] = ctx.sequence.name
+        if not ctx:
+            return params
+
+        if ctx.project:
+            params['project']['default'] = ctx.project
+            params['project']['required'] = False
+
+        if ctx.sequence:
+            params['sequence']['default'] = ctx.sequence
             params['sequence']['required'] = False
+
+        templates = list(api.get_templates('shot').keys())
+        if templates:
+            params['template']['options'] = templates
+            params['template']['default'] = templates[0]
 
         return params
 
     @staticmethod
     def available(ctx):
         return (
-            ctx.project
-            and not ctx.asset
-            and not ctx.shot
+            ctx.project and
+            ctx.sequence and
+            not ctx.asset and
+            not ctx.shot
         )
 
 
-@task
-@pass_context
+@task(priority=types.STAGE)
 @pass_kwargs
-@returns(artifact('shot'))
-def make_new_shot(ctx, sequence, name, template):
-    '''Make new shot'''
+@returns(store('shot_item'))
+def stage_shot(project, sequence, name, template=None):
 
-    construct = ctx.construct
-    sequence_path_template = construct.get_path_template('sequence')
-    sequence_path = sequence_path_template.format(
-        project=ctx.project.path,
-        sequence=sequence
-    )
-
-    if not os.path.exists(sequence_path):
-        raise OSError('Sequence does not exist: ' + sequence)
-
-    shot_path_template = construct.get_path_template('shot')
-    shot_path = shot_path_template.format(
-        project=ctx.project.path,
-        sequence=sequence,
+    path_template = api.get_path_template('shot')
+    shot_path = path_template.format(dict(
+        project=project.path,
+        sequence=sequence.name,
         shot=name
+    ))
+    print(shot_path)
+
+    try:
+        template = api.get_template(template, 'shot')
+    except KeyError:
+        template = None
+
+    return dict(
+        name=name,
+        path=shot_path,
+        tags=['shot'],
+        template=template,
     )
 
-    if os.path.exists(shot_path):
-        raise OSError('Shot already exists: ' + name)
 
-    if template is not None:
-        template_entry = construct.get_template('shot', name=template)
-        if not template_entry:
-            raise OSError('Seq template does not exist: ' + template)
-        shot = template_entry.copy(shot_path)
+@task(priority=types.VALIDATE)
+@requires(success('stage_shot'))
+@params(store('shot_item'))
+def validate_shot(shot_item):
+    if os.path.exists(shot_item['path']):
+        raise Abort('Shot already exists: ' + shot_item['name'])
+    return True
+
+
+@task(priority=types.COMMIT)
+@requires(success('validate_shot'))
+@params(store('shot_item'))
+@returns(artifact('shot'))
+def commit_shot(shot_item):
+    '''Make new task'''
+
+    if shot_item['template']:
+        shot = shot_item['template'].copy(shot_item['path'])
     else:
-        shot = fsfs.get_entry(shot_path)
-        shot.tag('shot')
+        shot = fsfs.get_entry(shot_item['path'])
+
+    shot.tag(*shot_item['tags'])
 
     return shot

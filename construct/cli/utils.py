@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import colorama
+import sys
 
 
 def error(msg):
@@ -34,10 +35,9 @@ def styled(string, *args, **kwargs):
     colorama.Style.RESET_ALL is aliased as reset.
 
     Examples:
-        >>> styled('{fg.red}WARNING:{reset}')
+        >>> styled('{fg.red}WARNING:{reset}')  # doctest: +SKIP
         [31m[WARNING][0m
     '''
 
     kwargs.update(vars(style))
     return string.format(*args, **kwargs)
-

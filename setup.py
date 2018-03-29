@@ -21,6 +21,7 @@ def get_meta(pyfile, readme):
 
     return meta
 
+
 meta = get_meta('./construct/__init__.py', 'README.rst')
 
 
@@ -45,5 +46,15 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['werkzeug', 'scrim', 'fstrings'],
+    install_requires=['werkzeug', 'scrim', 'fstrings', 'lucidity', 'chainmap'],
+    entry_points={
+        'console_scripts': [
+            'pyconstruct = construct.cli.__main__:main'
+        ]
+    },
+    scripts=[
+        'bin/construct.bat',
+        'bin/construct.ps1',
+        'bin/construct.sh',
+    ],
 )

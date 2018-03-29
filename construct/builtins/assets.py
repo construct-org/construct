@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
+from construct import api, config
 from construct.action import Action
 from construct.tasks import (
     task,
-    requires,
-    pass_context,
     pass_kwargs,
-    params,
     returns,
-    artifact
+    artifact,
+    store,
+    params,
+    success,
+    requires
 )
+from construct.errors import Abort
+from construct import types
 import fsfs
 
 
@@ -19,40 +23,49 @@ class NewAsset(Action):
     label = 'New Asset'
     identifier = 'new.asset'
     description = 'Create a new Construct Asset'
-    _parameters = dict(
-        type={
-            'label': 'Asset Type',
-            'required': True,
-            'type': str,
-            'help': 'Type of asset',
-        },
-        name={
-            'label': 'Asset Name',
-            'required': True,
-            'type': str,
-            'help': 'Name of asset'
-        },
-        template={
-            'label': 'Asset Template',
-            'required': False,
-            'type': str,
-            'help': 'Name of asset template'
-        }
-    )
 
-    @classmethod
-    def parameters(cls, ctx):
-        params = dict(cls._parameters)
+    @staticmethod
+    def parameters(ctx):
+        params = dict(
+            project={
+                'label': 'Project',
+                'help': 'Project Entry',
+                'required': True,
+                'type': types.Entry,
+            },
+            asset_type={
+                'label': 'Asset Type',
+                'required': True,
+                'type': types.String,
+                'help': 'Type of asset',
+            },
+            name={
+                'label': 'Asset Name',
+                'required': True,
+                'type': types.String,
+                'help': 'Name of asset'
+            },
+            template={
+                'label': 'Asset Template',
+                'required': False,
+                'type': types.String,
+                'help': 'Name of asset template'
+            }
+        )
 
-        if ctx and ctx.project:
-            templates = ctx.construct.get_template('asset')
-            if templates:
-                params['template']['options'] = [t.name for t in templates]
+        if not ctx:
+            return params
 
-            asset_types = ctx.project.read().get('asset_types', None)
-            if asset_types:
-                params['type']['options'] = asset_types
+        if ctx.project:
+            params['project']['default'] = ctx.project
+            params['project']['required'] = False
 
+        templates = list(api.get_templates('asset').keys())
+        if templates:
+            params['template']['options'] = templates
+            params['template']['default'] = templates[0]
+
+        params['asset_type']['options'] = config['ASSET_TYPES']
         return params
 
     @staticmethod
@@ -65,31 +78,52 @@ class NewAsset(Action):
         )
 
 
-@task
-@pass_context
+@task(priority=types.STAGE)
 @pass_kwargs
-@returns(artifact('asset'))
-def make_new_asset(ctx, type, name, template):
-    '''Make new asset'''
+@returns(store('asset_item'))
+def stage_asset(project, asset_type, name, template=None):
 
-    construct = ctx.construct
-    path_template = construct.get_path_template('asset')
-    asset_path = path_template.format(
-        project=ctx.project.path,
-        asset_type=type,
+    path_template = api.get_path_template('asset')
+    asset_path = path_template.format(dict(
+        project=project.path,
+        asset_type=asset_type,
         asset=name
+    ))
+
+    try:
+        template = api.get_template(template, 'asset')
+    except KeyError:
+        template = None
+
+    return dict(
+        name=name,
+        path=asset_path,
+        tags=['asset'],
+        template=template,
     )
 
-    if os.path.exists(asset_path):
-        raise OSError('Asset already exists: ' + name)
 
-    if template is not None:
-        template_entry = construct.get_template('asset', name=template)
-        if not template_entry:
-            raise ConstructError('Asset template does not exist: ' + template)
-        asset = template_entry.copy(asset_path)
+@task(priority=types.VALIDATE)
+@requires(success('stage_asset'))
+@params(store('asset_item'))
+def validate_asset(asset_item):
+    if os.path.exists(asset_item['path']):
+        raise Abort('Asset already exists: ' + asset_item['name'])
+    return True
+
+
+@task(priority=types.COMMIT)
+@requires(success('validate_asset'))
+@params(store('asset_item'))
+@returns(artifact('asset'))
+def commit_asset(asset_item):
+    '''Make new task'''
+
+    if asset_item['template']:
+        asset = asset_item['template'].copy(asset_item['path'])
     else:
-        asset = fsfs.get_entry(asset_path)
-        asset.tag('asset')
+        asset = fsfs.get_entry(asset_item['path'])
+
+    asset.tag(*asset_item['tags'])
 
     return asset

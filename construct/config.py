@@ -35,7 +35,7 @@ class Config(object):
         from construct.api import get_context
         ctx = get_context()
         if ctx and ctx.project:
-            project_config = dict(
+            data = dict(
                 (k, v) for k, v in ctx.project.data.items()
                 if k.isupper()
             )

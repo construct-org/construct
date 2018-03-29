@@ -17,6 +17,7 @@ import logging
 from operator import attrgetter
 from collections import OrderedDict
 from construct import types, actionparams
+from construct.stats import log_call
 from construct.utils import missing
 from construct.actionrunner import ActionRunner
 from construct.tasks import sort_tasks
@@ -68,6 +69,12 @@ class Action(types.ABC):
     def identifier(self):
         pass
 
+    @classmethod
+    def _available(cls, ctx=missing):
+        if ctx is missing:
+            return True
+        return cls.available(ctx)
+
     @abc.abstractmethod
     def available(ctx):
         '''
@@ -108,7 +115,7 @@ class Action(types.ABC):
     def __getattr__(self, attr):
         return self.ctx.__dict__.get(attr)
 
-    def retry_group(self, priorty):
+    def retry_group(self, priority):
         return self.runner.retry_group(priority)
 
     def run_group(self, priority):
@@ -160,12 +167,13 @@ class ActionCollector(object):
         from construct.api import get_context
         ctx = ctx or get_context()
         try:
-            action = self.collect(ctx)[identifier]
+            action = self.collect(missing)[identifier]
         except KeyError:
-            _log.error('Action not found: %s', identifier, exc_info=True)
+            _log.error('Action not found: %s', identifier)
+            return
         else:
-            if not action.available(ctx):
-                raise ActionUnavailable('Action unavailable in ctx: %s', ctx)
+            if not action._available(ctx):
+                raise ActionUnavailable('Action unavaibale in current context')
             return action
 
     def collect(self, ctx=None):

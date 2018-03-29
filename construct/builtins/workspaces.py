@@ -32,19 +32,19 @@ class NewWorkspace(Action):
             parent={
                 'label': 'Parent Entry',
                 'required': True,
-                'type': fsfs.Entry,
+                'type': types.Entry,
                 'help': 'Parent entry of workspace',
             },
             name={
                 'label': 'Workspace Name',
                 'required': True,
-                'type': str,
+                'type': types.String,
                 'help': 'Name of workspace'
             },
             template={
                 'label': 'Workspace Template Name',
                 'required': False,
-                'type': str,
+                'type': types.String,
                 'help': 'Name of workspace template'
             }
         )

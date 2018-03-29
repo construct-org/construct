@@ -6,24 +6,25 @@ __all__ = [
     'ensure_instance',
     'ensure_type',
     'env_with_default',
+    'get_qualname',
     'get_callable_name',
     'path_split',
     'pop_attr',
     'update_dict',
     'unipath',
     'package_path',
-    'import_module',
-    'import_package',
+    'import_file',
     'iter_modules',
     'missing',
 ]
 
-import sys
+import inspect
 import os
+import sys
 from collections import Mapping
-from glob import glob
-from types import ModuleType
 from fstrings import f
+from glob import glob
+from contextlib import contextmanager
 from construct.compat import basestring
 
 
@@ -36,13 +37,31 @@ missing = object()
 def package_path(*paths):
     '''Return a path relative to the construct package'''
 
-    return os.path.join(os.path.dirname(__file__), *paths)
+    return unipath(os.path.dirname(__file__), *paths)
 
 
 def unipath(*paths):
     '''os.path.join with forward slashes only.'''
 
     return os.path.abspath(os.path.join(*paths).replace('\\', '/'))
+
+
+def get_qualname(obj):
+    '''Get the qualified name (dotted path) of the object'''
+
+    try:
+        return obj.__qualname__
+    except AttributeError:
+        pass
+
+    if inspect.ismethod(obj):
+        if obj.__self__:
+            cls = obj.__self__.__class__
+        else:
+            cls = obj.im_class
+        return cls.__name__ + '.' + obj.__name__
+
+    return get_callable_name(obj)
 
 
 def pop_attr(obj, attr, default):
@@ -129,48 +148,50 @@ def update_dict(d, u):
     return d
 
 
-def import_module(path):
-    '''Import python module by absolute path'''
+@contextmanager
+def temp_syspath(path, *old_module_names):
 
-    dirname, basename = os.path.split(path)
-    name, _ = os.path.splitext(basename)
-
-    # Compile module
-    mod = ModuleType(name)
-    mod.__name__ = name
-    mod.__file__ = path
-    with open(path, 'r') as f:
-        src = f.read()
-    code = compile(src, '', 'exec')
-    exec(code, mod.__dict__)
-
-    return mod
+    old_modules = [(n, sys.modules.pop(n, None)) for n in old_module_names]
+    old_path = sys.path[:]
+    sys.path.insert(0, path)
+    try:
+        yield
+    finally:
+        sys.path[:] = old_path
+        for k, v in old_modules:
+            sys.modules[k] = v
 
 
-def import_package(path):
-    '''Import python package by absolute path'''
+def import_file(path):
+    '''Import python module by absolute path. The imported module is removed
+    from sys.modules before being returned. This means the same module
+    imported using import_file multiple times will return different module
+    objects. I haven't decided on whether this is desirable for our use
+    case yet, Extension loading. There have been no apparent downsides yet.
+    '''
 
     root, basename = os.path.split(path)
     name, _ = os.path.splitext(basename)
-    root = os.path.dirname(path)
 
-    sys_path = list(sys.path)
-    sys.path.insert(0, root)
-    mod = __import__(name, globals(), locals(), [], -1)
-    sys.path[:] = sys_path
-    sys.modules.pop(name)
+    with temp_syspath(root, name):
+        mod = __import__(name, globals(), locals(), [], -1)
+        sys.modules.pop(name)
 
     return mod
 
 
 def iter_modules(*paths):
-    '''Iterate over paths yielding python modules and packages'''
+    '''Iterate over paths yielding all contained python modules and packages.
+
+    The modules are removed from sys.modules after importing and before
+    they are yielded.
+    '''
 
     for path in paths:
         for py_file in glob(path + '/*.py'):
-            mod = import_module(py_file)
+            mod = import_file(py_file)
             yield mod
 
         for py_pkg in glob(path + '/*/__init__.py'):
-            mod = import_package(os.path.dirname(py_pkg))
+            mod = import_file(os.path.dirname(py_pkg))
             yield mod

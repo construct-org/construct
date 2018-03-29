@@ -70,7 +70,7 @@ def format_section(title, data, indent='', lcolor=reset, rcolor=reset):
 
 class Contextual(
     argparse.RawDescriptionHelpFormatter,
-    # argparse.ArgumentDefaultsHelpFormatter
+    argparse.ArgumentDefaultsHelpFormatter
 ):
 
     def _format_action(self, action):

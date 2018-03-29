@@ -17,4 +17,4 @@ install:
   - pipenv install --dev --skip-lock --system
 
 test_script:
-  - nosetests -v -s --with-doctest --doctest-extension=rst
+  - nosetests -v -s --logging-clear-handlers --with-doctest

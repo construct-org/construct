@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
+from construct import api, config
 from construct.action import Action
 from construct.tasks import (
     task,
-    requires,
-    success,
-    pass_context,
     pass_kwargs,
-    params,
-    store,
-    artifact,
     returns,
+    artifact,
+    store,
+    params,
+    success,
+    requires
 )
 from construct import types
+from construct.errors import Abort
 import fsfs
 
 
@@ -21,7 +22,7 @@ class NewTask(Action):
 
     label = 'New Task'
     identifier = 'new.task'
-    description = 'Create a new Construct Task'
+    description = 'Create a new Task'
 
     @staticmethod
     def parameters(ctx):
@@ -29,25 +30,25 @@ class NewTask(Action):
             parent={
                 'label': 'Parent Entry',
                 'required': True,
-                'type': fsfs.Entry,
+                'type': types.Entry,
                 'help': 'Parent entry of task',
             },
             type={
                 'label': 'Task Type',
                 'required': True,
-                'type': str,
+                'type': types.String,
                 'help': 'Type of task',
             },
             name={
                 'label': 'Task Name',
                 'required': False,
-                'type': str,
+                'type': types.String,
                 'help': 'Name of task'
             },
             template={
                 'label': 'Task Template Name',
                 'required': False,
-                'type': str,
+                'type': types.String,
                 'help': 'Name of task template'
             }
         )
@@ -55,9 +56,7 @@ class NewTask(Action):
         if not ctx:
             return params
 
-        if ctx.project:
-            task_types = ctx.project.read('task_types')
-            params['type']['options'] = task_types
+        params['type']['options'] = config['TASK_TYPES']
 
         if ctx.shot:
             params['parent']['default'] = ctx.shot
@@ -66,6 +65,9 @@ class NewTask(Action):
         elif ctx.asset:
             params['parent']['default'] = ctx.asset
             params['parent']['required'] = False
+
+        templates = [str(e.name) for e in api.get_templates('task')]
+        params['template']['options'] = templates
 
         return params
 
@@ -79,22 +81,15 @@ class NewTask(Action):
 
 
 @task(priority=types.STAGE)
-@pass_context
 @pass_kwargs
 @returns(store('task_item'))
-def stage_task(ctx, parent, type, name=None, template=None):
-
-    name = name or type
-    construct = ctx.construct
-
-    if template:
-        template = construct.get_template('task', name=template)
+def stage_task(parent, type, name=None, template=None):
 
     return dict(
-        name=name,
+        name=name or type,
         path=os.path.join(parent.path, name),
         tags=['task', type],
-        template=template,
+        template=api.get_template(template, 'task'),
     )
 
 
@@ -103,7 +98,7 @@ def stage_task(ctx, parent, type, name=None, template=None):
 @params(store('task_item'))
 def validate_task(task_item):
     if os.path.exists(task_item['path']):
-        raise OSError('Task already exists: ' + task_item['name'])
+        raise Abort('Task already exists: ' + task_item['name'])
     return True
 
 

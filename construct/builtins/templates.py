@@ -15,7 +15,7 @@ from construct.tasks import (
     params,
     returns
 )
-from construct.types import STAGE, COMMIT, VALIDATE
+from construct import types
 from construct.utils import unipath
 import fsfs
 
@@ -25,59 +25,55 @@ class NewTemplate(Action):
     label = 'New Template'
     identifier = 'new.template'
     description = 'Create a new template from an Entry'
-    _parameters = dict(
-        name={
-            'label': 'Template Name',
-            'required': True,
-            'type': str,
-            'help': 'Name of new template',
-        },
-        entry={
-            'label': 'Entry',
-            'required': False,
-            'type': (fsfs.Entry, str),
-            'help': 'Entry path',
-        },
-        include_files={
-            'label': 'Include Files',
-            'required': True,
-            'type': bool,
-            'default': False,
-            'help': 'Include all files in entry not just entry data',
-        }
-    )
 
-    @classmethod
-    def parameters(cls, ctx):
-        params = dict(cls._parameters)
-        if ctx and ctx.host == 'cli':
+    @staticmethod
+    def parameters(ctx):
+        params = dict(
+            name={
+                'label': 'Template Name',
+                'required': True,
+                'type': types.String,
+                'help': 'Name of new template',
+            },
+            entry={
+                'label': 'Entry',
+                'required': True,
+                'type': types.Entry,
+                'help': 'Entry to create template from',
+            },
+            include_files={
+                'label': 'Include Files',
+                'type': bool,
+                'default': False,
+                'help': 'Include all files in entry not just entry data',
+            }
+        )
+        if not ctx:
+            return params
+
+        if ctx.host == 'cli':
             params['entry']['default'] = ctx.get_deepest_entry()
+
         return params
 
     @staticmethod
     def available(ctx):
-        if ctx.host == 'cli':
-            return (
-                ctx.project
-                and any([
-                    ctx.sequence, ctx.shot, ctx.asset, ctx.task, ctx.workspace
-                ])
-            )
-        return ctx.project
+        return any([
+            not ctx.project,
+            ctx.shot,
+            ctx.asset,
+            ctx.task,
+            ctx.workspace
+        ])
 
 
-@task(priority=STAGE)
-@pass_context
+@task(priority=types.STAGE)
 @pass_kwargs
-def stage_template(ctx, **kwargs):
+def stage_template(**kwargs):
     '''Stage template data'''
 
     name = kwargs['name']
     entry = kwargs['entry']
-    if isinstance(entry, basestring):
-        if not os.path.exists(entry):
-            raise ActionError('Entry path does not exist: ' + entry)
-        entry = fsfs.get_entry(entry)
 
     templates_path = unipath(ctx.project.data.path, 'templates')
     template_path = unipath(templates_path, name)
@@ -86,17 +82,17 @@ def stage_template(ctx, **kwargs):
     ctx.store.template_path = template_path
 
 
-@task(priority=VALIDATE)
+@task(priority=types.VALIDATE)
 @requires(success('stage_template_data'))
 @params(kwarg('name'), store('template_path'))
 def validate_template(name, template_path):
     '''Make sure template does not already exist'''
 
     if os.path.exists(template_path):
-        raise ActionError('Template already exists: ' + name)
+        raise Abort('Template already exists: ' + name)
 
 
-@task(priority=COMMIT)
+@task(priority=types.COMMIT)
 @requires(success('validate_template'))
 @params(store('entry'), store('template_path'), kwarg('include_files'))
 @returns(artifact('template'))
