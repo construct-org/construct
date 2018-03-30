@@ -19,10 +19,10 @@ import fsfs
 
 
 class NewSequence(Action):
+    '''Create a new Sequence'''
 
     label = 'New Sequence'
     identifier = 'new.sequence'
-    description = 'Create a new Sequence'
 
     @staticmethod
     def parameters(ctx):

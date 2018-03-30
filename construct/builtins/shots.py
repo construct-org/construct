@@ -19,10 +19,10 @@ import fsfs
 
 
 class NewShot(Action):
+    '''Create a new Shot'''
 
     label = 'New Shot'
     identifier = 'new.shot'
-    description = 'Create a new Shot'
 
     @staticmethod
     def parameters(ctx):

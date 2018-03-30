@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import, print_function
 
 __all__ = [
     'RequestThread',
@@ -14,6 +14,7 @@ __all__ = [
     'requires',
     'skips',
     'pass_context',
+    'pass_args',
     'pass_kwargs',
     'params',
     'available',
@@ -526,6 +527,24 @@ def pass_context(fn):
     return fn
 
 
+def pass_args(fn):
+    '''Task decorator that passes Context object as first argument to task'''
+
+    def pass_args(ctx):
+        return ctx.args
+
+    if not hasattr(fn, '__task_arg_getters__'):
+        fn.__task_arg_getters__ = []
+
+    if len(fn.__task_arg_getters__):
+        for getter in fn.__task_arg_getters__:
+            if getattr(getter, '__name__', None) == 'pass_args':
+                return fn
+
+    fn.__task_arg_getters__.insert(0, pass_args)
+    return fn
+
+
 def pass_kwargs(fn):
     '''Task decorator that passes all action kwargs to the task'''
 
@@ -656,6 +675,7 @@ def success(identifier):
             request = ctx.requests[identifier]
             return request.success
         except KeyError:
+            _log.debug('success(%s): Request not found...' % identifier)
             return False
 
     return success

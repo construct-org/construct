@@ -120,13 +120,15 @@ class Extension(ABC):
             if action._available(ctx)
         }
 
-    def add_task(self, action_or_identifier, task):
+    def add_task(self, action_or_identifier, task, **task_overrides):
         '''Add a task to the specified action'''
 
         identifier = get_action_identifier(action_or_identifier)
+        if task_overrides:
+            task = task.clone(**task_overrides)
         self._tasks[identifier].append(task)
 
-    def remove_task(self, action_or_identifier, task):
+    def remove_task(self, action_or_identifier, task, **task_overrides):
         '''Remove a task from the specified action'''
 
         identifier = get_action_identifier(action_or_identifier)
@@ -141,7 +143,7 @@ class Extension(ABC):
         for key, tasks in self._tasks.items():
             if key == identifier:
                 continue
-            if fnmatch(key, identifier):
+            if fnmatch(identifier, key):
                 all_tasks.extend(tasks)
 
         if ctx is missing:
@@ -233,12 +235,12 @@ class ExtensionCollector(object):
 
         from construct.api import config
 
-        for entry_point in iter_entry_points(EXTENSIONS_ENTRY_POINT):
-            name, potential_extension = entry_point.name, entry_point.load()
-            if is_extension_type(potential_extension):
-                self.register(potential_extension)
-
         search_paths = list(paths)
+
+        for entry_point in iter_entry_points(EXTENSIONS_ENTRY_POINT):
+            obj = entry_point.load()
+            for _, extension in inspect.getmembers(obj, is_extension_type):
+                self.register(extension)
 
         cfg_search_paths = config.get('EXTENSION_PATHS', [])
         search_paths.extend(cfg_search_paths)
@@ -248,7 +250,7 @@ class ExtensionCollector(object):
             search_paths.extend(env_search_paths.split(os.pathsep))
 
         for mod in iter_modules(*search_paths):
-            for name, extension in inspect.getmembers(mod, is_extension_type):
+            for _, extension in inspect.getmembers(mod, is_extension_type):
                 self.register(extension)
 
 

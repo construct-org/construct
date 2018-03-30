@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
-from construct import api, config
+from construct import api, config, types
 from construct.action import Action
 from construct.tasks import (
     task,
@@ -13,16 +13,16 @@ from construct.tasks import (
     success,
     requires
 )
-from construct import types
+from construct.utils import unipath
 from construct.errors import Abort
 import fsfs
 
 
 class NewProject(Action):
+    '''Create a new Project'''
 
     label = 'New Project'
     identifier = 'new.project'
-    description = 'Create a new Project'
 
     @classmethod
     def parameters(cls, ctx):
@@ -30,13 +30,13 @@ class NewProject(Action):
             root={
                 'label': 'Project Root',
                 'required': True,
-                'type': str,
+                'type': types.String,
                 'help': 'project root directory',
             },
             template={
                 'label': 'Project Template',
                 'required': True,
-                'type': str,
+                'type': types.String,
                 'help': 'name of a project template',
             }
         )

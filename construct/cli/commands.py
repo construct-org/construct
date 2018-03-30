@@ -11,6 +11,7 @@ from construct.errors import ActionControlFlowError
 from construct.cli.formatters import new_formatter, Contextual, format_section
 from construct.cli.constants import OPTIONS_TITLE, ARGUMENTS_TITLE
 from construct.cli.utils import styled, error, abort
+from construct.utils import classproperty
 
 
 _log = logging.getLogger(__name__)
@@ -67,9 +68,13 @@ class Command(object):
         usage += styled('{reset}')
         return usage
 
-    @property
-    def description(self):
-        parts = self.__doc__.split('\n')
+    @classproperty
+    def short_description(cls):
+        return cls.__doc__.split('\n')[0]
+
+    @classproperty
+    def description(cls):
+        parts = cls.__doc__.split('\n')
         short = parts[0]
         body = dedent('\n'.join(parts[1:]))
         text = '\n'.join([short, body])
@@ -78,7 +83,7 @@ class Command(object):
     def setup_parser(self, parser):
         return NotImplemented
 
-    def run(self, args):
+    def run(self, args, *extra_args):
         return NotImplemented
 
 
@@ -87,7 +92,7 @@ class Version(Command):
 
     name = 'version'
 
-    def run(self, args):
+    def run(self, args, *extra_args):
         section = format_section(
             '',
             [
@@ -118,7 +123,7 @@ class Home(Command):
 
     name = 'home'
 
-    def run(self, args):
+    def run(self, args, *extra_args):
         ctx = construct.get_context()
         scrim = get_scrim()
         scrim.pushd(os.path.abspath(ctx.root))
@@ -130,7 +135,7 @@ class Pop(Command):
 
     name = 'pop'
 
-    def run(self, args):
+    def run(self, args, *extra_args):
         scrim = get_scrim()
         scrim.popd()
 
@@ -166,7 +171,7 @@ class Push(Command):
             help='List of tags like: project'
         )
 
-    def run(self, args):
+    def run(self, args, *extra_args):
         ctx = construct.get_context()
         query = dict(
             root=args.root,
@@ -221,7 +226,7 @@ class Search(Command):
             help='List of tags like: project'
         )
 
-    def run(self, args):
+    def run(self, args, *extra_args):
         ctx = construct.get_context()
         query = dict(
             root=args.root,
@@ -253,7 +258,7 @@ class Read(Command):
         )
         parser.add_argument('keys', nargs=-1, help='keys to read')
 
-    def run(self, args):
+    def run(self, args, *extra_args):
         import fsfs
         data = fsfs.read(args.root, *args.keys)
         print(fsfs.encode_data(data))
@@ -286,7 +291,7 @@ class Write(Command):
             nargs=1
         )
 
-    def run(self, args):
+    def run(self, args, *extra_args):
 
         import fsfs
         from fsfs.cli import safe_eval
@@ -327,7 +332,7 @@ class Tag(Command):
         )
         parser.add_argument('tags', nargs='*', help='List of tags to add')
 
-    def run(self, args):
+    def run(self, args, *extra_args):
         import fsfs
         fsfs.tag(args.root, *args.tags)
 
@@ -352,7 +357,7 @@ class Untag(Command):
         )
         parser.add_argument('tags', nargs='*', help='List of tags to remove')
 
-    def run(self, args):
+    def run(self, args, *extra_args):
         import fsfs
         fsfs.untag(args.root, *args.tags)
 
@@ -361,16 +366,18 @@ class ActionCommand(Command):
     ''':class:`Action` CLI command class'''
 
     def __init__(self, action, parent):
-        _log.debug('Initializing ActionCommand for %s' % self.name)
+        _log.debug('Initializing ActionCommand for %s' % action.identifier)
         self.action = action
         self.name = action.identifier
         super(ActionCommand, self).__init__(parent)
 
     @property
+    def short_description(self):
+        return self.action.short_description
+
+    @property
     def description(self):
-        parts = self.action.description.split('\n')
-        text = '\n'.join([parts[0], dedent('\n'.join(parts[1:]))])
-        return text
+        return self.action.description
 
     def custom_validator(self, name, cast, *validators):
         def check_value(value):
@@ -401,7 +408,7 @@ class ActionCommand(Command):
             type=param_options.get('type', str),
             dest=param_name,
             help=param_options.get('help', None),
-            required=param_options.get('required', False),
+            # required=param_options.get('required', False),
             default=param_options.get('default', None),
             choices=param_options.get('options', None)
         )
@@ -430,10 +437,9 @@ class ActionCommand(Command):
         for param_name, param_options in params.items():
             self.add_option(parser, param_name, param_options)
 
-    def run(self, args):
-        print(args)
+    def run(self, args, *extra_args):
         try:
-            action = self.action(**args.__dict__)
+            action = self.action(*extra_args, **args.__dict__)
             action.run()
         except ActionControlFlowError as e:
             print(styled('{fg.red}{}{reset}', e.message))

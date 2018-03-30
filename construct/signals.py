@@ -9,12 +9,44 @@ __all__ = [
     'disconnect',
 ]
 
+import logging
 from collections import defaultdict
 from fnmatch import fnmatch
+from contextlib import contextmanager
+from construct.utils import dummy_ctxmanager
 from construct.types import weakset
 
 
+ALL = '*'
 _subscribers = defaultdict(weakset)
+_suppress = None
+_log = logging.getLogger(__name__)
+
+
+def is_suppressed(identifier):
+    if _suppress is None:
+        return False
+
+    if _suppress == ALL or any([fnmatch(identifier, k) for k in _suppress]):
+        _log.debug('suppressed %s' % identifier)
+        return True
+
+
+def suppressed_when(condition, *identifiers):
+    if condition:
+        return suppressed(*identifiers)
+    return dummy_ctxmanager()
+
+
+@contextmanager
+def suppressed(*identifiers):
+    global _suppress
+    _suppress = list(identifiers) or ALL
+    _log.debug('suppressing %s' % _suppress)
+    try:
+        yield
+    finally:
+        _suppress = None
 
 
 def get_subscribers(identifier):
@@ -47,6 +79,9 @@ def send(identifier, *args, **kwargs):
         identifier (str): signal identifier
     '''
 
+    if is_suppressed(identifier):
+        return
+
     results = []
     for subscriber in get_subscribers(identifier):
         results.append(subscriber(*args, **kwargs))
@@ -59,6 +94,8 @@ def chain(identifier, *args, **kwargs):
     Arguments:
         identifier (str): signal identifier
     '''
+    if is_suppressed(identifier):
+        return
 
     subscribers = list(get_subscribers(identifier))
     if not subscribers:

@@ -16,6 +16,8 @@ __all__ = [
     'import_file',
     'iter_modules',
     'missing',
+    'classproperty',
+    'dummy_ctxmanager'
 ]
 
 import inspect
@@ -195,3 +197,17 @@ def iter_modules(*paths):
         for py_pkg in glob(path + '/*/__init__.py'):
             mod = import_file(os.path.dirname(py_pkg))
             yield mod
+
+
+class classproperty(object):
+
+    def __init__(self, fn):
+        self.fn = fn
+
+    def __get__(self, obj, type):
+        return self.fn(type)
+
+
+@contextmanager
+def dummy_ctxmanager():
+    yield None

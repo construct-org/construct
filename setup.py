@@ -46,7 +46,14 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['werkzeug', 'scrim', 'fstrings', 'lucidity', 'chainmap'],
+    install_requires=[
+        'werkzeug',
+        'scrim',
+        'fstrings',
+        'lucidity',
+        'chainmap',
+        'colorama'
+    ],
     entry_points={
         'console_scripts': [
             'pyconstruct = construct.cli.__main__:main'

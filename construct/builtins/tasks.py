@@ -19,10 +19,10 @@ import fsfs
 
 
 class NewTask(Action):
+    '''Create a new Task'''
 
     label = 'New Task'
     identifier = 'new.task'
-    description = 'Create a new Task'
 
     @staticmethod
     def parameters(ctx):
@@ -66,8 +66,10 @@ class NewTask(Action):
             params['parent']['default'] = ctx.asset
             params['parent']['required'] = False
 
-        templates = [str(e.name) for e in api.get_templates('task')]
-        params['template']['options'] = templates
+        templates = list(api.get_templates('task').keys())
+        if templates:
+            params['template']['options'] = templates
+            params['template']['default'] = templates[0]
 
         return params
 

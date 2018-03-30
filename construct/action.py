@@ -16,9 +16,10 @@ import abc
 import logging
 from operator import attrgetter
 from collections import OrderedDict
-from construct import types, actionparams
+from construct import types, actionparams, signals
+from construct.constants import ACTION_SIGNALS
 from construct.stats import log_call
-from construct.utils import missing
+from construct.utils import missing, classproperty
 from construct.actionrunner import ActionRunner
 from construct.tasks import sort_tasks
 from construct.errors import ActionUnavailable
@@ -55,25 +56,38 @@ class Action(types.ABC):
     '''
 
     runner_cls = ActionRunner
-    parameters = {}
+    parameters = None
+    suppress_signals = False
 
     @abc.abstractproperty
     def label(self):
-        pass
-
-    @abc.abstractproperty
-    def description(self):
-        pass
+        return NotImplemented
 
     @abc.abstractproperty
     def identifier(self):
-        pass
+        return NotImplemented
+
+    @classproperty
+    def description(cls):
+        return cls.__doc__.split('\n')[0]
+
+    @classproperty
+    def long_description(cls):
+        from textwrap import dedent
+        lines = cls.__doc__.split('\n')
+        first = lines[0] + '\n'
+        rest = ''
+        if len(lines) > 1:
+            rest = dedent('\n'.join(lines[1:]))
+        return first + rest
 
     @classmethod
     def _available(cls, ctx=missing):
         if ctx is missing:
             return True
-        return cls.available(ctx)
+        if callable(cls.available):
+            return cls.available(ctx)
+        return cls.available
 
     @abc.abstractmethod
     def available(ctx):
@@ -89,19 +103,25 @@ class Action(types.ABC):
     def params(cls, ctx):
         if callable(cls.parameters):
             return cls.parameters(ctx)
-        return cls.parameters
+        return cls.parameters or {}
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         from construct.api import get_context
         from construct.actioncontext import ActionContext
 
-        # Create action context
+        # Get base context to build ActionContext from
         ctx = kwargs.pop('ctx', get_context())
-        self.ctx = ActionContext(self, kwargs, ctx)
 
         # Validate params
-        params = self.params(self.ctx)
+        params = self.params(ctx)
         actionparams.validate(params)
+
+        # Combine kwargs with action parameter defaults
+        action_kwargs = actionparams.get_defaults(params)
+        action_kwargs.update(kwargs)
+
+        # Create action context
+        self.ctx = ActionContext(self, args, action_kwargs, ctx)
 
         # Validate kwargs against params
         actionparams.validate_kwargs(params, self.ctx.kwargs)
@@ -116,13 +136,16 @@ class Action(types.ABC):
         return self.ctx.__dict__.get(attr)
 
     def retry_group(self, priority):
-        return self.runner.retry_group(priority)
+        with signals.suppressed_when(self.suppress_signals, *ACTION_SIGNALS):
+            return self.runner.retry_group(priority)
 
     def run_group(self, priority):
-        return self.runner.run_group(priority)
+        with signals.suppressed_when(self.suppress_signals, *ACTION_SIGNALS):
+            return self.runner.run_group()
 
     def run(self):
-        return self.runner.run()
+        with signals.suppressed_when(self.suppress_signals, *ACTION_SIGNALS):
+            return self.runner.run()
 
 
 def is_action_type(obj):
@@ -157,7 +180,7 @@ class ActionCollector(object):
         self._extensions = extension_collector
 
     def __iter__(self):
-        for action in self.collect().values():
+        for action in sort_actions(self.collect().values()):
             yield action
 
     def __getattr__(self, identifier):

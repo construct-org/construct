@@ -37,7 +37,7 @@ def format_commands():
     from construct.cli.commands import commands
     return format_section(
         COMMANDS_TITLE,
-        [(c.name, c.__doc__.split('\n')[0]) for c in commands],
+        [(c.name, c.short_description) for c in commands],
         lcolor=styled('{bright}')
     )
 
@@ -46,7 +46,7 @@ def format_actions():
     actions = construct.actions.collect()
     return format_section(
         ACTIONS_TITLE,
-        [(a.identifier, a.description) for a in actions.values()],
+        [(a.identifier, a.description) for a in construct.actions],
         lcolor=styled('{bright}')
     )
 

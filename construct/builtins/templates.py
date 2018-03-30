@@ -21,10 +21,10 @@ import fsfs
 
 
 class NewTemplate(Action):
+    '''Create a new Template from an Entry'''
 
     label = 'New Template'
     identifier = 'new.template'
-    description = 'Create a new template from an Entry'
 
     @staticmethod
     def parameters(ctx):
