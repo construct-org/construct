@@ -9,7 +9,7 @@ from construct.constants import WAITING
 
 class ActionContext(Context):
 
-    def __init__(self, action, kwargs, ctx=None):
+    def __init__(self, action, args, kwargs, ctx=None):
         from construct.api import actions, get_context
 
         if ctx is None:
@@ -25,5 +25,6 @@ class ActionContext(Context):
         self.requests = {}
         self.artifacts = types.Namespace()
         self.store = types.Namespace()
+        self.args = args
         self.kwargs = actionparams.get_defaults(action.params(ctx))
         self.kwargs.update(kwargs)

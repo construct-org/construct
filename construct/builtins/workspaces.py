@@ -21,10 +21,10 @@ import fsfs
 
 
 class NewWorkspace(Action):
+    '''Create a new Workspace'''
 
     label = 'New Workspace'
     identifier = 'new.workspace'
-    description = 'Create a new Construct Workspace'
 
     @staticmethod
     def parameters(ctx):

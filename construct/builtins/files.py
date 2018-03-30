@@ -6,9 +6,10 @@ from construct import types
 
 
 class Publish(Action):
+    '''Publish the current open file'''
+
     label = 'Publish'
     identifier = 'publish'
-    description = 'Publish the current open file'
 
     @staticmethod
     def parameters(ctx):
@@ -17,7 +18,7 @@ class Publish(Action):
                 'label': 'Task',
                 'required': True,
                 'type': types.Entry,
-                'help': 'Task',
+                'help': 'Task Entry',
             },
             version={
                 'label': 'Version',
@@ -44,9 +45,10 @@ class Publish(Action):
 
 
 class PublishFile(Action):
+    '''Publish a file to the specified task'''
+
     label = 'Publish File'
     identifier = 'publish.file'
-    description = 'Publish a file to the specified task'
 
     @staticmethod
     def parameters(ctx):
@@ -82,10 +84,10 @@ class PublishFile(Action):
 
 
 class Save(Action):
+    '''Save the current file'''
 
     label = 'Save'
     identifier = 'file.save'
-    description = 'Save the current file'
     parameters = dict(
         task={
             'label': 'Task',
@@ -121,10 +123,10 @@ class Save(Action):
 
 
 class Open(Action):
+    '''Open a file'''
 
     label = 'Open'
     identifier = 'file.open'
-    description = 'Open a file'
     parameters = dict(
         file={
             'label': 'File path',

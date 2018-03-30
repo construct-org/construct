@@ -18,6 +18,7 @@ LOGGING:
         construct:
             level: DEBUG
             handlers: [console]
+            propagate: False
 
 
 STATUSES:

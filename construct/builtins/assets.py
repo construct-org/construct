@@ -19,10 +19,10 @@ import fsfs
 
 
 class NewAsset(Action):
+    '''Create a new Asset'''
 
     label = 'New Asset'
     identifier = 'new.asset'
-    description = 'Create a new Construct Asset'
 
     @staticmethod
     def parameters(ctx):

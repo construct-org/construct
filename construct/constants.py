@@ -14,6 +14,11 @@ PAUSED = 'PAUSED'
 DISABLED = 'DISABLED'
 ENABLED = 'ENABLED'
 DONE_STATUSES = [SUCCESS, FAILED]
+ACTION_SIGNALS = [
+    'action.*',
+    'group.*',
+    'request.*',
+]
 
 
 EXTENSIONS_ENTRY_POINT = 'construct.extensions'

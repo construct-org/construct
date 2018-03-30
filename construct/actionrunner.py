@@ -260,8 +260,13 @@ class ActionRunner(object):
         nwaiting = len(self._waiting)
         for _ in range(nwaiting):
             request = self._waiting.pop()
-            request.set_status(SKIPPED)
-            self._skipped.push(request)
+            task = request.task
+
+            if task.ready(self.ctx):
+                self._ready.push(request)
+            else:
+                request.set_status(SKIPPED)
+                self._skipped.push(request)
 
     def _run_once(self, propagate=True):
 
