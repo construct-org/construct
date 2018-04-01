@@ -185,6 +185,11 @@ class ConsoleStream(object):
 
 
 class Console(object):
+    '''Wraps stdout and stderr and wraps every line you write as a
+    Line widget. Making it easy to modify previously printed lines. You
+    can also subclass Line and manually add your own widgets to the output
+    stream.
+    '''
 
     def __init__(self):
 
@@ -249,11 +254,25 @@ class Console(object):
         self._n, self._r, self._e = n, r, e
 
     def add_widget(self, widget):
+        '''Manually add a widget'''
+
         self.lines.insert(0, widget)
         self.set_state(True, False, False)
         self.stream.write(widget.text.rstrip('\n') + '\n')
 
     def insert_widget(self, index, widget):
+        '''Manually insert a widget
+
+        Examples:
+            import stout, time
+            with stout.Console() as con:
+                print(100)
+                w = stout.Spinner(con)
+                con.insert_widget(1, w)  # insert spinner above '100'
+                for i in range(20):
+                    w.tick()
+                    time.sleep(0.05)
+        '''
 
         # Insert a blank line
         sys.__stdout__.write('\n')
@@ -266,6 +285,15 @@ class Console(object):
             line.update()
 
     def insert(self, index, text):
+        '''Inserts text at the given index. Index starts at the bottom of your
+        console, like this:
+
+            3. a line
+            2. another line
+            1. yet another line
+            0. last line
+        '''
+
         # Store lines up to index and after index
         before_lines = self.lines[:index]
         after_lines = self.lines[index:]
@@ -283,11 +311,16 @@ class Console(object):
             line.update()
 
     def write(self, value):
+        '''Line aware writing. Always returns a Line, either a new Line
+        widget or the line that was written to.
+        '''
+
         length = len(value)
         dy = self.cursor.dy
         dx = self.cursor.dx
 
-        if dy > 0:
+        if dy > 0:  # Cursor is in another line
+
             line = self.lines[dy - 1]
             if dx:
                 line._text = clean_text(
@@ -297,13 +330,19 @@ class Console(object):
                 )
             else:
                 line._text = clean_text(value + line._text[length:])
-        elif self._n:
+
+        elif self._n:  # Cursor is on new line
+
             line = Line(value, self)
             self.lines.insert(0, line)
-        elif self._r:
+
+        elif self._r:  # Cursor is at the start of the last line
+
             line = self.lines[0]
             line._text = clean_text(value + line._text[length:])
-        else:
+
+        else:  # Cursor is somewhere on the last line
+
             line = self.lines[0]
             if dx:
                 line._text = clean_text(
@@ -314,6 +353,7 @@ class Console(object):
             else:
                 line._text = clean_text(value + line._text[length:])
 
+        # Set state for next print
         if value.endswith('\n'):
             self.set_state(True, False, False)
             self.cursor.dx = 0
@@ -324,6 +364,7 @@ class Console(object):
             self.set_state(False, False, True)
             self.cursor.dx += length
 
+        # Finally...print to stream
         self.stream.write(value)
         return line
 
