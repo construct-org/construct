@@ -438,11 +438,12 @@ class ActionCommand(Command):
             self.add_option(parser, param_name, param_options)
 
     def run(self, args, *extra_args):
+        from construct.cli.stout import Console
         try:
             action = self.action(*extra_args, **args.__dict__)
             action.run()
         except ActionControlFlowError as e:
-            print(styled('{fg.red}{}{reset}', e.message))
+            print(styled('{fg.red}Error:{reset} {}', e.message))
 
 
 commands = [c for c in Command.__subclasses__() if c._available()]

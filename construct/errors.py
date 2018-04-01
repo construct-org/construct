@@ -40,6 +40,10 @@ class ActionError(ConstructError):
     '''Raised when an action fails'''
 
 
+class TemplateError(ConstructError):
+    '''Raised when a folder template, or path template error occurs'''
+
+
 class ActionControlFlowError(ConstructError):
     '''
     Raised by Tasks to control Action execution...

@@ -16,6 +16,7 @@ from construct.action import Action, ActionCollector, ActionProxy
 from construct.actioncontext import ActionContext
 from construct.utils import unipath, ensure_instance
 from construct.stats import log_call
+from construct.errors import TemplateError
 
 __all__ = [
     'Context',
@@ -214,13 +215,17 @@ def get_template(name, *tags):
     templates = get_templates(*tags)
 
     alt = None
-    for name, template in templates.items():
+    for template in templates.values():
         if name == template.name:
             return template
         if name in template.name:
-            alt = template
+            alt = template.name
 
-    raise KeyError('{} not found...did you mean "{}"?'.format(name, alt))
+    if alt:
+        msg = '"{}" not found, did you mean "{}"?'.format(name, alt)
+    else:
+        msg = '"{}" not found'.format(name)
+    raise TemplateError(msg)
 
 
 @log_call

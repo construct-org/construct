@@ -52,7 +52,10 @@ setup(
         'fstrings',
         'lucidity',
         'chainmap',
-        'colorama'
+        'colorama',
+        'scandir',
+        'backports.shutil_get_terminal_size',
+        'win_unicode_console'
     ],
     entry_points={
         'console_scripts': [

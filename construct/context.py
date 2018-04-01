@@ -53,8 +53,10 @@ class Context(object):
         self.__dict__.update(kwargs)
 
     def __repr__(self):
-        kwargs = ', '.join([f('{k}={v!r}') for k, v in self.__dict__.items()])
-        return f('{self.__class__.__name__}({kwargs})')
+        kwargs = ', '.join(
+            [('{}={}').format(k, v) for k, v in self.__dict__.items()]
+        )
+        return '{}({})'.format(self.__class__.__name__, kwargs)
 
     def __enter__(self):
         self.push()

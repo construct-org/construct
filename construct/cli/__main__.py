@@ -22,8 +22,16 @@ from construct.cli.constants import (
     ARGUMENTS_TITLE,
     ARTIFACTS_TITLE,
     ACTION_CONTEXT_TITLE,
-    STATUS_LABELS
+    STATUS_LABELS,
+    TASK_ERROR_TEMPLATE,
+    ICONS
 )
+from construct.cli import stout
+from construct.cli.widgets import TaskLine
+import win_unicode_console
+
+
+console_widgets = {}
 
 
 @signals.route('action.before')
@@ -50,13 +58,42 @@ def on_action_before(ctx):
     )
     print(ctx_section + '\n')
 
+    print('Key')
+    key_tmpl = '    {} {:<7}'
+    for status, icon in ICONS.items()[:4]:
+        print(key_tmpl.format(icon, status), end='')
+    print()
+    for status, icon in ICONS.items()[4:7]:
+        print(key_tmpl.format(icon, status), end='')
+    print('\n')
+
+    # TODO: Setup console
+    console = stout.Console()
+    console.init()
+    stout.set_console(console)
+
+    for group, tasks in ctx.task_groups.items():
+        print(group.description)
+        for task in tasks:
+            w = TaskLine(task, console)
+            console_widgets[task.identifier] = w
+            console.add_widget(w)
+
 
 @signals.route('action.after')
 def on_action_after(ctx):
 
+    console = stout.get_console()
+    console.deinit()
+    stout.set_console(None)
+
+    # TODO: console deinit turns off colorama and win_unicode_console
+    win_unicode_console.enable()
+    colorama.init()
+
     artifacts = ctx.artifacts.items()
     if not artifacts:
-        print('\nNo artifacts created.')
+        print()
         return
 
     artifacts = format_section(
@@ -65,18 +102,19 @@ def on_action_after(ctx):
         lcolor=style.bright
     )
     print('\n' + artifacts)
-
-
-@signals.route('group.before')
-def on_group_before(group):
-    print(group.priority.description)
+    print()
 
 
 @signals.route('request.status.changed')
 def on_request_status_change(request, last_status, status):
-    msg = styled('    {bright}{:{}<50}{reset}', request.task.identifier, '.')
-    msg += STATUS_LABELS[status]
-    print(msg)
+
+    console = stout.get_console()
+    w = console_widgets[request.task.identifier]
+    w.set_status(status)
+
+    if status == FAILED:
+        err = w.format_error(request.exception)
+        console.insert(w.row, err)
 
 
 def logging_config(level):
@@ -145,6 +183,7 @@ def main():
     '''CLI Entry Point'''
 
     # Enable ansi console colors
+    win_unicode_console.enable()
     colorama.init()
 
     parser = setup_parser()

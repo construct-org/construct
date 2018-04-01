@@ -18,7 +18,6 @@ from operator import attrgetter
 from collections import OrderedDict
 from construct import types, actionparams, signals
 from construct.constants import ACTION_SIGNALS
-from construct.stats import log_call
 from construct.utils import missing, classproperty
 from construct.actionrunner import ActionRunner
 from construct.tasks import sort_tasks
