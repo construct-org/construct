@@ -40,6 +40,10 @@ class ActionError(ConstructError):
     '''Raised when an action fails'''
 
 
+class TaskError(ConstructError):
+    '''Raised when a task is misconfigured'''
+
+
 class TemplateError(ConstructError):
     '''Raised when a folder template, or path template error occurs'''
 

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
-import shutil
-from fstrings import f
 from construct.action import Action
 from construct.tasks import (
     task,
@@ -66,10 +64,10 @@ class NewWorkspace(Action):
     @staticmethod
     def available(ctx):
         return (
-            ctx.project
-            and (ctx.shot or ctx.asset)
-            and ctx.task
-            and not ctx.workspace
+            ctx.project and
+            (ctx.shot or ctx.asset) and
+            ctx.task and
+            not ctx.workspace
         )
 
 

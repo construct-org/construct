@@ -47,6 +47,11 @@ class Builtins(Extension):
         self.add_task(assets.NewAsset, assets.validate_asset)
         self.add_task(assets.NewAsset, assets.commit_asset)
 
+        self.add_action(assets.NewAssetType)
+        self.add_task(assets.NewAssetType, assets.stage_asset_type)
+        self.add_task(assets.NewAssetType, assets.validate_asset_type)
+        self.add_task(assets.NewAssetType, assets.commit_asset_type)
+
         self.add_action(tasks.NewTask)
         self.add_task(tasks.NewTask, tasks.stage_task)
         self.add_task(tasks.NewTask, tasks.validate_task)

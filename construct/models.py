@@ -87,6 +87,10 @@ factory.Entry = Entry
 class Project(Entry):
 
     @property
+    def asset_types(self):
+        return self.children('asset_type')
+
+    @property
     def assets(self):
         return self.children('asset')
 

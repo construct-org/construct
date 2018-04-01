@@ -274,6 +274,7 @@ def search(name=None, tags=None, **kwargs):
 new_project = ActionProxy('new.project')
 new_sequence = ActionProxy('new.sequence')
 new_shot = ActionProxy('new.shot')
+new_asset_type = ActionProxy('new.asset_type')
 new_asset = ActionProxy('new.asset')
 new_task = ActionProxy('new.task')
 new_workspace = ActionProxy('new.workspace')

@@ -31,6 +31,7 @@ class Context(object):
         'project',
         'sequence',
         'shot',
+        'asset_type',
         'asset',
         'task',
         'workspace',
@@ -40,6 +41,7 @@ class Context(object):
         'project',
         'sequence',
         'shot',
+        'asset_type',
         'asset',
         'task',
         'workspace'

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
-from construct import api, config, types
+from construct import api, types
 from construct.action import Action
 from construct.tasks import (
     task,
@@ -15,7 +15,6 @@ from construct.tasks import (
 )
 from construct.utils import unipath
 from construct.errors import Abort
-import fsfs
 
 
 class NewProject(Action):

@@ -5,25 +5,19 @@ import sys
 import argparse
 import colorama
 import construct
-from traceback import print_exception
 from collections import OrderedDict
 from construct import signals
 from construct.constants import FAILED
 from construct.cli.commands import commands, ActionCommand
 from construct.cli.formatters import (
-    new_formatter,
     Root,
     format_section,
-    format_context
 )
 from construct.cli.utils import styled, style
 from construct.cli.constants import (
     OPTIONS_TITLE,
-    ARGUMENTS_TITLE,
     ARTIFACTS_TITLE,
     ACTION_CONTEXT_TITLE,
-    STATUS_LABELS,
-    TASK_ERROR_TEMPLATE,
     ICONS
 )
 from construct.cli import stout
@@ -67,7 +61,6 @@ def on_action_before(ctx):
         print(key_tmpl.format(icon, status), end='')
     print('\n')
 
-    # TODO: Setup console
     console = stout.Console()
     console.init()
     stout.set_console(console)
@@ -88,6 +81,9 @@ def on_action_after(ctx):
     stout.set_console(None)
 
     # TODO: console deinit turns off colorama and win_unicode_console
+    #       Might want to check colorama and win_unicode_console before
+    #       console.init, if they are already enabled, don't disable them
+    #       in console.deinit, assume someone else is handling it.
     win_unicode_console.enable()
     colorama.init()
 

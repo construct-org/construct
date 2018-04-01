@@ -31,6 +31,7 @@ STATUSES:
 
 
 PATH_TEMPLATES:
+    asset_type: '{project}/assets/{asset_type}'
     asset: '{project}/assets/{asset_type}/{asset}'
     sequence: '{project}/sequences/{sequence}'
     shot: '{project}/sequences/{sequence}/{shot}'
@@ -39,13 +40,6 @@ PATH_TEMPLATES:
     publish_file: '{task}_{parent}{opt[_][suffix]}_v{:0>3d}.{ext}'
     workspace: '{task}/work/{workspace}'
     workspace_file: '{task}_{asset}{opt[_][suffix]}_v{:0>3d}.{ext}'
-
-
-ASSET_TYPES:
-    - prop
-    - character
-    - environment
-    - product
 
 
 TASK_TYPES:

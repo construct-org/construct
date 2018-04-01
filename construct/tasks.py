@@ -30,6 +30,7 @@ __all__ = [
 import threading
 import sys
 import inspect
+import logging
 from operator import attrgetter
 from collections import OrderedDict
 from construct.constants import *
@@ -40,10 +41,11 @@ from construct.utils import (
     ensure_callable,
 )
 from construct.types import Priority
-from construct.errors import TimeoutError
+from construct.errors import TimeoutError, TaskError
 from construct import signals
 
 
+_log = logging.getLogger(__name__)
 DEFAULT_PRIORITY = Priority(0)
 
 
@@ -675,8 +677,7 @@ def success(identifier):
             request = ctx.requests[identifier]
             return request.success
         except KeyError:
-            _log.debug('success(%s): Request not found...' % identifier)
-            return False
+            raise TaskError('success(%r): Request not found..' % identifier)
 
     return success
 
@@ -690,7 +691,7 @@ def done(identifier):
             request = ctx.requests[identifier]
             return request.done
         except KeyError:
-            return False
+            raise TaskError('done(%r): Request not found..' % identifier)
 
     return done
 
@@ -704,7 +705,7 @@ def failure(identifier):
             request = ctx.requests[identifier]
             return request.failed
         except KeyError:
-            return False
+            raise TaskError('failure(%r): Request not found..' % identifier)
 
     return failure
 
