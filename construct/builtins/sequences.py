@@ -70,6 +70,7 @@ class NewSequence(Action):
             not ctx.asset
         )
 
+
 @task(priority=types.STAGE)
 @pass_kwargs
 @returns(store('sequence_item'))

@@ -23,7 +23,7 @@ COMMANDS_TITLE = styled('{bright}{fg.blue}Commands{reset}')
 CONTEXT_TITLE = styled('{normal}Current Context{reset}')
 OPTIONS_TITLE = styled('{bright}{fg.yellow}Options{reset}')
 
-TASK_TEMPLATE = '    {icon} {bright}{identifier}{sep}{reset}{status}'
+TASK_TEMPLATE = '    {icon} {bright}{identifier}{sep}{reset}{description}'
 TASK_ERROR_TEMPLATE = '      {bright}{fg.red}{}: {reset}{}'
 STATUS_LABELS = {
     WAITING: styled('{dim}WAITING{reset}'),
@@ -37,13 +37,13 @@ STATUS_LABELS = {
     ENABLED: styled('{bright}ENABLED{reset}'),
 }
 ICONS = OrderedDict([
+    ('ENABLED', styled('{dim}{fg.green}◌{reset}')),
+    ('DISABLED', styled('{dim}{fg.red}◌{reset}')),
     ('WAITING', styled('{dim}◌{reset}')),
-    ('PENDING', styled('{dim}{fg.magenta}◌{reset}')),
     ('RUNNING', styled('{fg.green}◌{reset}')),
-    ('PAUSED', styled('{dim}{fg.red}◌{reset}')),
-    ('SKIPPED', styled('{fg.cyan}◌{reset}')),
+    ('PENDING', styled('{bright}{fg.magenta}◌{reset}')),
+    ('PAUSED', styled('{bright}{fg.cyan}◌{reset}')),
+    ('SKIPPED', styled('{bright}{fg.blue}◌{reset}')),
     ('SUCCESS', styled('{bright}{fg.green}●{reset}')),
     ('FAILED', styled('{bright}{fg.red}●{reset}')),
-    ('DISABLED', styled('{dim}◌{reset}')),
-    ('ENABLED', styled('{dim}◌{reset}')),
 ])

@@ -32,7 +32,7 @@ class TaskLine(Line):
             TASK_TEMPLATE,
             icon=ICONS[self.status],
             identifier=self.task.identifier + style.reset,
-            status= '',
+            description='',
             sep=''
         )
 

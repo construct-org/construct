@@ -128,7 +128,7 @@ class Task(Entry):
 
     @property
     def workspaces(self, *tags):
-        return self.children('workspaces', *tags)
+        return self.children('workspace', *tags)
 
     @property
     def publishes(self, *tags):

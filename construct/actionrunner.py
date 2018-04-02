@@ -13,7 +13,9 @@ from construct.errors import (
     Abort,
     Fail,
     Pause,
-    Confirm
+    Confirm,
+    Skip,
+    Disable
 )
 from construct.tasks import AsyncRequest
 from fstrings import f
@@ -105,6 +107,7 @@ class ActionRunner(object):
         self._failed = Stack()
         self._success = Stack()
         self._skipped = Stack()
+        self._disabled = Stack()
         self._stacks = [
             self._waiting,
             self._ready,
@@ -147,7 +150,7 @@ class ActionRunner(object):
             task = request.task
 
             if not request.enabled:
-                self._waiting.push(request)
+                self._disabled.push(request)
 
             elif task.ready(self.ctx):
                 self._ready.push(request)
@@ -167,7 +170,6 @@ class ActionRunner(object):
 
             request = self._ready.pop()
             task = request.task
-            group = self._get_group(task.priority)
 
             if task.skip(self.ctx):
                 request.set_status(SKIPPED)
@@ -223,7 +225,20 @@ class ActionRunner(object):
                     'Confirm error handling not yet implemented'
                 )
 
-            except:
+            except Skip:
+
+                # Task wants to skip
+                self._skipped.push(request)
+                request.set_status(SKIPPED)
+
+            except Disable:
+
+                # Task wants to skip
+                self._waiting.push(request)
+                request.set_enabled(False)
+                request.set_status(DISABLED)
+
+            except Exception:
 
                 # Propagate unrecognized exceptions
                 self._fail_request(request)

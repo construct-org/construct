@@ -73,6 +73,20 @@ class TimeoutError(ActionControlFlowError):
     '''Raised when a request times out'''
 
 
+class Skip(ActionControlFlowError):
+    '''
+    Raise by a Task to notify the Action runner that the task should be
+    skipped.
+    '''
+
+
+class Disable(ActionControlFlowError):
+    '''
+    Raise by a Task to notify the Action runner that the task should be
+    disabled.
+    '''
+
+
 class Abort(ActionControlFlowError):
     '''
     Raised by a Task to notify the ActionRunner that a critical error has

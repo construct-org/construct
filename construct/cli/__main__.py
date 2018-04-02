@@ -53,11 +53,11 @@ def on_action_before(ctx):
     print(ctx_section + '\n')
 
     print('Key')
-    key_tmpl = '    {} {:<7}'
-    for status, icon in ICONS.items()[:4]:
+    key_tmpl = '    {} {:<8}'
+    for status, icon in ICONS.items()[:5]:
         print(key_tmpl.format(icon, status), end='')
     print()
-    for status, icon in ICONS.items()[4:7]:
+    for status, icon in ICONS.items()[5:]:
         print(key_tmpl.format(icon, status), end='')
     print('\n')
 
@@ -92,13 +92,15 @@ def on_action_after(ctx):
         print()
         return
 
-    artifacts = format_section(
-        ARTIFACTS_TITLE,
-        data=[(k, v) for k, v in artifacts],
-        lcolor=style.bright
-    )
-    print('\n' + artifacts)
-    print()
+    data = [(k, v) for k, v in artifacts if v]
+    if data:
+        artifacts = format_section(
+            ARTIFACTS_TITLE,
+            data=data,
+            lcolor=style.bright
+        )
+        print('\n' + artifacts)
+        print()
 
 
 @signals.route('request.status.changed')

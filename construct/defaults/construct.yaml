@@ -30,6 +30,16 @@ STATUSES:
     - 'complete'
 
 
+TASK_TYPES:
+    - model
+    - rig
+    - shade
+    - texture
+    - comp
+    - light
+    - layout
+
+
 PATH_TEMPLATES:
     asset_type: '{project}/assets/{asset_type}'
     asset: '{project}/assets/{asset_type}/{asset}'
@@ -42,21 +52,13 @@ PATH_TEMPLATES:
     workspace_file: '{task}_{asset}{opt[_][suffix]}_v{:0>3d}.{ext}'
 
 
-TASK_TYPES:
-    - model
-    - rig
-    - shade
-    - texture
-    - comp
-    - light
-    - layout
-
-
 SOFTWARE:
     maya2017:
         host: 'maya'
+        workspace: 'maya'
         identifier: 'launch.maya2017'
         description: 'Launch Autodesk Maya2017'
+        default_workspace: 'maya'
         icon: './icons/maya.png'
         cmd:
             win:
@@ -72,6 +74,7 @@ SOFTWARE:
         host: 'maya'
         identifier: 'launch.maya2018'
         description: 'Launch Autodesk Maya2018'
+        default_workspace: 'maya'
         icon: './icons/maya.png'
         extensions: ['.ma', '.mb', '.fbx', '.obj', '.abc']
         cmd:
@@ -88,6 +91,7 @@ SOFTWARE:
         host: 'nuke'
         identifier: 'launch.nuke11.0v2'
         description: 'Launch The Foundry Nuke11.0v2'
+        default_workspace: 'nuke'
         icon: './icons/nuke.png'
         extensions: ['.nk']
         cmd:
@@ -104,6 +108,7 @@ SOFTWARE:
         host: 'sublime'
         identifier: 'launch.sublimetext'
         description: 'Launch Sublimt Text 3'
+        default_workspace: null
         icon: './icons/sublime.png'
         extensions: ['.txt', '.py', '.mel']
         cmd:

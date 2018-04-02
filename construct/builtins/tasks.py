@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
-from construct import api, config
+from construct import api, config, types
 from construct.action import Action
 from construct.tasks import (
     task,
@@ -13,7 +13,7 @@ from construct.tasks import (
     success,
     requires
 )
-from construct import types
+from construct.utils import unipath
 from construct.errors import Abort
 import fsfs
 
@@ -86,10 +86,12 @@ class NewTask(Action):
 @pass_kwargs
 @returns(store('task_item'))
 def stage_task(parent, type, name=None, template=None):
+    '''Stage task for creation'''
 
+    name = name or type
     return dict(
-        name=name or type,
-        path=os.path.join(parent.path, name),
+        name=name,
+        path=unipath(parent.path, name),
         tags=['task', type],
         template=api.get_template(template, 'task'),
     )
@@ -99,6 +101,8 @@ def stage_task(parent, type, name=None, template=None):
 @requires(success('stage_task'))
 @params(store('task_item'))
 def validate_task(task_item):
+    '''Validate potential task'''
+
     if os.path.exists(task_item['path']):
         raise Abort('Task already exists: ' + task_item['name'])
     return True
@@ -109,7 +113,7 @@ def validate_task(task_item):
 @params(store('task_item'))
 @returns(artifact('task'))
 def commit_task(task_item):
-    '''Make new task'''
+    '''Create new task'''
 
     if task_item['template']:
         task = task_item['template'].copy(task_item['path'])

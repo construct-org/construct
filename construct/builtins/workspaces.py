@@ -14,7 +14,8 @@ from construct.tasks import (
     returns,
     params
 )
-from construct import types
+from construct import types, api
+from construct.errors import Abort
 import fsfs
 
 
@@ -27,7 +28,7 @@ class NewWorkspace(Action):
     @staticmethod
     def parameters(ctx):
         params = dict(
-            parent={
+            task={
                 'label': 'Parent Entry',
                 'required': True,
                 'type': types.Entry,
@@ -51,13 +52,12 @@ class NewWorkspace(Action):
             return params
 
         if ctx.task:
-            params['parent']['default'] = ctx.task
-            params['parent']['required'] = False
+            params['task']['default'] = ctx.task
+            params['task']['required'] = False
 
-        if 'construct' in ctx:
-            templates = ctx.construct.get_template('workspace')
-            if templates:
-                params['template']['options'] = [t.name for t in templates]
+        templates = api.get_templates('workspace')
+        if templates:
+            params['template']['options'] = list(templates.keys())
 
         return params
 
@@ -72,35 +72,33 @@ class NewWorkspace(Action):
 
 
 @task(priority=types.STAGE)
-@pass_context
 @pass_kwargs
 @returns(store('workspace_item'))
-def stage_workspace(ctx, parent, name=None, template=None):
-    '''Stage a workspace for creation'''
+def stage_workspace(task, name=None, template=None):
+    '''Stage workspace for creation'''
 
-    name = name or template
-    construct = ctx.construct
-    if template:
-        template = construct.get_template('workspace', name=template)
-
-    path_template = construct.get_path_template('workspace')
-
+    path_template = api.get_path_template('workspace')
+    path = path_template.format(dict(
+        task=task.path,
+        workspace=name
+    ))
+    name = name
     return dict(
         name=name,
-        path=path_template.format(parent=parent.path, workspace=name),
+        path=path,
         tags=['workspace'],
-        template=template,
+        template=api.get_template(template, 'workspace'),
     )
 
 
 @task(priority=types.VALIDATE)
-@params(store('workspace_item'))
 @requires(success('stage_workspace'))
+@params(store('workspace_item'))
 def validate_workspace(workspace_item):
-    '''Validate workspace'''
+    '''Validate potential workspace'''
 
     if os.path.exists(workspace_item['path']):
-        raise OSError('Workspace already exists: ' + workspace_item['name'])
+        raise Abort('Task already exists: ' + workspace_item['name'])
     return True
 
 
@@ -109,7 +107,7 @@ def validate_workspace(workspace_item):
 @params(store('workspace_item'))
 @returns(artifact('workspace'))
 def commit_workspace(workspace_item):
-    '''Make new workspace'''
+    '''Create new workspace'''
 
     if workspace_item['template']:
         workspace = workspace_item['template'].copy(workspace_item['path'])
