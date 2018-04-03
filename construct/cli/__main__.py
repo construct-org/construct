@@ -6,8 +6,8 @@ import argparse
 import colorama
 import construct
 from collections import OrderedDict
-from construct import signals
-from construct.constants import FAILED
+from construct import signals, get_context
+from construct.constants import FAILED, SUCCESS, SKIPPED
 from construct.cli.commands import commands, ActionCommand
 from construct.cli.formatters import (
     Root,
@@ -21,7 +21,7 @@ from construct.cli.constants import (
     ICONS
 )
 from construct.cli import stout
-from construct.cli.widgets import TaskLine
+from construct.cli.widgets import TaskLine, ProgressBar
 import win_unicode_console
 
 
@@ -52,7 +52,7 @@ def on_action_before(ctx):
     )
     print(ctx_section + '\n')
 
-    print('Key')
+    print('Status Key')
     key_tmpl = '    {} {:<8}'
     for status, icon in ICONS.items()[:5]:
         print(key_tmpl.format(icon, status), end='')
@@ -71,6 +71,11 @@ def on_action_before(ctx):
             w = TaskLine(task, console)
             console_widgets[task.identifier] = w
             console.add_widget(w)
+
+    print()
+    progress = ProgressBar(len(ctx.tasks), console)
+    console_widgets['progress'] = progress
+    console.add_widget(progress)
 
 
 @signals.route('action.after')
@@ -113,6 +118,14 @@ def on_request_status_change(request, last_status, status):
     if status == FAILED:
         err = w.format_error(request.exception)
         console.insert(w.row, err)
+
+    ctx = get_context()
+    progress = console_widgets['progress']
+    i = 0
+    for request in ctx.requests.values():
+        if request._status in [FAILED, SUCCESS, SKIPPED]:
+            i += 1
+    progress.set_value(i)
 
 
 def logging_config(level):

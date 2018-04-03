@@ -155,7 +155,9 @@ class Request(object):
         self._status = None
         self._exc = None
         self._value = None
+        self.push()
         self.set_status(WAITING)
+        self.pop()
 
     def push(self):
         _ctx_stack.push(self.ctx)

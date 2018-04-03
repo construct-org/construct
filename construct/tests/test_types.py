@@ -3,17 +3,17 @@ from __future__ import absolute_import
 from construct import types
 
 
-class Object(object):
-
-    def method_a(self):
-        pass
-
-    def method_b(self):
-        pass
-
-
 def test_weakset_bound_methods():
     '''Weakset with bound methods'''
+
+
+    class Object(object):
+
+        def method_a(self):
+            pass
+
+        def method_b(self):
+            pass
 
     weakset = types.weakset()
 
@@ -52,5 +52,4 @@ def test_weakset_functions():
     assert len(weakset) == 1
 
     del(func)
-
     assert len(weakset) == 0

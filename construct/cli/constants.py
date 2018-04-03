@@ -25,8 +25,6 @@ COMMANDS_TITLE = styled('{bright}{fg.blue}Commands{reset}')
 CONTEXT_TITLE = styled('{normal}Current Context{reset}')
 OPTIONS_TITLE = styled('{bright}{fg.yellow}Options{reset}')
 
-TASK_TEMPLATE = '    {icon} {bright}{identifier}{sep}{reset}{description}'
-TASK_ERROR_TEMPLATE = '      {bright}{fg.red}{}: {reset}{}'
 STATUS_LABELS = {
     WAITING: styled('{dim}WAITING{reset}'),
     PENDING: styled('{dim}PENDING{reset}'),
