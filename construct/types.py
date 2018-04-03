@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
 
 __all__ = [
     'ABC',
@@ -166,6 +166,9 @@ class weakset(object):
             self._refs
         )
 
+    def __len__(self):
+        return len(self._refs)
+
     def __iter__(self):
         for i in range(len(self._refs)):
             id_ = self._ids.pop(0)
@@ -185,7 +188,8 @@ class weakset(object):
         self._refs.pop(index)
 
     def add(self, obj):
-        id_ = id(obj)
+        id_ = weak_id(obj)
+
         if id_ in self._ids:
             return
 
@@ -197,12 +201,21 @@ class weakset(object):
             self._refs.append(weakref.ref(obj, self.discard))
 
 
+def weak_id(obj):
+    '''Returns a unique and constant id for an object including bound meths.'''
+
+    if inspect.ismethod(obj):
+        return id(obj.__self__) + id(obj.__func__)
+    else:
+        return id(obj)
+
+
 class weakmeth(object):
     '''Like weakref but for bound methods'''
 
     def __init__(self, meth, callback=None):
         self.name = meth.__name__
-        self.ref = weakref.ref(meth.__self__, callback)
+        self.ref = weakref.ref(meth.__self__, lambda _: callback(self))
 
     def __call__(self):
         obj = self.ref()

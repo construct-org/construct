@@ -70,9 +70,9 @@ class Ansi(object):
 
         Examples:
             >>> Ansi.get_token_args('\x1b[10;2H')
-            ('move', (10, 2))
+            ('move', [10, 2])
             >>> Ansi.get_token_args('\x1b[4A')
-            ('move_up', (4,))
+            ('move_up', [4])
         '''
 
         for name, token in cls.tokens:
@@ -311,8 +311,8 @@ class Console(object):
             line.update()
 
     def write(self, value):
-        '''Line aware writing. Always returns a Line, either a new Line
-        widget or the line that was written to.
+        '''Always returns a Line, either a new Line widget or the line that
+        was modified.
         '''
 
         length = len(value)

@@ -10,16 +10,15 @@ def teardown():
 
 
 def test_discover_single_path():
-    '''Discover plugins on single path'''
+    '''Discover Extensions on single path'''
 
     construct.extensions.discover(data_path('extpath1'))
     exts = construct.extensions.collect()
     assert 'ExtensionA' in exts
-    assert len(exts) == 1
 
 
 def test_discover_multiple_paths():
-    '''Discover plugins on multiple paths'''
+    '''Discover Extensions on multiple paths'''
 
     construct.extensions.discover(
         data_path('extpath1'),
@@ -30,12 +29,11 @@ def test_discover_multiple_paths():
     assert 'ExtensionA' in exts
     assert 'ExtensionB' in exts
     assert 'ExtensionC' in exts
-    assert len(exts) == 3
 
 
 @raises(RuntimeError)
 def test_construct_discover_exc():
-    '''Discover plugins in Construct.__init__ that raise exceptions'''
+    '''Discover Extension that raises exception'''
 
     construct.extensions.discover(
         data_path('extpath4_wexc')

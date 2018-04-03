@@ -52,8 +52,7 @@ ICONS = OrderedDict([
 
 
 if platform().startswith('Windows-7'):
-    # cmd.exe prompt doesn't support full unicode character set on Win7
-    # Use cp437 compatible characters
+    # Use cp437 compatible characters on Windows 7
     ICONS = OrderedDict([
         ('ENABLED', styled('{dim}{fg.green}○{reset}')),
         ('DISABLED', styled('{bright}{fg.red}○{reset}')),
