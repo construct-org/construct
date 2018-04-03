@@ -46,10 +46,10 @@ PATH_TEMPLATES:
     sequence: '{project}/sequences/{sequence}'
     shot: '{project}/sequences/{sequence}/{shot}'
     task: '{parent}/{task}'
-    publish: '{task}/publish/{task}_{asset}{opt[_][suffix]}_v{:0>3d}'
-    publish_file: '{task}_{parent}{opt[_][suffix]}_v{:0>3d}.{ext}'
+    publish: '{task}/publish/{file_type}/{task}_{name}/v{:0>3d}'
+    publish_file: '{task}_{name}_v{:0>3d}.{ext}'
     workspace: '{task}/work/{workspace}'
-    workspace_file: '{task}_{asset}{opt[_][suffix]}_v{:0>3d}.{ext}'
+    workspace_file: '{task}_{name}_v{:0>3d}.{ext}'
 
 
 SOFTWARE:
@@ -87,22 +87,22 @@ SOFTWARE:
             mac:
                 path: /Applications/Autodesk/maya2018/bin/maya
                 args: []
-    nuke11.0v2:
+    nuke11.1v2:
         host: 'nuke'
-        identifier: 'launch.nuke11.0v2'
-        description: 'Launch The Foundry Nuke11.0v2'
+        identifier: 'launch.nuke11.1v2'
+        description: 'Launch The Foundry Nuke11.1v2'
         default_workspace: 'nuke'
         icon: './icons/nuke.png'
         extensions: ['.nk']
         cmd:
             win:
-                path: C:/Program Files/Nuke11.0v2/Nuke11.0.exe
+                path: C:/Program Files/Nuke11.1v2/Nuke11.1.exe
                 args: []
             linux:
-                path: /usr/local/Nuke11.0v2/Nuke11.0
+                path: /usr/local/Nuke11.1v2/Nuke11.1
                 args: []
             mac:
-                path: /Applications/Nuke11.0v2/Nuke11.0v2.app/Nuke11.0
+                path: /Applications/Nuke11.1v2/Nuke11.1v2.app/Nuke11.1
                 args: []
     sublime:
         host: 'sublime'

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+from scrim import get_scrim
+from platform import platform
 from construct.cli.utils import styled
 from collections import OrderedDict
 from construct.constants import (
@@ -47,3 +49,19 @@ ICONS = OrderedDict([
     ('SUCCESS', styled('{bright}{fg.green}●{reset}')),
     ('FAILED', styled('{bright}{fg.red}●{reset}')),
 ])
+
+
+if platform().startswith('Windows-7'):
+    # cmd.exe prompt doesn't support full unicode character set on Win7
+    # Use cp437 compatible characters
+    ICONS = OrderedDict([
+        ('ENABLED', styled('{dim}{fg.green}○{reset}')),
+        ('DISABLED', styled('{bright}{fg.red}○{reset}')),
+        ('WAITING', styled('{dim}○{reset}')),
+        ('RUNNING', styled('{fg.green}○{reset}')),
+        ('PENDING', styled('{bright}{fg.magenta}○{reset}')),
+        ('PAUSED', styled('{bright}{fg.cyan}○{reset}')),
+        ('SKIPPED', styled('{bright}{fg.blue}○{reset}')),
+        ('SUCCESS', styled('{bright}{fg.green}•{reset}')),
+        ('FAILED', styled('{bright}{fg.red}•{reset}')),
+    ])
