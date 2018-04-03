@@ -10,6 +10,33 @@ import sys
 import colorama
 from backports.shutil_get_terminal_size import get_terminal_size
 import win_unicode_console
+import os
+
+_win_hide = None
+_win_show = None
+if os.name == 'nt':
+    # Taken from stackoverflow
+    # https://stackoverflow.com/a/10455937
+    import msvcrt
+    import ctypes
+
+    class _CursorInfo(ctypes.Structure):
+        _fields_ = [("size", ctypes.c_int),
+                    ("visible", ctypes.c_byte)]
+
+    def _win_hide():
+        ci = _CursorInfo()
+        handle = ctypes.windll.kernel32.GetStdHandle(-11)
+        ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(ci))
+        ci.visible = False
+        ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(ci))
+
+    def _win_show():
+        ci = _CursorInfo()
+        handle = ctypes.windll.kernel32.GetStdHandle(-11)
+        ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(ci))
+        ci.visible = True
+        ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(ci))
 
 
 TAB_WIDTH = 4
@@ -98,11 +125,17 @@ class Cursor(object):
         self.dx = 0
         self.dy = 0
 
-    def show(self):
-        self.console.stream.write(Ansi.show_cursor)
+    def show_cursor(self):
+        if _win_show:
+            _win_show()
+        else:
+            self.console.stream.write(Ansi.show_cursor)
 
-    def hide(self):
-        self.console.stream.write(Ansi.hide_cursor)
+    def hide_cursor(self):
+        if _win_hide:
+            _win_hide()
+        else:
+            self.console.stream.write(Ansi.hide_cursor)
 
     def home(self):
         self.console.stream.write(Ansi.home)
@@ -233,11 +266,13 @@ class Console(object):
         sys.stderr = self.wrapper
         self.cursor = Cursor(self)
         set_console(self)
+        self.cursor.hide_cursor()
 
     def deinit(self):
         if self.stream is None:
             raise RuntimeError('Console has not been initialized.')
 
+        self.cursor.show_cursor()
         global orig_stdout
         global orig_stderr
         sys.stdout = orig_stdout

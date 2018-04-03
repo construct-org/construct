@@ -73,7 +73,7 @@ def on_action_before(ctx):
             console.add_widget(w)
 
     print()
-    progress = ProgressBar(len(ctx.tasks), console)
+    progress = ProgressBar('Tasks', len(ctx.tasks), console)
     console_widgets['progress'] = progress
     console.add_widget(progress)
 

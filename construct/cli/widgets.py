@@ -44,16 +44,18 @@ class TaskLine(Line):
 
 class ProgressBar(Line):
 
-    info_template = 'Tasks <{i} of {max}> '
+    info_template = '{label} <{i} of {max}> '
     bar_template = '{bright}{color}{lfill}{dim}{rfill}{reset}'
     lfill_char = '░'
     rfill_char = '░'
     color_map = [
-        style.fg.cyan,
-        style.fg.cyan,
+        style.fg.red,
+        style.fg.yellow,
+        style.fg.green
     ]
 
-    def __init__(self, max, console):
+    def __init__(self, label, max, console):
+        self.label = label
         self.max = max
         self.width = 76
         self.i = 0
@@ -61,10 +63,16 @@ class ProgressBar(Line):
         super(ProgressBar, self).__init__(text, console)
 
     def get_color(self, percent):
-        return self.color_map[int(percent)]
+        from math import floor
+        index = int(floor(percent * (len(self.color_map) - 1)))
+        return self.color_map[index]
 
     def format_bar(self):
-        info = self.info_template.format(i=self.i, max=self.max)
+        info = self.info_template.format(
+            label=self.label,
+            i=self.i,
+            max=self.max
+        )
         info_width = len(info)
         bar_width = self.width - info_width
         if self.i == 0:
