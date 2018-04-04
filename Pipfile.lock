@@ -57,13 +57,6 @@
             "index": "pypi",
             "version": "==0.1.0"
         },
-        "lucidity": {
-            "hashes": [
-                "sha256:071912a17a8af53081c52e2854358abb9574f5bcb34a1ef55a7b052ba0232be8"
-            ],
-            "index": "pypi",
-            "version": "==1.5.0"
-        },
         "psutil": {
             "hashes": [
                 "sha256:230eeb3aeb077814f3a2cd036ddb6e0f571960d327298cc914c02385c3e02a63",

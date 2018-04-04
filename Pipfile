@@ -15,7 +15,6 @@ scandir = "*"
 werkzeug = "*"
 chainmap = "*"
 scrim = "*"
-lucidity = "*"
 win_unicode_console = "*"
 colorama = "*"
 "fsfs-0.1.9" = {git = "https://github.com/danbradham/fsfs.git"}

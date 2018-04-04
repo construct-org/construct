@@ -7,7 +7,7 @@ import logging
 from logging.config import dictConfig
 from itertools import chain
 import yaml
-import lucidity
+from construct.vendor import lucidity
 from construct.context import _ctx_stack, _req_stack, Context
 from construct.config import Config
 from construct.extension import ExtensionCollector, Extension

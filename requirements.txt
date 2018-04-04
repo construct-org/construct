@@ -3,7 +3,6 @@ scandir
 werkzeug
 chainmap
 scrim
-lucidity
 backports.shutil_get_terminal_size
 win_unicode_console
 colorama

@@ -50,7 +50,6 @@ setup(
         'werkzeug',
         'scrim',
         'fstrings',
-        'lucidity',
         'chainmap',
         'colorama',
         'scandir',
