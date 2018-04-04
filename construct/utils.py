@@ -45,7 +45,9 @@ def package_path(*paths):
 def unipath(*paths):
     '''os.path.join with forward slashes only.'''
 
-    return os.path.abspath(os.path.join(*paths).replace('\\', '/'))
+    return os.path.abspath(
+        os.path.expanduser(os.path.join(*paths))
+    ).replace('\\', '/')
 
 
 def get_qualname(obj):
