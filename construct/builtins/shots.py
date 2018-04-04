@@ -92,7 +92,6 @@ def stage_shot(project, sequence, name, template=None):
         sequence=sequence.name,
         shot=name
     ))
-    print(shot_path)
 
     try:
         template = api.get_template(template, 'shot')

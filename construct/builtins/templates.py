@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 import os
+import construct
 from construct.action import Action
-from construct.errors import ActionError
+from construct.errors import Abort
 from construct.tasks import (
     task,
     pass_kwargs,
@@ -17,7 +18,6 @@ from construct.tasks import (
 )
 from construct import types
 from construct.utils import unipath
-import fsfs
 
 
 class NewTemplate(Action):
@@ -58,8 +58,7 @@ class NewTemplate(Action):
 
     @staticmethod
     def available(ctx):
-        return any([
-            not ctx.project,
+        return ctx.project and any([
             ctx.shot,
             ctx.asset,
             ctx.task,
@@ -68,35 +67,42 @@ class NewTemplate(Action):
 
 
 @task(priority=types.STAGE)
+@pass_context
 @pass_kwargs
-def stage_template(**kwargs):
+@returns(store('template'))
+def stage_template(ctx, name, entry, include_files):
     '''Stage template data'''
-
-    name = kwargs['name']
-    entry = kwargs['entry']
 
     templates_path = unipath(ctx.project.data.path, 'templates')
     template_path = unipath(templates_path, name)
 
-    ctx.store.entry = entry
-    ctx.store.template_path = template_path
+    template_item = types.Namespace(
+        entry=entry,
+        name=name,
+        path=template_path,
+        include_files=include_files,
+    )
+    return template_item
 
 
 @task(priority=types.VALIDATE)
 @requires(success('stage_template_data'))
-@params(kwarg('name'), store('template_path'))
-def validate_template(name, template_path):
+@params(store('template'))
+def validate_template(template):
     '''Make sure template does not already exist'''
 
-    if os.path.exists(template_path):
-        raise Abort('Template already exists: ' + name)
+    if (
+        os.path.exists(template.path) or
+        template.name in construct.get_templates()
+    ):
+        raise Abort('Template already exists: ' + template.name)
 
 
 @task(priority=types.COMMIT)
 @requires(success('validate_template'))
-@params(store('entry'), store('template_path'), kwarg('include_files'))
+@params(store('template'))
 @returns(artifact('template'))
-def commit_template(entry, template_path, include_files):
+def commit_template(template):
     '''Commit template'''
 
     new_template = entry.copy(template_path, only_data=not include_files)

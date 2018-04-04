@@ -3,9 +3,10 @@ from __future__ import absolute_import, print_function
 import argparse
 import os
 import sys
+import logging
+import traceback
 from textwrap import dedent
 from scrim import get_scrim
-import logging
 import construct
 from construct.errors import ActionControlFlowError
 from construct.cli.formatters import new_formatter, Contextual, format_section
@@ -443,7 +444,21 @@ class ActionCommand(Command):
             action = self.action(*extra_args, **args.__dict__)
             action.run()
         except ActionControlFlowError as e:
-            print(styled('{fg.red}Error:{reset} {}', e.message))
-
+            msg = styled(
+                '{bright}{fg.red}Action Error:{fg.reset} {}'
+                ' raised critical error {fg.red}{}{reset}',
+                action.identifier,
+                e.__class__.__name__
+            )
+            print(msg)
+        except Exception as e:
+            msg = styled(
+                '{bright}{fg.red}Action Error:{fg.reset} {}'
+                ' raised unexpected error {fg.red}{}{reset}\n',
+                action.identifier,
+                e.__class__.__name__
+            )
+            print(msg)
+            traceback.print_exc()
 
 commands = [c for c in Command.__subclasses__() if c._available()]

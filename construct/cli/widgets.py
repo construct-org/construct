@@ -57,7 +57,7 @@ class ProgressBar(Line):
     def __init__(self, label, max, console):
         self.label = label
         self.max = max
-        self.width = 76
+        self.width = min(76, console.width - 2)
         self.i = 0
         text = self.format_bar()
         super(ProgressBar, self).__init__(text, console)

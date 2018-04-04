@@ -91,7 +91,7 @@ def stage_sequence(project, name, template=None):
         name=name,
         path=sequence_path,
         tags=['sequence'],
-        template=api.get_template(template, 'sequence'),
+        template=template,
     )
 
 
