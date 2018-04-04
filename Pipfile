@@ -1,27 +1,22 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [dev-packages]
-
 sphinx = "*"
 sphinx-rtd-theme = "*"
 sphinxcontrib-napoleon = "*"
 nose = "*"
 
-
 [packages]
-
 fstrings = "*"
 scandir = "*"
 werkzeug = "*"
-fsfs = {git = "git://github.com/danbradham/fsfs.git"}
 chainmap = "*"
 scrim = "*"
 lucidity = "*"
-backports.shutil_get_terminal_size = "*"
 win_unicode_console = "*"
 colorama = "*"
+"fsfs-0.1.9" = {git = "https://github.com/danbradham/fsfs.git"}
+"backports.shutil-get-terminal-size" = "*"

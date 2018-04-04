@@ -8,11 +8,11 @@ from logging.config import dictConfig
 from itertools import chain
 import yaml
 import lucidity
-from construct.context import _ctx_stack, _req_stack, Context
-from construct.constants import DEFAULT_LOGGING
-from construct.config import Config
-from construct.extension import ExtensionCollector, Extension
 from construct.action import Action, ActionCollector, ActionProxy
+from construct.context import _ctx_stack, _req_stack, Context
+from construct.extension import ExtensionCollector, Extension
+from construct.config import Config
+from construct.constants import DEFAULT_LOGGING
 from construct.actioncontext import ActionContext
 from construct.utils import unipath, ensure_instance
 from construct.stats import log_call

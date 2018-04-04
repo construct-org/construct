@@ -17,11 +17,11 @@ import logging
 from operator import attrgetter
 from collections import OrderedDict
 from construct import types, actionparams, signals
-from construct.constants import ACTION_SIGNALS
 from construct.utils import missing, classproperty
 from construct.actionrunner import ActionRunner
 from construct.tasks import sort_tasks
 from construct.errors import ActionUnavailable
+from construct.constants import ACTION_SIGNALS
 
 
 _log = logging.getLogger(__name__)
