@@ -81,12 +81,25 @@ def init(root=None, host=None, extension_paths=None, logging=None):
     # Configure logging
     dictConfig(logging or config.get('LOGGING', DEFAULT_LOGGING))
 
+    if config_file:
+        _log.debug('Loaded config: %s' % config_file)
+    else:
+        _log.debug('Using default config')
+
     # Setup initial context
     global _context
     _log.debug('Setting initial context...')
     _context = Context.from_env()
     if root:
+        _log.debug('Setting root to %s' % root)
         _context.root = root
+    elif 'CONSTRUCT_ROOT' in os.environ:
+        _log.debug('Setting root to %s' % os.environ['CONSTRUCT_ROOT'])
+        _context.root = os.environ['CONSTRUCT_ROOT']
+    else:
+        _log.debug('Setting root to %s' % config['ROOT'])
+        _context.root = config['ROOT']
+
     if host:
         _context.host = host
 
@@ -152,7 +165,7 @@ def set_context_from_entry(entry):
 
     global _context
     new_context = Context.from_path(entry.path)
-    _context.update(new_context, exclude=['host'])
+    _context.update(new_context, exclude=['host', 'root'])
 
 
 @log_call
@@ -161,7 +174,7 @@ def set_context_from_path(path):
 
     global _context
     new_context = Context.from_path(path)
-    _context.update(new_context, exclude=['host'])
+    _context.update(new_context, exclude=['host', 'root'])
 
 
 @log_call
