@@ -8,10 +8,10 @@ from logging.config import dictConfig
 from itertools import chain
 import yaml
 import lucidity
-from construct.action import Action, ActionCollector, ActionProxy
 from construct.context import _ctx_stack, _req_stack, Context
-from construct.extension import ExtensionCollector, Extension
 from construct.config import Config
+from construct.extension import ExtensionCollector, Extension
+from construct.action import Action, ActionCollector, ActionProxy
 from construct.constants import DEFAULT_LOGGING
 from construct.actioncontext import ActionContext
 from construct.utils import unipath, ensure_instance
@@ -92,13 +92,13 @@ def init(root=None, host=None, extension_paths=None, logging=None):
     _context = Context.from_env()
     if root:
         _log.debug('Setting root to %s' % root)
-        _context.root = root
+        _context.root = unipath(root)
     elif 'CONSTRUCT_ROOT' in os.environ:
         _log.debug('Setting root to %s' % os.environ['CONSTRUCT_ROOT'])
-        _context.root = os.environ['CONSTRUCT_ROOT']
+        _context.root = unipath(os.environ['CONSTRUCT_ROOT'])
     else:
         _log.debug('Setting root to %s' % config['ROOT'])
-        _context.root = config['ROOT']
+        _context.root = unipath(config['ROOT'])
 
     if host:
         _context.host = host
