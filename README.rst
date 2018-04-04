@@ -6,6 +6,10 @@
     :target: https://travis-ci.org/danbradham/construct
     :alt: Travis
 
+.. image:: https://img.shields.io/appveyor/ci/construct-org/construct.svg?style=flat-square
+    :target: https://ci.appveyor.com/project/danbradham/construct
+    :alt: AppVeyor
+
 =========
 construct
 =========

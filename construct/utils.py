@@ -84,11 +84,11 @@ def get_callable_name(obj):
 
     try:
         return obj.func_name
-    except NameError:
+    except AttributeError:
         return obj.__name__
-    except NameError:
+    except AttributeError:
         return obj.__class__.__name__
-    except NameError:
+    except AttributeError:
         return obj.__func__.__name__
 
 
@@ -178,7 +178,7 @@ def import_file(path):
     name, _ = os.path.splitext(basename)
 
     with temp_syspath(root, name):
-        mod = __import__(name, globals(), locals(), [], -1)
+        mod = __import__(name, globals(), locals(), [])
         sys.modules.pop(name)
 
     return mod

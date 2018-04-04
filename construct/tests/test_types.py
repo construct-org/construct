@@ -6,7 +6,6 @@ from construct import types
 def test_weakset_bound_methods():
     '''Weakset with bound methods'''
 
-
     class Object(object):
 
         def method_a(self):

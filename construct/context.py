@@ -8,10 +8,8 @@ __all__ = [
 ]
 
 import os
-import sys
 import fsfs
 from getpass import getuser
-from fstrings import f
 from collections import Mapping
 from werkzeug.local import LocalStack
 from construct.constants import DEFAULT_ROOT, DEFAULT_HOST
@@ -66,7 +64,6 @@ class Context(object):
 
     def __exit__(self, exc_type, exc_value, tb):
         self.pop()
-        raise exc_type, exc_value, tb
 
     def __getitem__(self, key):
         return self.__dict__.__getitem__(key)

@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function
 __all__ = ['TaskGroup', 'ActionRunner']
 
 import logging
+import six
 from construct.types import Stack
 from construct import signals
 from construct.constants import *
@@ -43,8 +44,7 @@ class TaskGroup(object):
     def raise_exception(self):
         if not self._exc:
             return
-
-        raise self._exc[0], self._exc[1], self._exc[2]
+        six.reraise(*self._exc)
 
     def set_status(self, status):
         if self._status == status:

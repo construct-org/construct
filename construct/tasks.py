@@ -31,8 +31,10 @@ import threading
 import sys
 import inspect
 import logging
+import six
 from operator import attrgetter
 from collections import OrderedDict
+from construct.compat import basestring
 from construct.constants import *
 from construct.context import _ctx_stack, _req_stack
 from construct.utils import (
@@ -127,10 +129,9 @@ class RequestThread(threading.Thread):
             return self.request._value
 
         if self.request.failed:
-            exc = self.request._exc
             if propagate:
-                raise exc[0], exc[1], exc[2]
-            return exc
+                six.reraise(*self.request._exc)
+            return self.request._exc
 
     def get(self, timeout=None, interval=0.2, propagate=True):
 
@@ -238,7 +239,7 @@ class Request(object):
 
         if self.failed:
             if propagate:
-                raise self._exc[0], self._exc[1], self._exc[2]
+                six.reraise(*self._exc)
             return self._exc
 
         try:
@@ -260,9 +261,9 @@ class Request(object):
 
             self.retries += 1
             exc_info = sys.exc_info()
-            self.set_exception(*sys.exc_info())
+            self.set_exception(exc_info)
             if propagate:
-                raise exc_info[0], exc_info[1], exc_info[2]
+                six.reraise(*exc_info)
             return exc_info
 
         finally:
