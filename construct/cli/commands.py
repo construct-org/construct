@@ -171,6 +171,12 @@ class Push(Command):
             nargs='*',
             help='List of tags like: project'
         )
+        parser.add_argument(
+            '-d', '--depth',
+            type=int,
+            required=False,
+            help='Search depth'
+        )
 
     def run(self, args, *extra_args):
         ctx = construct.get_context()
@@ -178,13 +184,22 @@ class Push(Command):
             root=args.root,
             name=args.name,
             tags=args.tags,
-            direction=args.direction
+            direction=args.direction,
+            depth=args.depth or (10 if ctx.project else 1),
         )
         entry = construct.search(**query).one()
 
         if not entry:
             error('Could not find entry for query...')
             sys.exit(1)
+
+        path = entry.path
+        if args.name:
+            parts = args.name.split('/')
+            for part in parts:
+                highlight = styled('{bright}{fg.yellow}{}{reset}', part)
+                path = path.replace(part, highlight)
+        print(path)
 
         scrim = get_scrim()
         scrim.pushd(os.path.abspath(entry.path))
@@ -226,6 +241,12 @@ class Search(Command):
             nargs='*',
             help='List of tags like: project'
         )
+        parser.add_argument(
+            '-d', '--depth',
+            type=int,
+            required=False,
+            help='Search depth'
+        )
 
     def run(self, args, *extra_args):
         ctx = construct.get_context()
@@ -233,7 +254,8 @@ class Search(Command):
             root=args.root,
             name=args.name,
             tags=args.tags,
-            direction=args.direction
+            direction=args.direction,
+            depth=args.depth or (10 if ctx.project else 1),
         )
         entries = list(construct.search(**query))
 
@@ -241,9 +263,14 @@ class Search(Command):
             print(('Found 0 result.'))
             sys.exit(1)
 
-        for entry in entries:
-            # TODO: Highlight parts of path matching query
-            print(entry)
+        for i, entry in enumerate(entries):
+            path = entry.path
+            if args.name:
+                parts = args.name.split('/')
+                for part in parts:
+                    highlight = styled('{bright}{fg.yellow}{}{reset}', part)
+                    path = path.replace(part, highlight)
+            print(path)
 
 
 class Read(Command):
