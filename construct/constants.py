@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 import os
 import timeit
 import time
-from construct.utils import package_path
+from construct.utils import package_path, unipath
 
 
 WAITING = 'WAITING'
@@ -22,9 +24,9 @@ ACTION_SIGNALS = [
 
 
 EXTENSIONS_ENTRY_POINT = 'construct.extensions'
-USER_CONFIG = os.path.expanduser('~/.construct/construct.yaml')
+USER_CONFIG = unipath('~/.construct/construct.yaml')
 DEFAULT_CONFIG = package_path('defaults', 'construct.yaml')
-DEFAULT_ROOT = os.path.expanduser('~/projects')
+DEFAULT_ROOT = unipath('~/projects')
 DEFAULT_HOST = 'standalone'
 DEFAULT_LOGGING = dict(
     version=1,

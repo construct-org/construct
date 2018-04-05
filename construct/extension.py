@@ -86,7 +86,7 @@ class Extension(ABC):
     def add_template_path(self, path):
         self._template_paths.append(unipath(path))
 
-    def remote_template_path(self, path):
+    def remove_template_path(self, path):
         p = unipath(path)
         if p in self._template_paths:
             self._template_paths.remove(p)

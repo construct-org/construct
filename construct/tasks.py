@@ -261,7 +261,7 @@ class Request(object):
 
             self.retries += 1
             exc_info = sys.exc_info()
-            self.set_exception(exc_info)
+            self.set_exception(*exc_info)
             if propagate:
                 six.reraise(*exc_info)
             return exc_info
