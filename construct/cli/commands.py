@@ -185,7 +185,7 @@ class Push(Command):
             name=args.name,
             tags=args.tags,
             direction=args.direction,
-            depth=args.depth or (10 if ctx.project else 1),
+            depth=args.depth or (10 if ctx.project else 2),
         )
         entry = construct.search(**query).one()
 
@@ -255,7 +255,7 @@ class Search(Command):
             name=args.name,
             tags=args.tags,
             direction=args.direction,
-            depth=args.depth or (10 if ctx.project else 1),
+            depth=args.depth or (10 if ctx.project else 2),
         )
         entries = list(construct.search(**query))
 
