@@ -51,6 +51,12 @@ Installation
 
     $ pip install git+ssh://git@github.com/construct-org/construct.git
 
+
+Documentation
+=============
+`Visit the Full Documentation for more info and API Documentation <https://construct-org.github.io/construct>`_
+
+
 .. _construct_cli: https://github.com/construct-org/construct_cli
 .. _construct_cpenv: https://github.com/construct-org/construct_cpenv
 .. _construct_templates: https://github.com/construct-org/construct_templates
