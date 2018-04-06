@@ -8,7 +8,7 @@ creating your own yaml file, and pointing your CONSTRUCT_CONFIG environment
 variable to it.
 
 
-.. code-block::
+.. code-block:: yaml
 
     ROOT: '~/projects'
     EXTENSION_PATHS:
