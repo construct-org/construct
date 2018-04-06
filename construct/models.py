@@ -117,6 +117,15 @@ class Shot(Entry):
         return self.children('task', *tags)
 
 
+class AssetType(Entry):
+
+    type_for_tag = 'asset_type'
+
+    @property
+    def assets(self):
+        return self.children('asset')
+
+
 class Asset(Entry):
 
     @property

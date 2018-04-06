@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>construct &mdash; construct 0.0.4 documentation</title>
+  <title>construct &mdash; construct 0.1.7 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="construct 0.0.4 documentation" href="#"/>
-        <link rel="next" title="Guide" href="guide.html"/> 
+    <link rel="top" title="construct 0.1.7 documentation" href="#"/>
+        <link rel="next" title="Concepts" href="concepts.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.0.4
+                0.1.7
               </div>
             
           
@@ -91,7 +91,11 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">construct</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">Environment Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">API Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 </ul>
 
@@ -156,9 +160,24 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="construct">
+  <a class="reference external image-reference" href="https://github.com/danbradham/construct/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/github/license/construct-org/construct.svg?style=flat-square" /></a>
+<a class="reference external image-reference" href="https://travis-ci.org/danbradham/construct"><img alt="Travis" src="https://img.shields.io/travis/construct-org/construct.svg?style=flat-square" /></a>
+<div class="section" id="construct">
 <h1>construct<a class="headerlink" href="#construct" title="Permalink to this headline">¶</a></h1>
-<p>Creative project and asset management written in pure python. Highly customizable through the use of plugins, actions and templates.</p>
+<p>An extensible API for creative project and asset management.</p>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Manage Projects on your file system</li>
+<li>Integrate with your Creative Software</li>
+<li>Manage Workspaces and Publishes</li>
+<li>Folder and Path Templating (<a class="reference external" href="https://github.com/danbradham/fsfs">fsfs</a> and <a class="reference external" href="https://gitlab.com/4degrees/lucidity">Lucidity</a>)</li>
+<li>Contextual API</li>
+<li>Extensions, Actions, and Tasks</li>
+</ul>
+</div></blockquote>
+</div>
 <div class="section" id="core-packages">
 <h2>Core Packages<a class="headerlink" href="#core-packages" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
@@ -172,8 +191,8 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference external" href="https://github.com/construct-org/construct_cli">construct_cli</a></td>
-<td>Command line interface</td>
+<tr class="row-even"><td><a class="reference external" href="https://github.com/construct-org/construct_cpenv">construct_cpenv</a></td>
+<td>Cpenv Integration for env management</td>
 </tr>
 <tr class="row-odd"><td><a class="reference external" href="https://github.com/construct-org/construct_launcher">construct_launcher</a></td>
 <td>Application launcher</td>
@@ -184,86 +203,61 @@
 <tr class="row-odd"><td><a class="reference external" href="https://github.com/construct-org/construct_nuke">construct_nuke</a></td>
 <td>The Foundry Nuke integration</td>
 </tr>
-<tr class="row-even"><td><a class="reference external" href="https://github.com/construct-org/construct_templates">construct_templates</a></td>
-<td>Basic templates for project, shots, and assets</td>
-</tr>
-<tr class="row-odd"><td><a class="reference external" href="https://github.com/construct-org/construct_ui">construct_ui</a></td>
+<tr class="row-even"><td><a class="reference external" href="https://github.com/construct-org/construct_ui">construct_ui</a></td>
 <td>Graphical user interface</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="environment-variables">
-<h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="docutils">
-<colgroup>
-<col width="27%" />
-<col width="7%" />
-<col width="26%" />
-<col width="39%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">variable</th>
-<th class="head">type</th>
-<th class="head">default</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>CONSTRUCT_ROOT</td>
-<td>str</td>
-<td>cwd</td>
-<td>Root directory of projects</td>
-</tr>
-<tr class="row-odd"><td>CONSTRUCT_PLUGIN_PATH</td>
-<td>str</td>
-<td>~/.construct/plugins</td>
-<td>List of paths for plugin lookup</td>
-</tr>
-<tr class="row-even"><td>CONSTRUCT_USER</td>
-<td>str</td>
-<td>current user name</td>
-<td>Name of user</td>
-</tr>
-<tr class="row-odd"><td>CONSTRUCT_DEBUG</td>
-<td>int</td>
-<td>0</td>
-<td>Disable/Enable debugging</td>
-</tr>
-<tr class="row-even"><td>CONSTRUCT_HOST</td>
-<td>str</td>
-<td>&#160;</td>
-<td>Name of current host
-(cli, maya, nuke, etc.)</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install git+ssh://git@github.com/construct-org/construct.git
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install git+ssh://git@github.com/construct-org/construct.git
 </pre></div>
 </div>
 <div class="toctree-wrapper compound">
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">construct</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#context">Context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#extensions">Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#actions">Actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#tasks">Tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">Environment Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#anatomy-of-the-cli">Anatomy of the CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#navigation-commands">Navigation Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#create-a-new-project">Create a new Project</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">API Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#initialize-construct">Initialize Construct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#create-a-project">Create a Project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#create-a-shot-with-an-animation-task">Create a Shot with an animation task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#create-an-asset-with-a-model-task">Create an Asset with a model task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#working-with-context">Working with Context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html#searching">Searching</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.action">construct.action module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.actionhub">construct.actionhub module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.actionloop">construct.actionloop module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#construct-actioncontext-module">construct.actioncontext module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.actionparams">construct.actionparams module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.api">construct.api module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#construct-actionrunner-module">construct.actionrunner module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.compat">construct.compat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.config">construct.config module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.constants">construct.constants module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.construct">construct.construct module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.context">construct.context module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.err">construct.err module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.plugins">construct.plugins module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.signal">construct.signal module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#construct-errors-module">construct.errors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#construct-extension-module">construct.extension module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.models">construct.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#construct-signals-module">construct.signals module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.stats">construct.stats module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.tasks">construct.tasks module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.types">construct.types module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#module-construct.util">construct.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#construct-utils-module">construct.utils module</a></li>
 </ul>
 </li>
 </ul>
@@ -286,7 +280,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="guide.html" class="btn btn-neutral float-right" title="Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="concepts.html" class="btn btn-neutral float-right" title="Concepts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -318,7 +312,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.0.4',
+            VERSION:'0.1.7',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

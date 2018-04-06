@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Concepts &mdash; construct 0.1.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="construct 0.1.7 documentation" href="index.html"/>
+        <link rel="next" title="Configuration" href="configuration.html"/>
+        <link rel="prev" title="construct" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> construct
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">construct</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#context">Context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extensions">Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#actions">Actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tasks">Tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">Environment Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">API Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">construct</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Concepts</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/concepts.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="concepts">
+<h1>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="context">
+<h2>Context<a class="headerlink" href="#context" title="Permalink to this headline">¶</a></h2>
+<p>Construct has a strong sense of Context. The current Context is used to
+determine which Extensions, Actions, Tasks and Templates are available.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">host:</th><td class="field-body">Host application cli, maya, nuke, etc…</td>
+</tr>
+<tr class="field-even field"><th class="field-name">platform:</th><td class="field-body">win, linux, or mac</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">root:</th><td class="field-body">Directory containing your projects</td>
+</tr>
+<tr class="field-even field"><th class="field-name">user:</th><td class="field-body">Username</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">project:</th><td class="field-body">Project Entry</td>
+</tr>
+<tr class="field-even field"><th class="field-name">sequence:</th><td class="field-body">Sequence Entry - contains shots</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">shot:</th><td class="field-body">Shot Entry - contains tasks</td>
+</tr>
+<tr class="field-even field"><th class="field-name">asset_type:</th><td class="field-body">AssetType Entry - contains assets</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">asset:</th><td class="field-body">Asset Entry - contains tasks</td>
+</tr>
+<tr class="field-even field"><th class="field-name">task:</th><td class="field-body">Task Entry - where publishes and workspaces are stored</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">workspace:</th><td class="field-body">Workspace Entry - where work files are stored</td>
+</tr>
+<tr class="field-even field"><th class="field-name">file:</th><td class="field-body">Current workfile file</td>
+</tr>
+</tbody>
+</table>
+<p>All Extensions, Actions, and Tasks implement an <code class="xref py py-meth docutils literal notranslate"><span class="pre">available()</span></code> method that
+takes a Context object and returns True if available in that Context.</p>
+</div>
+<div class="section" id="extensions">
+<h2>Extensions<a class="headerlink" href="#extensions" title="Permalink to this headline">¶</a></h2>
+<p>Extensions are the basic building blocks of Construct. They provide Actions,
+Tasks, and Templates. All builtin actions and templates are provided by the
+Builtins Extension. Extensions can provide Tasks to extend existing Actions or
+provide their own Actions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">construct</span> <span class="kn">import</span> <span class="n">Extension</span>
+
+<span class="k">class</span> <span class="nc">MyExtension</span><span class="p">(</span><span class="n">Extension</span><span class="p">):</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;My Extension&#39;</span>
+    <span class="n">attr_name</span> <span class="o">=</span> <span class="s1">&#39;my_extension&#39;</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># setup extension</span>
+        <span class="c1"># add Actions, Tasks, and template paths</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+        <span class="c1"># Return True if Extension is available in ctx</span>
+        <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="actions">
+<h2>Actions<a class="headerlink" href="#actions" title="Permalink to this headline">¶</a></h2>
+<p>Actions are interfaces to run a set of Tasks ordered by their respective
+priorities and requirements. Let’s take a look at the <code class="xref py py-class docutils literal notranslate"><span class="pre">NewProject</span></code> Action provided by the Builtins Extension.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">construct</span>
+<span class="kn">from</span> <span class="nn">construct</span> <span class="kn">import</span> <span class="n">Action</span>
+
+<span class="k">class</span> <span class="nc">NewProject</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Create a new Project&#39;&#39;&#39;</span>
+
+    <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;New Project&#39;</span>
+    <span class="n">identifier</span> <span class="o">=</span> <span class="s1">&#39;new.project&#39;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">root</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;Project Root&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">String</span><span class="p">,</span>
+                <span class="s1">&#39;help&#39;</span><span class="p">:</span> <span class="s1">&#39;project root directory&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">template</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;Project Template&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">String</span><span class="p">,</span>
+                <span class="s1">&#39;help&#39;</span><span class="p">:</span> <span class="s1">&#39;name of a project template&#39;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ctx</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">params</span>
+
+        <span class="n">templates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">construct</span><span class="o">.</span><span class="n">get_templates</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">][</span><span class="s1">&#39;options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">templates</span>
+        <span class="k">if</span> <span class="n">templates</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">][</span><span class="s1">&#39;default&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">templates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">params</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">available</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">ctx</span><span class="o">.</span><span class="n">project</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tasks">
+<h2>Tasks<a class="headerlink" href="#tasks" title="Permalink to this headline">¶</a></h2>
+<p>Tasks are decorated python functions that are added to an Action and ordered by
+their respective priorities and requirements.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">construct.tasks</span> <span class="kn">import</span> <span class="n">task</span><span class="p">,</span> <span class="n">requires</span><span class="p">,</span> <span class="n">success</span><span class="p">,</span> <span class="n">returns</span><span class="p">,</span> <span class="n">artifact</span>
+
+<span class="nd">@task</span>
+<span class="nd">@requires</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="s1">&#39;other_task&#39;</span><span class="p">))</span>
+<span class="nd">@returns</span><span class="p">(</span><span class="n">artifact</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">some_task</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;other_task completed successfully&#39;</span>
+</pre></div>
+</div>
+<p>This task is useless, but, it shows us a few neat things about Tasks. Our task
+‘some_task’ requires the success of ‘other_task’ and returns an artifact named
+‘message’. Construct provides a rich set of decorators and functions to help
+you setup the flow of your Actions. Tasks also remain callable after being
+decorated, so you can run them on their own which is nice for testing.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">some_task</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;other_task completed successfully&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="construct" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Dan Bradham.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.7',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

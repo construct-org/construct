@@ -15,18 +15,10 @@ construct\.action module
     :undoc-members:
     :show-inheritance:
 
-construct\.actionhub module
+construct\.actioncontext module
 ---------------------------
 
-.. automodule:: construct.actionhub
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-construct\.actionloop module
-----------------------------
-
-.. automodule:: construct.actionloop
+.. automodule:: construct.actioncontext
     :members:
     :undoc-members:
     :show-inheritance:
@@ -35,6 +27,14 @@ construct\.actionparams module
 ------------------------------
 
 .. automodule:: construct.actionparams
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+construct\.actionrunner module
+----------------------------
+
+.. automodule:: construct.actionrunner
     :members:
     :undoc-members:
     :show-inheritance:
@@ -48,18 +48,18 @@ construct\.compat module
     :undoc-members:
     :show-inheritance:
 
-construct\.constants module
+construct\.config module
 ---------------------------
 
-.. automodule:: construct.constants
+.. automodule:: construct.config
     :members:
     :undoc-members:
     :show-inheritance:
 
-construct\.construct module
+construct\.constants module
 ---------------------------
 
-.. automodule:: construct.construct
+.. automodule:: construct.constants
     :members:
     :undoc-members:
     :show-inheritance:
@@ -72,26 +72,42 @@ construct\.context module
     :undoc-members:
     :show-inheritance:
 
-construct\.err module
+construct\.errors module
 ---------------------
 
-.. automodule:: construct.err
+.. automodule:: construct.errors
     :members:
     :undoc-members:
     :show-inheritance:
 
-construct\.plugins module
+construct\.extension module
 -------------------------
 
-.. automodule:: construct.plugins
+.. automodule:: construct.extension
     :members:
     :undoc-members:
     :show-inheritance:
 
-construct\.signal module
+construct\.models module
 ------------------------
 
-.. automodule:: construct.signal
+.. automodule:: construct.models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+construct\.signals module
+------------------------
+
+.. automodule:: construct.signals
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+construct\.stats module
+------------------------
+
+.. automodule:: construct.stats
     :members:
     :undoc-members:
     :show-inheritance:
@@ -112,10 +128,10 @@ construct\.types module
     :undoc-members:
     :show-inheritance:
 
-construct\.util module
+construct\.utils module
 ----------------------
 
-.. automodule:: construct.util
+.. automodule:: construct.utils
     :members:
     :undoc-members:
     :show-inheritance:

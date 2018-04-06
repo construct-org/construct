@@ -9,9 +9,22 @@
 =========
 construct
 =========
+An extensible API for creative project and asset management.
 
-Creative project and asset management.
 
+Features
+========
+
+ - Manage Projects on your file system
+ - Integrate with your Creative Software
+ - Manage Workspaces and Publishes
+ - Folder and Path Templating (fsfs_ and Lucidity_)
+ - Contextual API
+ - Extensions, Actions, and Tasks
+ - Rock solid CLI
+
+     + manage and navigate your projects
+     + automatically generate commands from Actions
 
 Core Packages
 =============
@@ -31,25 +44,12 @@ Core Packages
 +----------------------+------------------------------------------------+
 
 
-Environment Variables
-=====================
-
-+------------------+------+----------------------------------+----------------------------+
-| variable         | type | default                          | description                |
-+==================+======+==================================+============================+
-| CONSTRUCT_ROOT   | str  | ~/projects                       | Root directory of projects |
-+------------------+------+----------------------------------+----------------------------+
-| CONSTRUCT_CONFIG | str  | construct/defaults/construct.yml | Path to config file        |
-+------------------+------+----------------------------------+----------------------------+
-
-
 Installation
 ============
 
 .. code-block:: console
 
     $ pip install git+ssh://git@github.com/construct-org/construct.git
-
 
 .. _construct_cli: https://github.com/construct-org/construct_cli
 .. _construct_cpenv: https://github.com/construct-org/construct_cpenv
@@ -58,3 +58,5 @@ Installation
 .. _construct_maya: https://github.com/construct-org/construct_maya
 .. _construct_nuke: https://github.com/construct-org/construct_nuke
 .. _construct_ui: https://github.com/construct-org/construct_ui
+.. _fsfs: https://github.com/danbradham/fsfs
+.. _Lucidity: https://gitlab.com/4degrees/lucidity
