@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from scrim import get_scrim
 from platform import platform
 from construct.cli.utils import styled
 from collections import OrderedDict

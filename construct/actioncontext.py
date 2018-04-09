@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from collections import OrderedDict
 from construct.context import Context
 from construct.tasks import group_tasks
 from construct import types, actionparams

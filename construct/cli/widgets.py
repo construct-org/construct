@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division
-import sys
 from construct.cli.stout import Line
 from construct.cli.constants import (
     STATUS_LABELS,

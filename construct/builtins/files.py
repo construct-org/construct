@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function
-import fsfs
+from __future__ import absolute_import
 from construct.action import Action
 from construct import types
 
