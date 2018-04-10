@@ -17,6 +17,7 @@ import logging
 from operator import attrgetter
 from collections import OrderedDict
 from construct import types, actionparams, signals
+from construct.compat import basestring
 from construct.constants import ACTION_SIGNALS
 from construct.utils import missing, classproperty
 from construct.actionrunner import ActionRunner
