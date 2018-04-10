@@ -53,7 +53,9 @@ class Namespace(object):
     def __repr__(self):
         return '{}({})'.format(
             self.__class__.__name__,
-            ', '.join(['='.join([k, v]) for k, v in self.__dict__.items()])
+            ', '.join(
+                [('{}={}').format(k, v) for k, v in self.__dict__.items()]
+            )
         )
 
     def __contains__(self, key):

@@ -23,6 +23,7 @@ class NewSequence(Action):
 
     label = 'New Sequence'
     identifier = 'new.sequence'
+    returns = artifact('sequence')
 
     @staticmethod
     def parameters(ctx):

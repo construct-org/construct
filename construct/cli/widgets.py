@@ -84,8 +84,8 @@ class ProgressBar(Line):
         return styled(
             info + self.bar_template,
             color=self.get_color(percent),
-            lfill = self.lfill_char * lfill_width,
-            rfill = self.rfill_char * rfill_width
+            lfill=self.lfill_char * lfill_width,
+            rfill=self.rfill_char * rfill_width
         )
 
     def set_value(self, i):

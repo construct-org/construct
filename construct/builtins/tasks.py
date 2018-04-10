@@ -23,6 +23,7 @@ class NewTask(Action):
 
     label = 'New Task'
     identifier = 'new.task'
+    returns = artifact('task')
 
     @staticmethod
     def parameters(ctx):

@@ -20,7 +20,7 @@ from construct import types, actionparams, signals
 from construct.constants import ACTION_SIGNALS
 from construct.utils import missing, classproperty
 from construct.actionrunner import ActionRunner
-from construct.tasks import sort_tasks
+from construct.tasks import sort_tasks, CtxAction
 from construct.errors import ActionUnavailable
 
 
@@ -79,6 +79,31 @@ class Action(types.ABC):
         if len(lines) > 1:
             rest = dedent('\n'.join(lines[1:]))
         return first + rest
+
+    def _returns(self):
+        '''Called by ActionProxy to extract a return value from the Action's
+        Context after run. This function calls Action.returns passing along
+        the ActionContext when available. If Action.returns is not set
+        all the artifacts from an Action run are returned.
+
+        Examples:
+
+            from construct import Action
+            from construct.tasks import artifact
+
+            class NewProject(Action):
+                ...
+                returns = artifact('project')
+        '''
+
+        return_getter = getattr(self, 'returns', None)
+        if return_getter:
+            if isinstance(return_getter, CtxAction):
+                return return_getter.get(self.ctx)
+            else:
+                return return_getter(self.ctx)
+        else:
+            return self.ctx.artifacts
 
     @classmethod
     def _available(cls, ctx=missing):
@@ -174,6 +199,9 @@ def get_action_identifier(action_or_identifier):
 
 
 class ActionCollector(object):
+    '''Collects Actions and their associated tasks from the currently
+    available Extensions.
+    '''
 
     def __init__(self, extension_collector):
         self._extensions = extension_collector
@@ -199,6 +227,15 @@ class ActionCollector(object):
             return action
 
     def collect(self, ctx=None):
+        '''Collect all actions in the given context. If no context is provided
+        return ALL actions.
+
+        Arguments:
+            ctx: Context instance - used to determine action availability
+
+        Returns:
+            dict - (Action.identifier, Action) key value pairs
+        '''
 
         from construct.api import get_context
         ctx = ctx or get_context()
@@ -218,6 +255,15 @@ class ActionCollector(object):
         return actions
 
     def collect_tasks(self, action_or_identifier, ctx=None):
+        '''Collect all the tasks for a given Action or Action identifier.
+
+        Arguments:
+            action_or_identifier: Action class or Action.identifier string
+            ctx: Context instance
+
+        Returns:
+            [Task...] - List of Task instances in priority order
+        '''
 
         from construct.api import get_context
         ctx = ctx or get_context()
@@ -233,6 +279,8 @@ class ActionCollector(object):
 
 
 class ActionProxy(object):
+    '''Proxy object that allows you to call Actions as if they were functions.
+    '''
 
     def __init__(self, identifier):
         self.identifier = identifier
@@ -257,7 +305,7 @@ class ActionProxy(object):
     def __call__(self, **kwargs):
         a = self.action(**kwargs)
         a.run()
-        return a.ctx.artifacts
+        return a._returns()
 
 
 def sort_actions(actions):

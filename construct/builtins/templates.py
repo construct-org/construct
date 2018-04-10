@@ -25,6 +25,7 @@ class NewTemplate(Action):
 
     label = 'New Template'
     identifier = 'new.template'
+    returns = artifact('template')
 
     @staticmethod
     def parameters(ctx):

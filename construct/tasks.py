@@ -167,7 +167,7 @@ class Request(object):
     def pop(self):
         if _req_stack.top is self:
             _req_stack.pop()
-        if _ctx_stack.top is self:
+        if _ctx_stack.top is self.ctx:
             _ctx_stack.pop()
 
     @property

@@ -24,6 +24,7 @@ class NewWorkspace(Action):
 
     label = 'New Workspace'
     identifier = 'new.workspace'
+    returns = artifact('workspace')
 
     @staticmethod
     def parameters(ctx):

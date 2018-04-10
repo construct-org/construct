@@ -23,6 +23,7 @@ class NewAssetType(Action):
 
     label = 'New Asset Type'
     identifier = 'new.asset_type'
+    returns = artifact('asset_type')
 
     @staticmethod
     def parameters(ctx):
@@ -103,6 +104,7 @@ class NewAsset(Action):
 
     label = 'New Asset'
     identifier = 'new.asset'
+    returns = artifact('asset')
 
     @staticmethod
     def parameters(ctx):

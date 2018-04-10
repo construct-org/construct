@@ -23,6 +23,7 @@ class NewShot(Action):
 
     label = 'New Shot'
     identifier = 'new.shot'
+    returns = artifact('shot')
 
     @staticmethod
     def parameters(ctx):

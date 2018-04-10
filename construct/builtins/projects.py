@@ -22,6 +22,7 @@ class NewProject(Action):
 
     label = 'New Project'
     identifier = 'new.project'
+    returns = artifact('project')
 
     @classmethod
     def parameters(cls, ctx):
