@@ -49,6 +49,11 @@ class TemplateError(ConstructError):
     '''Raised when a folder template, or path template error occurs'''
 
 
+class ArgumentError(ConstructError):
+    '''Raised when an :class:`Action` is instantiated with arguments that do
+    not match the parameters specified in :attr:`Action.parameters`'''
+
+
 class ActionControlFlowError(ConstructError):
     '''
     Raised by Tasks to control Action execution...
@@ -62,8 +67,7 @@ class ActionControlFlowError(ConstructError):
 
 
 class ValidationError(ActionControlFlowError):
-    '''Raised when an :class:`Action` is instantiated with arguments that do
-    not match the parameters specified in :attr:`Action.parameters`'''
+    '''Raised by a Task when validation of a staged item fails.'''
 
     def __init__(self, *args, **kwargs):
         self.selection = kwargs.pop('selection', [])

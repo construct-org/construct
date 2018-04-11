@@ -43,7 +43,7 @@ class NewWorkspace(Action):
             },
             template={
                 'label': 'Workspace Template Name',
-                'required': False,
+                'required': True,
                 'type': types.String,
                 'help': 'Name of workspace template'
             }

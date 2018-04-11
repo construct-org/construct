@@ -8,7 +8,7 @@ import traceback
 from textwrap import dedent
 from scrim import get_scrim
 import construct
-from construct.errors import ActionControlFlowError
+from construct.errors import ActionControlFlowError, ArgumentError
 from construct.cli.formatters import new_formatter, Contextual, format_section
 from construct.cli.constants import OPTIONS_TITLE, ARGUMENTS_TITLE
 from construct.cli.utils import styled, error, abort
@@ -466,26 +466,29 @@ class ActionCommand(Command):
             self.add_option(parser, param_name, param_options)
 
     def run(self, args, *extra_args):
-        from construct.cli.stout import Console
         try:
             action = self.action(*extra_args, **args.__dict__)
             action.run()
         except ActionControlFlowError as e:
             msg = styled(
-                '{bright}{fg.red}Action Error:{fg.reset} {}'
+                '{bright}{fg.red}Control Flow Error:{fg.reset} {}'
                 ' raised critical error {fg.red}{}{reset}',
-                action.identifier,
+                self.action.identifier,
                 e.__class__.__name__
             )
+            print(msg)
+        except ArgumentError as e:
+            msg = styled('{bright}{fg.red}Argument Error:{fg.reset} {}', e)
             print(msg)
         except Exception as e:
             msg = styled(
                 '{bright}{fg.red}Action Error:{fg.reset} {}'
                 ' raised unexpected error {fg.red}{}{reset}\n',
-                action.identifier,
+                self.action.identifier,
                 e.__class__.__name__
             )
             print(msg)
             traceback.print_exc()
+
 
 commands = [c for c in Command.__subclasses__() if c._available()]

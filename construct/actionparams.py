@@ -4,7 +4,7 @@ from __future__ import absolute_import
 __all__ = ['validate', 'validate_kwargs', 'get_defaults']
 
 import string
-from construct.errors import ParameterError, ValidationError
+from construct.errors import ParameterError, ArgumentError
 from fstrings import f
 
 REQUIRED_OPTIONS = ['type', 'label']
@@ -97,11 +97,11 @@ def validate_kwargs(parameters, kwargs):
         True
 
     Raises:
-        ValidationError: describing why kwargs is invalid
+        ArgumentError: describing why kwargs is invalid
     '''
 
     if not parameters and kwargs:
-        raise ValidationError(f('Got additional arguments: {kwargs}'))
+        raise ArgumentError(f('Got additional arguments: {kwargs}'))
 
     for name, options in parameters.items():
 
@@ -112,25 +112,25 @@ def validate_kwargs(parameters, kwargs):
         valid_values = options.get('options', None)
 
         if value is None and required:
-            raise ValidationError(f('Missing required argument: {name}'))
+            raise ArgumentError(f('Missing required argument: {name}'))
         elif value is None and not required:
             continue
 
         if not isinstance(value, options['type']):
-            raise ValidationError(f('{name} must be {type_} not {value}.'))
+            raise ArgumentError(f('{name} must be {type_} not {value}.'))
 
         if valid_values:
             exc_msg = f('{name} must be one of: {valid_values}')
             if value not in valid_values:
-                raise ValidationError(exc_msg)
+                raise ArgumentError(exc_msg)
 
         if validator:
             exc_msg = f('{name} failed custom validator: {value}')
             try:
                 if validator(value) is False:
-                    raise ValidationError(exc_msg)
+                    raise ArgumentError(exc_msg)
             except:
-                raise ValidationError(exc_msg)
+                raise ArgumentError(exc_msg)
 
     return True
 

@@ -161,8 +161,10 @@ class Request(object):
         self.pop()
 
     def push(self):
-        _ctx_stack.push(self.ctx)
-        _req_stack.push(self)
+        if _ctx_stack.top is not self.ctx:
+            _ctx_stack.push(self.ctx)
+        if _req_stack.top is not self:
+            _req_stack.push(self)
 
     def pop(self):
         if _req_stack.top is self:
@@ -196,9 +198,13 @@ class Request(object):
         if self._status == status:
             return
 
-        last_status = status
-        self._status = status
-        signals.send('request.status.changed', self, last_status, status)
+        self.push()
+        try:
+            last_status = status
+            self._status = status
+            signals.send('request.status.changed', self, last_status, status)
+        finally:
+            self.pop()
 
     @property
     def enabled(self):

@@ -2,7 +2,7 @@
 from __future__ import absolute_import, division, print_function
 from nose.tools import raises
 from construct import actionparams
-from construct.errors import ValidationError
+from construct.errors import ArgumentError
 
 
 params_0 = dict()
@@ -42,13 +42,13 @@ def test_validate_nada():
     actionparams.validate(params_1)
 
 
-@raises(ValidationError)
+@raises(ArgumentError)
 def test_pass_args_to_empty_params():
     '''Validate kwargs against empty params'''
     actionparams.validate_kwargs(params_0, {'invalid': 'kwargs'})
 
 
-@raises(ValidationError)
+@raises(ArgumentError)
 def test_missing_required():
     '''Validate kwargs with missing required argument'''
     actionparams.validate_kwargs(
