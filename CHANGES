@@ -1,3 +1,7 @@
+0.1.11
+======
+
+- Fixed fsfs was not setup prior to pulling context from env vars
 
 
 0.1.10
