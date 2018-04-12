@@ -54,10 +54,10 @@ def on_action_before(ctx):
 
     print('Status Key')
     key_tmpl = '    {} {:<8}'
-    for status, icon in ICONS.items()[:5]:
+    for status, icon in list(ICONS.items())[:5]:
         print(key_tmpl.format(icon, status), end='')
     print()
-    for status, icon in ICONS.items()[5:]:
+    for status, icon in list(ICONS.items())[5:]:
         print(key_tmpl.format(icon, status), end='')
     print('\n')
 

@@ -1,18 +1,26 @@
+
+
+0.1.10
+======
+
+- *construct push* now goes to the shortest path found
+
+
 0.1.0
 =====
 
- - Include cli in main package
- - Improved Task api
- - Added Exception control flow to ActionRunner
- - Refactored Extensions
- - Added ExtensionCollector and ActionCollector
+- Include cli in main package
+- Improved Task api
+- Added Exception control flow to ActionRunner
+- Refactored Extensions
+- Added ExtensionCollector and ActionCollector
     - Improves flexibility in extension and action discovery
- - Improved api
- - Added contextual config object
+- Improved api
+- Added contextual config object
     - access through construct.config
     - loaded from CONSTRUCT_CONFIG env var
-    - CRO - config resolution order
+    - Config var lookup order
         - ctx.project
         - config
         - defaults
- - Refactor signals module
+- Refactor signals module

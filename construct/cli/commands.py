@@ -126,8 +126,12 @@ class Home(Command):
 
     def run(self, args, *extra_args):
         ctx = construct.get_context()
+
+        if not os.path.exists(ctx.root):
+            os.makedirs(ctx.root)
+
         scrim = get_scrim()
-        scrim.pushd(os.path.abspath(ctx.root))
+        scrim.pushd(ctx.root)
 
 
 @requires_scrim
@@ -187,11 +191,22 @@ class Push(Command):
             direction=args.direction,
             depth=args.depth or (10 if ctx.project else 2),
         )
-        entry = construct.search(**query).one()
 
-        if not entry:
+        # Doesn't always return the best match
+        # entry = construct.search(**query).one()
+
+        # Get a better match, not just the first hit
+        entries = list(construct.search(**query))
+
+        if not entries:
             error('Could not find entry for query...')
             sys.exit(1)
+
+        if len(entries) == 1:
+            entry = entries[0]
+        else:
+            # The shortest entry has to be the closest to our query
+            entry = min(entries, key=lambda e: len(e.path))
 
         path = entry.path
         if args.name:
