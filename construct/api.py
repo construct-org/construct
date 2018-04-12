@@ -86,6 +86,14 @@ def init(root=None, host=None, extension_paths=None, logging=None):
     else:
         _log.debug('Using default config')
 
+    # Setup fsfs entry factory
+    _log.debug('Configuring fsfs...')
+    from construct.models import factory
+    from construct.constants import FSFS_DATA_ROOT, FSFS_DATA_FILE
+    fsfs.set_entry_factory(factory)
+    fsfs.set_data_root(FSFS_DATA_ROOT)
+    fsfs.set_data_file(FSFS_DATA_FILE)
+
     # Setup initial context
     global _context
     _log.debug('Setting initial context...')
@@ -111,14 +119,6 @@ def init(root=None, host=None, extension_paths=None, logging=None):
     # Register builtins
     from construct.builtins import Builtins
     extensions.register(Builtins)
-
-    # Setup fsfs entry factory
-    _log.debug('Configuring fsfs...')
-    from construct.models import factory
-    from construct.constants import FSFS_DATA_ROOT, FSFS_DATA_FILE
-    fsfs.set_entry_factory(factory)
-    fsfs.set_data_root(FSFS_DATA_ROOT)
-    fsfs.set_data_file(FSFS_DATA_FILE)
 
     _log.debug('Initialized!')
     _initialized = True
