@@ -1,0 +1,8 @@
+title: Create a new project
+scenes:
+  - name: go home note
+    action: \# first we'll navigate to our root
+  - name: go home
+    action: construct home
+  - name: new project
+    action: construct new.project --root=my_project
