@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mkdir casts
+mkdir -p casts
 
 for filename in scripts/*.yaml; do
 
@@ -8,5 +8,6 @@ for filename in scripts/*.yaml; do
 
     echo "spielbash --script $filename --output $output $@"
     spielbash --script $filename --output $output "$@"
+    echo
 
 done

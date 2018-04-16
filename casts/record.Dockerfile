@@ -34,10 +34,14 @@ ADD record.sh /src/record.sh
 RUN chmod +x /src/record.sh
 
 
-#Setup data volume
+# Setup data volume
 
 WORKDIR /data
 VOLUME ["/data"]
+
+
+# Set PS1
+RUN echo 'export PS1="\w> "' >> /root/.bashrc
 
 
 ENTRYPOINT ["/src/record.sh"]
