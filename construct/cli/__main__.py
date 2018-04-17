@@ -45,9 +45,19 @@ def on_action_before(ctx):
         print(args_section + '\n')
 
     ctx_keys = ['action'] + ctx.keys
+    ctx_data = []
+    for k in ctx_keys:
+        v = ctx[k]
+        if not v:
+            continue
+        if k in ctx.entry_keys:
+            ctx_data.append((k, v.name))
+        else:
+            ctx_data.append((k, v))
+
     ctx_section = format_section(
         ACTION_CONTEXT_TITLE,
-        data=[(k, v) for k in ctx_keys for v in {ctx[k]} if v],
+        data=ctx_data,
         lcolor=style.bright
     )
     print(ctx_section + '\n')

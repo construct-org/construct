@@ -32,8 +32,8 @@ class TaskLine(Line):
             self.template,
             icon=ICONS[self.status],
             identifier=self.task.identifier + style.reset,
-            description='',
-            sep=''
+            description=self.task.description,
+            sep=' - '
         )
 
     def set_status(self, status):

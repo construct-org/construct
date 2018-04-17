@@ -57,7 +57,7 @@ class NewTask(Action):
         if not ctx:
             return params
 
-        params['type']['options'] = config['TASK_TYPES']
+        params['type']['options'] = list(config['TASK_TYPES'].keys())
 
         if ctx.shot:
             params['parent']['default'] = ctx.shot

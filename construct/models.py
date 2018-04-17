@@ -4,6 +4,7 @@ import getpass
 import datetime
 import fsfs
 from construct.errors import ConfigurationError
+from construct.utils import cached_property
 
 
 factory = fsfs.EntryFactory()
@@ -53,31 +54,17 @@ class Entry(factory.Entry):
         try:
             return self.read('status')
         except KeyError:
-            pass
-
-        try:
-            if 'project' in self.tags:
-                statuses = self.read('statuses')
-            else:
-                project = self.parent('project')
-                statuses = project.read('statuses')
-        except KeyError:
-            raise ConfigurationError(
-                'Project missing key "statuses"'
-            )
-
-        return statuses[0]
+            self.set_status('waiting')
+            return 'waiting'
 
     def set_status(self, status):
         '''Set status of Entry'''
+        from construct import config
+        statuses = config['STATUSES'].keys()
 
-        if 'project' in self.tags:
-            statuses = self.read('statuses')
-        else:
-            project = self.parent('project')
-            statuses = project.read('statuses')
         if status not in statuses:
             raise ValueError('Status must be one of: ' + str(statuses))
+
         self.write(status=status)
 
 
@@ -132,8 +119,35 @@ class Asset(Entry):
     def tasks(self, *tags):
         return self.children('task', *tags)
 
+    @cached_property
+    def type(self):
+        return self.parent('asset_type').name
+
 
 class Task(Entry):
+
+    @cached_property
+    def config(self):
+        from construct import config
+        tasks_cfg = config['TASK_TYPES']
+        if self.name in tasks_cfg:
+            return tasks_cfg[self.name]
+        else:
+            for tag in self.tags:
+                if tag in tasks_cfg:
+                    return tasks_cfg[tag]
+
+    @property
+    def short(self):
+        return self.config['short']
+
+    @property
+    def color(self):
+        return self.config['color']
+
+    @property
+    def icon(self):
+        return self.config['icon']
 
     @property
     def workspaces(self, *tags):
@@ -152,6 +166,23 @@ class Task(Entry):
 
 
 class Workspace(Entry):
+
+    @cached_property
+    def config(self):
+        from construct import config
+
+        software_cfg = config['SOFTWARE']
+        for app_name, app_cfg in config['SOFTWARE'].items():
+            if app_cfg['host'] == self.name:
+                return app_cfg
+            else:
+                for tag in self.tags:
+                    if app_cfg['host'] == tag:
+                        return app_cfg
+
+    @property
+    def icon(self):
+        return self.config['icon']
 
     @property
     def versions(self):

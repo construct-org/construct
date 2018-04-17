@@ -17,7 +17,8 @@ __all__ = [
     'iter_modules',
     'missing',
     'classproperty',
-    'dummy_ctxmanager'
+    'dummy_ctxmanager',
+    'cached_property'
 ]
 
 import inspect
@@ -213,3 +214,19 @@ class classproperty(object):
 @contextmanager
 def dummy_ctxmanager():
     yield None
+
+
+class cached_property(object):
+    '''Like property but replaces the instance method with the result of the
+    first call'''
+
+    def __init__(self, method):
+        self.method = method
+
+    def __get__(self, obj, type):
+        if obj is None:
+            return self
+
+        value = self.method(obj)
+        setattr(obj, self.method.__name__, value)
+        return value

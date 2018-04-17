@@ -25,9 +25,18 @@ def new_formatter(parent, formatter_type):
 
 def format_context():
     ctx = construct.get_context()
+    ctx_data = []
+    for k in ctx.keys:
+        v = ctx[k]
+        if not v:
+            continue
+        if k in ctx.entry_keys:
+            ctx_data.append((k, v.name))
+        else:
+            ctx_data.append((k, v))
     return format_section(
         CONTEXT_TITLE,
-        [(k, ctx[k]) for k in ctx.keys if ctx[k]],
+        ctx_data,
         lcolor=styled('{bright}')
     )
 

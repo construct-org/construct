@@ -22,22 +22,69 @@ LOGGING:
 
 
 STATUSES:
-    - 'waiting'
-    - 'in progress'
-    - 'rendering'
-    - 'pending'
-    - 'rejected'
-    - 'complete'
+    waiting:
+        color: [0.0, 0.0, 0.0]
+        icon: 'default'
+        order: 0
+    in progress:
+        color: [0.5, 0.5, 0.0]
+        icon: 'default'
+        order: 1
+    rendering:
+        color: [0.0, 1.0, 0.0]
+        icon: 'default'
+        order: 2
+    pending:
+        color: [0.5, 0.0, 0.5]
+        icon: 'default'
+        order: 3
+    rejected:
+        color: [1.0, 0.0, 0.0]
+        icon: 'default'
+        order: 4
+    complete:
+        color: [0.0, 0.0, 1.0]
+        icon: 'default'
+        order: 5
 
 
 TASK_TYPES:
-    - model
-    - rig
-    - shade
-    - texture
-    - comp
-    - light
-    - layout
+    model:
+        short: mdl
+        color: [0, 0, 0]
+        icon: 'default'
+    rig:
+        short: rig
+        color: [0, 0, 0]
+        icon: 'default'
+    shade:
+        short: shd
+        color: [0, 0, 0]
+        icon: 'default'
+    texture:
+        short: txt
+        color: [0, 0, 0]
+        icon: 'default'
+    comp:
+        short: comp
+        color: [0, 0, 0]
+        icon: 'default'
+    light:
+        short: lgt
+        color: [0, 0, 0]
+        icon: 'default'
+    layout:
+        short: lo
+        color: [0, 0, 0]
+        icon: 'default'
+    anim:
+        short: anim
+        color: [0, 0, 0]
+        icon: 'default'
+    fx:
+        short: fx
+        color: [0, 0, 0]
+        icon: 'default'
 
 
 PATH_TEMPLATES:
@@ -53,23 +100,6 @@ PATH_TEMPLATES:
 
 
 SOFTWARE:
-    maya2017:
-        host: 'maya'
-        workspace: 'maya'
-        identifier: 'launch.maya2017'
-        description: 'Launch Autodesk Maya2017'
-        default_workspace: 'maya'
-        icon: './icons/maya.png'
-        cmd:
-            win:
-                path: C:/Program Files/Autodesk/Maya2017/bin/maya.exe
-                args: []
-            linux:
-                path: /usr/autodesk/maya2017/bin/maya
-                args: []
-            mac:
-                path: /Applications/Autodesk/maya2017/bin/maya
-                args: []
     maya2018:
         host: 'maya'
         identifier: 'launch.maya2018'
