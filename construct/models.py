@@ -59,6 +59,7 @@ class Entry(factory.Entry):
 
     def set_status(self, status):
         '''Set status of Entry'''
+
         from construct import config
         statuses = config['STATUSES'].keys()
 
