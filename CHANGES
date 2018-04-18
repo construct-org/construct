@@ -1,3 +1,17 @@
+0.1.14
+======
+
+- Adjust availability of new.template, file.* and publish.file
+
+
+0.1.13
+======
+
+- Add more info to STATUSES and TASK_TYPES config vars
+- Fixed mac os mangled some paths causes fsfs search to fail
+  - fixed upstream in fsfs
+
+
 0.1.11
 ======
 

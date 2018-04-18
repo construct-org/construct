@@ -17,5 +17,5 @@ chainmap = "*"
 scrim = "*"
 win_unicode_console = "*"
 colorama = "*"
-"fsfs-0.1.9" = {git = "https://github.com/danbradham/fsfs.git"}
+"fsfs" = {git = "https://github.com/danbradham/fsfs.git"}
 "backports.shutil-get-terminal-size" = "*"
