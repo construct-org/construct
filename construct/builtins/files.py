@@ -38,9 +38,7 @@ class Publish(Action):
 
     @staticmethod
     def available(ctx):
-        if ctx.host == 'cli':
-            return ctx.task
-        return True
+        return ctx.host != 'cli' and ctx.task
 
 
 class PublishFile(Action):
@@ -77,9 +75,7 @@ class PublishFile(Action):
 
     @staticmethod
     def available(ctx):
-        if ctx.host == 'cli':
-            return ctx.task
-        return True
+        return ctx.host == 'cli' and ctx.task
 
 
 class Save(Action):
@@ -116,9 +112,7 @@ class Save(Action):
 
     @staticmethod
     def available(ctx):
-        if ctx.host == 'cli':
-            return ctx.task
-        return True
+        return ctx.host != 'cli' and ctx.task
 
 
 class Open(Action):
@@ -137,12 +131,4 @@ class Open(Action):
 
     @staticmethod
     def available(ctx):
-        if ctx.host == 'cli':
-            # TODO: Create a get_files utility using scandir I reckon
-            #       Should support glob patterns or ext as parameter
-            import os
-            from os.path import join, isfile
-            r = os.getcwd()
-            files = [p for p in os.listdir(r) if isfile(join(r, p))]
-            return files and ctx.project
-        return ctx.project
+        return ctx.host != 'cli' and ctx.task
