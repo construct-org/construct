@@ -59,7 +59,7 @@ class NewTemplate(Action):
 
     @staticmethod
     def available(ctx):
-        return ctx.project and any([
+        return ctx.host == 'cli' and ctx.project and any([
             ctx.shot,
             ctx.asset,
             ctx.task,
