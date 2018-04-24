@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import getpass
 import datetime
 import fsfs
+from scandir import scandir
 from construct.errors import ConfigurationError
 from construct.utils import cached_property
 
@@ -187,17 +188,54 @@ class Workspace(Entry):
 
     @property
     def versions(self):
-        pass
+        import construct
+        path_template = construct.get_path_template('workspace_file')
+        versions = []
+        for f in scandir(self.path):
+            try:
+                data = path_template.parse(f)
+            except:
+                continue
+            versions.append(data)
+        return versions
+
+    def get_next_version(self, name, ext):
+        task = self.parent('task')
+        versions = []
 
     def get_latest_version(self):
         pass
 
-    @property
-    def publishes(self):
-        pass
+    def new_version(self, user, name, version, file_type, file):
+        relative_path = os.path.relpath(file, self.path)
+        version = Version(
+            user=user,
+            file_type=file_type,
+            file=relative_path,
+            name=name,
+            version=version,
+        )
+        data = self.read()
+        data.setdefault('versions', [])
+        data['versions'].append(version)
+        self.write(**data)
 
-    def get_latest_publish(self):
-        pass
+
+class EmbeddedModel(dict):
+
+    __fields__ = []
+
+    def __init__(self, *args, **kwargs):
+        super(Version, self).__init__(*args, **kwargs)
+        self.__dict__ = self
+        for field in self.__fields__:
+            if field not in self:
+                raise ValueError('Missing keyword argument: %s' % field)
+
+
+class Version(EmbeddedModel):
+
+    __field__ = ['user', 'name', 'version', 'file_type', 'file']
 
 
 def is_entry(obj):

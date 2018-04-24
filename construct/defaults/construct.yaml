@@ -93,10 +93,10 @@ PATH_TEMPLATES:
     sequence: '{project}/sequences/{sequence}'
     shot: '{project}/sequences/{sequence}/{shot}'
     task: '{parent}/{task}'
-    publish: '{task}/publish/{file_type}/{task}_{name}/v{:0>3d}'
-    publish_file: '{task}_{name}_v{:0>3d}.{ext}'
+    publish: '{task}/publish/{file_type}/{task}_{name}/v{version}'
+    publish_file: '{task}_{name}_v{version}.{ext}'
     workspace: '{task}/work/{workspace}'
-    workspace_file: '{task}_{name}_v{:0>3d}.{ext}'
+    workspace_file: '{task}_{name}_v{version}.{ext}'
 
 
 SOFTWARE:
@@ -156,13 +156,22 @@ SOFTWARE:
 FILE_TYPES:
     alembic:
         extensions: ['.abc']
+        icon: 'default'
     maya:
         extensions: ['.ma', '.mb']
+        icon: 'default'
     nuke:
         extensions: ['.nk']
+        icon: 'default'
     c4d:
         extensions: ['.c4d']
+        icon: 'default'
     photoshop:
         extensions: ['.psd', '.psb']
+        icon: 'default'
     illustrator:
         extensions: ['.ai']
+        icon: 'default'
+    sequence:
+        extensions: ['.png', '.tif', '.exr', '.dpx']
+        icon: 'default'
