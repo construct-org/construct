@@ -52,6 +52,7 @@ class Extension(ABC):
         self._actions = {}
         self._tasks = defaultdict(list)
         self._template_paths = []
+        self._forms = {}
 
     def _available(self, ctx=missing):
         if ctx is not missing:
@@ -93,6 +94,19 @@ class Extension(ABC):
 
     def get_template_paths(self):
         return list(self._template_paths)
+
+    def add_form(self, action_identifier, form):
+        identifier = get_action_identifier(action_or_identifier)
+        self._forms[identifier] = form
+
+    def remove_form(self, action_identifier, form):
+        identifier = get_action_identifier(action_or_identifier)
+        if self._forms[identifier] == form:
+            self._forms.pop(identifier)
+
+    def get_form(self, action_identifier):
+        identifier = get_action_identifier(action_or_identifier)
+        return self._forms.get(identifier, None)
 
     def add_action(self, action):
         '''Add an action to this extension'''
