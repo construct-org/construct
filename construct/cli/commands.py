@@ -273,12 +273,9 @@ class Search(Command):
             direction=args.direction,
             depth=args.depth or (3 if ctx.project else 2),
         )
-        entries = list(construct.search(**query))
+        entries = construct.search(**query)
 
-        if not entries:
-            print(('Found 0 result.'))
-            sys.exit(1)
-
+        i = 0
         for i, entry in enumerate(entries):
             path = entry.path
             if args.name:
@@ -287,6 +284,9 @@ class Search(Command):
                     highlight = styled('{bright}{fg.yellow}{}{reset}', part)
                     path = path.replace(part, highlight)
             print(path)
+
+        if i == 0:
+            print(('Found 0 result.'))
 
 
 class Read(Command):
