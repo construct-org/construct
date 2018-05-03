@@ -7,6 +7,8 @@ import logging
 from pkg_resources import iter_entry_points
 from collections import defaultdict
 from fnmatch import fnmatch
+from functools import wraps
+
 from construct.constants import EXTENSIONS_ENTRY_POINT
 from construct.types import ABC
 from construct.utils import iter_modules, ensure_type, missing, unipath
@@ -95,16 +97,16 @@ class Extension(ABC):
     def get_template_paths(self):
         return list(self._template_paths)
 
-    def add_form(self, action_identifier, form):
+    def add_form(self, action_or_identifier, form):
         identifier = get_action_identifier(action_or_identifier)
         self._forms[identifier] = form
 
-    def remove_form(self, action_identifier, form):
+    def remove_form(self, action_or_identifier, form):
         identifier = get_action_identifier(action_or_identifier)
         if self._forms[identifier] == form:
             self._forms.pop(identifier)
 
-    def get_form(self, action_identifier):
+    def get_form(self, action_or_identifier):
         identifier = get_action_identifier(action_or_identifier)
         return self._forms.get(identifier, None)
 
@@ -166,6 +168,60 @@ class Extension(ABC):
         return [t for t in all_tasks if t.available(ctx)]
 
 
+class HostExtension(Extension):
+
+    name = 'Nice Name'
+    host_name = 'name'
+
+    def save_file(file):
+        '''Save a file'''
+        return NotImplemented
+
+    def open_file(file):
+        '''Open a file'''
+        return NotImplemented
+
+    def get_selection():
+        '''Get the host's current selection'''
+        return NotImplemented
+
+    def set_selection(selection):
+        '''Set the host's current selection'''
+        return NotImplemented
+
+    def get_workspace():
+        '''Get the host's workspace'''
+        return NotImplemented
+
+    def set_workspace(directory):
+        '''Set the host's workspace'''
+        return NotImplemented
+
+    def get_filepath():
+        '''Get the path to the host's current file'''
+        return NotImplemented
+
+    def get_filename():
+        '''Get the name of the host's current file'''
+        return NotImplemented
+
+    def get_frame_range():
+        '''Get the frame range of the host'''
+        return NotImplemented
+
+    def set_frame_range(start_frame, end_frame):
+        '''Set the frame range the host'''
+        return NotImplemented
+
+    def get_qt_parent(widget_cls=None):
+        '''Get the host's main QT widget'''
+        return NotImplemented
+
+    def get_qt_loop(self):
+        from Qt import QtWidgets
+        return QtWidgets.QApplication.instance()
+
+
 class ExtensionCollector(object):
     '''Handles Extension discovery and registration. Also allows looking
     up extensions via attribute access.'''
@@ -200,14 +256,21 @@ class ExtensionCollector(object):
             raise RuntimeError('Not an extension: %s' % extension)
 
         if extension.name in _extensions:
-            _log.debug('Extension already loaded: %s', extension)
+            _log.debug('Extension already loaded: %s' % extension)
             return
 
-        _log.debug('Registered extension: %s', extension)
-        instance = extension()
-        instance._load()
+        try:
+            instance = extension()
+            instance._load()
+        except Exception as e:
+            _log.error(
+                'Failed to load extension: %s: %s' % (extension, e.message)
+            )
+            return
+
         self.by_name[extension.name] = instance
         self.by_attr[extension.attr_name] = instance
+        _log.debug('Registered extension: %s', extension)
 
     def unregister(self, extension):
         '''Unregister an extension'''
@@ -268,9 +331,12 @@ class ExtensionCollector(object):
                 self.register(extension)
 
 
+EXTENSION_TYPES = [Extension, HostExtension]
+
+
 def is_extension_type(obj):
     return (
-        obj is not Extension and
+        obj not in EXTENSION_TYPES and
         isinstance(obj, type) and
         issubclass(obj, Extension)
     )

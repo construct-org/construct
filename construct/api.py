@@ -10,7 +10,7 @@ import yaml
 from construct.vendor import lucidity
 from construct.context import _ctx_stack, _req_stack, Context
 from construct.config import Config
-from construct.extension import ExtensionCollector, Extension
+from construct.extension import ExtensionCollector, Extension, HostExtension
 from construct.action import Action, ActionCollector, ActionProxy
 from construct.constants import DEFAULT_LOGGING
 from construct.actioncontext import ActionContext
@@ -24,6 +24,7 @@ __all__ = [
     'Config',
     'extensions',
     'Extension',
+    'HostExtension',
     'actions',
     'Action',
     'ActionContext',
@@ -41,6 +42,8 @@ __all__ = [
     'get_template_search_paths',
     'get_templates',
     'get_template',
+    'get_host',
+    'get_form',
     'new_project',
     'new_sequence',
     'new_shot',
@@ -189,6 +192,25 @@ def get_request():
     '''Get current task :class:`Request`'''
 
     return _req_stack.top
+
+
+@log_call
+def get_host(name=None):
+    '''Get current host extension or get host by name'''
+
+    ctx = get_context()
+    host = name or ctx.host
+    return extensions[host]
+
+
+@log_call
+def get_form(action_identifier):
+    '''Get form for action_identifier'''
+
+    for ext in extensions:
+        form = ext.get_form(action_identifier)
+        if form:
+            return form
 
 
 @log_call
