@@ -172,13 +172,13 @@ def isolated_imports(path=None):
 
         sys.path[:] = old_path
 
-        for k, v in sys.modules.items():
+        for k, v in list(sys.modules.items()):
             if k in old_modules:
                 sys.modules[k] = old_modules[k]
             else:
                 del(sys.modules[k])
 
-        for k, v in sys.path_importer_cache.items():
+        for k, v in list(sys.path_importer_cache.items()):
             if k in old_path_cache:
                 sys.path_importer_cache[k] = old_path_cache[k]
             else:
