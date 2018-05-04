@@ -31,10 +31,12 @@ def test_discover_multiple_paths():
     assert 'ExtensionC' in exts
 
 
-@raises(RuntimeError)
-def test_construct_discover_exc():
-    '''Discover Extension that raises exception'''
+# Behavior was changed
+# Extensions that raise extensions on load are now logged
+# @raises(RuntimeError)
+# def test_construct_discover_exc():
+#     '''Discover Extension that raises exception'''
 
-    construct.extensions.discover(
-        data_path('extpath4_wexc')
-    )
+#     construct.extensions.discover(
+#         data_path('extpath4_wexc')
+#     )
