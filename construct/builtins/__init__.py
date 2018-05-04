@@ -67,7 +67,10 @@ class Builtins(Extension):
         self.add_task(templates.NewTemplate, templates.validate_template)
         self.add_task(templates.NewTemplate, templates.commit_template)
 
-        self.add_action(files.Save)
         self.add_action(files.Publish)
         self.add_action(files.PublishFile)
+
         self.add_action(files.Open)
+        self.add_task(files.Open, files.open_file)
+
+        self.add_action(files.Save)

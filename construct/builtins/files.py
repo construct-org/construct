@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from construct.action import Action
-from construct.tasks import artifact
-from construct import types
+from construct.tasks import (
+    task,
+    pass_kwargs,
+    returns,
+    artifact,
+    store,
+    params,
+    success,
+    requires
+)
+from construct import types, get_host
 
 
 class Publish(Action):
@@ -141,3 +150,12 @@ class Open(Action):
     @staticmethod
     def available(ctx):
         return ctx.host != 'cli' and ctx.task
+
+
+@task
+@pass_kwargs
+def open_file(file):
+    '''Open file in Host application'''
+
+    host = get_host()
+    host.open_file(file)

@@ -331,16 +331,16 @@ class ExtensionCollector(object):
                 self.register(extension)
 
 
-EXTENSION_TYPES = [Extension, HostExtension]
+EXTENSION_TYPES = (Extension, HostExtension)
 
 
 def is_extension_type(obj):
     return (
         obj not in EXTENSION_TYPES and
         isinstance(obj, type) and
-        issubclass(obj, Extension)
+        issubclass(obj, EXTENSION_TYPES)
     )
 
 
 def is_extension(obj):
-    return isinstance(obj, Extension)
+    return isinstance(obj, EXTENSION_TYPES)
