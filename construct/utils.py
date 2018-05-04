@@ -13,6 +13,7 @@ __all__ = [
     'update_dict',
     'unipath',
     'package_path',
+    'isolated_imports',
     'import_file',
     'iter_modules',
     'missing',
@@ -154,20 +155,49 @@ def update_dict(d, u):
 
 
 @contextmanager
-def temp_syspath(path, *old_module_names):
+def isolated_imports(path=None):
+    '''Contextmanager that isolates all import'''
 
-    old_modules = [(n, sys.modules.pop(n, None)) for n in old_module_names]
+    old_path_cache = {k: v for k, v in sys.path_importer_cache.items()}
+    old_modules = {k: v for k, v in sys.modules.items()}
     old_path = sys.path[:]
-    sys.path.insert(0, path)
+
     try:
+
+        if path:
+            sys.path.insert(0, path)
         yield
+
     finally:
+
         sys.path[:] = old_path
-        for k, v in old_modules:
-            sys.modules[k] = v
+
+        for k, v in sys.modules.items():
+            if k in old_modules:
+                sys.modules[k] = old_modules[k]
+            else:
+                del(sys.modules[k])
+
+        for k, v in sys.path_importer_cache.items():
+            if k in old_path_cache:
+                sys.path_importer_cache[k] = old_path_cache[k]
+            else:
+                del(sys.path_importer_cache[k])
 
 
-def import_file(path):
+def unload_modules(*names):
+    '''Removes mouldes and their children from sys.modules
+
+    This is intended for use within the isolated_imports contextmanager.
+    '''
+
+    for name in names:
+        for k, v in sys.modules.items():
+            if k.startswith(name):
+                del(sys.modules[k])
+
+
+def import_file(path, remove=True):
     '''Import python module by absolute path. The imported module is removed
     from sys.modules before being returned. This means the same module
     imported using import_file multiple times will return different module
@@ -178,9 +208,9 @@ def import_file(path):
     root, basename = os.path.split(path)
     name, _ = os.path.splitext(basename)
 
-    with temp_syspath(root, name):
+    with isolated_imports(root):
+        unload_modules(name)
         mod = __import__(name, globals(), locals(), [])
-        sys.modules.pop(name)
 
     return mod
 

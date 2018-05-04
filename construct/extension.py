@@ -4,15 +4,15 @@ import abc
 import os
 import inspect
 import logging
-from pkg_resources import iter_entry_points
 from collections import defaultdict
 from fnmatch import fnmatch
-from functools import wraps
 
 from construct.constants import EXTENSIONS_ENTRY_POINT
 from construct.types import ABC
 from construct.utils import iter_modules, ensure_type, missing, unipath
 from construct.action import get_action_identifier, Action
+from construct.compat import pkg_resources
+pkg_resources = pkg_resources()
 
 
 _extensions = {}
@@ -314,7 +314,8 @@ class ExtensionCollector(object):
 
         search_paths = list(paths)
 
-        for entry_point in iter_entry_points(EXTENSIONS_ENTRY_POINT):
+        entry_points = pkg_resources.iter_entry_points(EXTENSIONS_ENTRY_POINT)
+        for entry_point in entry_points:
             obj = entry_point.load()
             for _, extension in inspect.getmembers(obj, is_extension_type):
                 self.register(extension)
