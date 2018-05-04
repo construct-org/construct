@@ -263,7 +263,7 @@ class ExtensionCollector(object):
             instance = extension()
             instance._load()
         except Exception as e:
-            _log.error(
+            _log.debug(
                 'Failed to load extension: %s: %s' % (extension, e.message)
             )
             return
