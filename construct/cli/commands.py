@@ -202,7 +202,7 @@ class Push(Command):
             entries = list(construct.search(**query))
 
             if not entries:
-                error('Could not find entry for query...')
+                error('Could not find entry...')
                 sys.exit(1)
 
             if len(entries) == 1:
@@ -210,6 +210,9 @@ class Push(Command):
             else:
                 # The shortest entry has to be the closest to our query
                 entry = min(entries, key=lambda e: len(e.path))
+
+        if not entry:
+            error('Could not find entry...')
 
         path = entry.path
         if args.name:

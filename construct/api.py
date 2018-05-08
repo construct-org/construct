@@ -319,7 +319,11 @@ def quick_select(selector, **kwargs):
         else:
             root = ctx.root or os.getcwd()
 
-    return fsfs.quick_select(root, selector)
+    first_depth = 5 if ctx.project else 2
+    if ctx.project:
+        first_depth = 4
+
+    return fsfs.quick_select(root, selector, first_depth=first_depth)
 
 
 # Builtin Action Aliases
