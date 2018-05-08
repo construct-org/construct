@@ -136,7 +136,7 @@ class Template(object):
                 if self.duplicate_placeholder_mode == self.STRICT:
                     if key in parsed:
                         if parsed[key] != value:
-                            raise lucidity.error.ParseError(
+                            raise error.ParseError(
                                 'Different extracted values for placeholder '
                                 '{0!r} detected. Values were {1!r} and {2!r}.'
                                 .format(key, parsed[key], value)
@@ -156,7 +156,7 @@ class Template(object):
             return data
 
         else:
-            raise lucidity.error.ParseError(
+            raise error.ParseError(
                 'Path {0!r} did not match template pattern.'.format(path)
             )
 
@@ -188,7 +188,7 @@ class Template(object):
                 value = value[part]
 
         except (TypeError, KeyError):
-            raise lucidity.error.FormatError(
+            raise error.FormatError(
                 'Could not format data {0!r} due to missing key {1!r}.'
                 .format(data, placeholder)
             )
