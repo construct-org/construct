@@ -192,16 +192,15 @@ class Workspace(Entry):
         path_template = construct.get_path_template('workspace_file')
         versions = []
         for f in scandir(self.path):
-            try:
-                data = path_template.parse(f)
-            except:
-                continue
+            data = path_template.parse(f)
             versions.append(data)
         return versions
 
     def get_next_version(self, name, ext):
         task = self.parent('task')
-        versions = []
+        version = 1000
+        for v in self.versions:
+            pass
 
     def get_latest_version(self):
         pass

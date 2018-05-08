@@ -94,15 +94,15 @@ PATH_TEMPLATES:
     shot: '{project}/sequences/{sequence}/{shot}'
     task: '{parent}/{task}'
     publish: '{task}/publish/{file_type}/{task}_{name}/v{version}'
-    publish_file: '{task}_{name}_v{version}.{ext}'
+    publish_file: '{task}_{name}_v{version}{ext}'
     workspace: '{task}/work/{workspace}'
-    workspace_file: '{task}_{name}_v{version}.{ext}'
+    workspace_file: '{task}_{name}_v{version}{ext}'
 
 
 SOFTWARE:
     maya2018:
         host: 'maya'
-        identifier: 'launch.maya2018'
+        identifier: 'launch.maya'
         description: 'Launch Autodesk Maya2018'
         default_workspace: 'maya'
         icon: './icons/maya.png'
@@ -117,26 +117,26 @@ SOFTWARE:
             mac:
                 path: /Applications/Autodesk/maya2018/bin/maya
                 args: []
-    nuke11.1v2:
+    nuke11.1v3:
         host: 'nuke'
-        identifier: 'launch.nuke11.1v2'
-        description: 'Launch The Foundry Nuke11.1v2'
+        identifier: 'launch.nuke'
+        description: 'Launch The Foundry Nuke11.1v3'
         default_workspace: 'nuke'
         icon: './icons/nuke.png'
         extensions: ['.nk']
         cmd:
             win:
-                path: C:/Program Files/Nuke11.1v2/Nuke11.1.exe
+                path: C:/Program Files/Nuke11.1v3/Nuke11.1.exe
                 args: []
             linux:
-                path: /usr/local/Nuke11.1v2/Nuke11.1
+                path: /usr/local/Nuke11.1v3/Nuke11.1
                 args: []
             mac:
-                path: /Applications/Nuke11.1v2/Nuke11.1v2.app/Nuke11.1
+                path: /Applications/Nuke11.1v3/Nuke11.1v3.app/Nuke11.1
                 args: []
-    sublime:
+    sublime3:
         host: 'sublime'
-        identifier: 'launch.sublimetext'
+        identifier: 'launch.sublime'
         description: 'Launch Sublimt Text 3'
         default_workspace: null
         icon: './icons/sublime.png'

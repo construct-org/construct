@@ -37,6 +37,7 @@ __all__ = [
     'get_context',
     'get_request',
     'search',
+    'quick_select',
     'get_path_template',
     'get_path_templates',
     'get_template_search_paths',
@@ -302,6 +303,23 @@ def search(name=None, tags=None, **kwargs):
         tags = fsfs.util.tupilize(tags)
         entries = entries.tags(*tags)
     return entries
+
+
+@log_call
+def quick_select(selector, **kwargs):
+    '''Quickly find one Entry using a selector string like entry1/entry2'''
+
+    ctx = get_context()
+    root = kwargs.pop('root', None)
+
+    if root is None:
+        entry = ctx.get_deepest_entry()
+        if entry:
+            root = entry.path
+        else:
+            root = ctx.root or os.getcwd()
+
+    return fsfs.quick_select(root, selector)
 
 
 # Builtin Action Aliases

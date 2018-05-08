@@ -184,30 +184,32 @@ class Push(Command):
         )
 
     def run(self, args, *extra_args):
+        import fsfs
+
         ctx = construct.get_context()
-        query = dict(
-            root=args.root,
-            name=args.name,
-            tags=args.tags,
-            direction=args.direction,
-            depth=args.depth or (3 if ctx.project else 2),
-        )
 
-        # Doesn't always return the best match
-        # entry = construct.search(**query).one()
-
-        # Get a better match, not just the first hit
-        entries = list(construct.search(**query))
-
-        if not entries:
-            error('Could not find entry for query...')
-            sys.exit(1)
-
-        if len(entries) == 1:
-            entry = entries[0]
+        if fsfs.DEFAULT_SELECTOR_SEP in args.name and not args.tags:
+            entry = construct.quick_select(args.name, root=args.root)
         else:
-            # The shortest entry has to be the closest to our query
-            entry = min(entries, key=lambda e: len(e.path))
+            query = dict(
+                root=args.root,
+                name=args.name,
+                tags=args.tags,
+                direction=args.direction,
+                depth=args.depth or (3 if ctx.project else 2),
+            )
+            # Get a better match, not just the first hit
+            entries = list(construct.search(**query))
+
+            if not entries:
+                error('Could not find entry for query...')
+                sys.exit(1)
+
+            if len(entries) == 1:
+                entry = entries[0]
+            else:
+                # The shortest entry has to be the closest to our query
+                entry = min(entries, key=lambda e: len(e.path))
 
         path = entry.path
         if args.name:

@@ -117,6 +117,12 @@ class Save(Action):
                 'required': True,
                 'type': types.Integer,
                 'help': 'File Version'
+            },
+            extension={
+                'label': 'Extension',
+                'require': True,
+                'type': types.String,
+                'help': 'File Extension'
             }
         )
 
@@ -126,11 +132,33 @@ class Save(Action):
         params['workspace']['default'] = ctx.workspace
         params['name']['default'] = ctx.task.parent().name
         params['version']['default'] = 1
+
+        extensions = ctx.workspace.config['extensions']
+        params['extension']['default'] = extensions[0]
+        params['extension']['options'] = extensions
+        params['extension']['required'] = False
         return params
 
     @staticmethod
     def available(ctx):
         return ctx.host != 'cli' and ctx.workspace
+
+@task
+@pass_kwargs
+@returns(store('file'))
+def build_filename(workspace, name, version, extension):
+    '''Builds the full save path'''
+    pass
+
+
+@task
+@requires(success('build_filepath'))
+@params(store('file'))
+def save_file(file):
+    '''Save file in Host application'''
+
+    host = get_host()
+    host.save_file(file)
 
 
 class Open(Action):
