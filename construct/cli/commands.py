@@ -189,7 +189,12 @@ class Push(Command):
         ctx = construct.get_context()
 
         if fsfs.DEFAULT_SELECTOR_SEP in args.name and not args.tags:
-            entry = construct.quick_select(args.name, root=args.root)
+            query = dict(
+                selector=args.name,
+                root=args.root,
+                skip_root=True
+            )
+            entry = construct.quick_select(**query)
         else:
             query = dict(
                 root=args.root,
@@ -197,6 +202,7 @@ class Push(Command):
                 tags=args.tags,
                 direction=args.direction,
                 depth=args.depth or (3 if ctx.project else 2),
+                skip_root=True
             )
             # Get a better match, not just the first hit
             entries = list(construct.search(**query))
@@ -213,6 +219,7 @@ class Push(Command):
 
         if not entry:
             error('Could not find entry...')
+            sys.exit(1)
 
         path = entry.path
         if args.name:

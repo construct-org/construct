@@ -319,7 +319,7 @@ def quick_select(selector, **kwargs):
         else:
             root = ctx.root or os.getcwd()
 
-    first_depth = 5 if ctx.project else 2
+    first_depth = 5 if ctx.project else 3
     if ctx.project:
         first_depth = 4
 
