@@ -11,7 +11,8 @@ from construct.tasks import (
     success,
     requires
 )
-from construct import types, get_host
+from construct import types, get_host, utils, get_path_template
+from construct.vendor.lucidity.error import ParseError
 
 
 class Publish(Action):
@@ -118,7 +119,7 @@ class Save(Action):
                 'type': types.Integer,
                 'help': 'File Version'
             },
-            extension={
+            ext={
                 'label': 'Extension',
                 'require': True,
                 'type': types.String,
@@ -130,29 +131,50 @@ class Save(Action):
             return params
 
         params['workspace']['default'] = ctx.workspace
-        params['name']['default'] = ctx.task.parent().name
-        params['version']['default'] = 1
+        name = ctx.task.parent().name
+        if ctx.file:
+            path_template = get_path_template('workspace_file')
+            try:
+                data = path_template.parse(ctx.file)
+            except ParseError:
+                pass
+            else:
+                name = data['name']
+
+        params['name']['default'] = name
 
         extensions = ctx.workspace.config['extensions']
-        params['extension']['default'] = extensions[0]
-        params['extension']['options'] = extensions
-        params['extension']['required'] = False
+        params['ext']['default'] = extensions[0]
+        params['ext']['options'] = extensions
+        params['ext']['required'] = False
+        next_version = ctx.workspace.get_next_version(name, extensions[0])
+        params['version']['default'] = next_version
+        params['version']['required'] = False
         return params
 
     @staticmethod
     def available(ctx):
         return ctx.host != 'cli' and ctx.workspace
 
+
 @task
 @pass_kwargs
 @returns(store('file'))
-def build_filename(workspace, name, version, extension):
+def build_filename(workspace, name, version, ext):
     '''Builds the full save path'''
-    pass
+
+    task = workspace.parent('task')
+    path_template = get_path_template('workspace_file')
+    return path_template.format(dict(
+        task=task.short,
+        name=name,
+        version='{:0>3d}'.format(version),
+        ext=ext
+    ))
 
 
 @task
-@requires(success('build_filepath'))
+@requires(success('build_filename'))
 @params(store('file'))
 def save_file(file):
     '''Save file in Host application'''

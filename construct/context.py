@@ -13,7 +13,8 @@ from getpass import getuser
 from collections import Mapping
 from werkzeug.local import LocalStack
 from construct.constants import DEFAULT_ROOT, DEFAULT_HOST
-from construct.utils import platform
+from construct.utils import platform, unipath
+from construct.models import is_entry
 
 
 _ctx_stack = LocalStack()
@@ -33,7 +34,8 @@ class Context(object):
         'asset',
         'task',
         'workspace',
-        'platform'
+        'platform',
+        'file'
     ]
     entry_keys = [
         'project',
@@ -42,7 +44,8 @@ class Context(object):
         'asset_type',
         'asset',
         'task',
-        'workspace'
+        'workspace',
+        'file'
     ]
     defaults = {k: None for k in keys}
     defaults['platform'] = platform
@@ -84,7 +87,7 @@ class Context(object):
     def get_deepest_entry(self):
         for key in reversed(self.entry_keys):
             entry = self.__dict__.get(key, None)
-            if entry:
+            if entry and is_entry(entry):
                 return entry
 
     def update(self, other, exclude=['host']):
@@ -151,6 +154,7 @@ class Context(object):
         ctx = Context.from_env()
 
         if os.path.isfile(path):
+            ctx.file = unipath(path)
             path = os.path.dirname(path)
 
         for entry in fsfs.search(path, direction=fsfs.UP):

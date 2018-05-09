@@ -4,6 +4,7 @@ import getpass
 import datetime
 import fsfs
 from scandir import scandir
+from construct.vendor.lucidity.error import ParseError
 from construct.errors import ConfigurationError
 from construct.utils import cached_property
 
@@ -186,24 +187,36 @@ class Workspace(Entry):
     def icon(self):
         return self.config['icon']
 
-    @property
-    def versions(self):
+    def get_work_files(self):
         import construct
         path_template = construct.get_path_template('workspace_file')
-        versions = []
+        versions = {}
         for f in scandir(self.path):
-            data = path_template.parse(f)
-            versions.append(data)
+            try:
+                data = path_template.parse(f.name)
+                data['version'] = int(data['version'])
+            except ParseError:
+                continue
+            versions[f.name] = data
         return versions
 
     def get_next_version(self, name, ext):
-        task = self.parent('task')
-        version = 1000
-        for v in self.versions:
-            pass
+        import construct
+        path_template = construct.get_path_template('workspace_file')
+        task = self.parent('task').short
+        versions = self.get_work_files()
+        version = 0
 
-    def get_latest_version(self):
-        pass
+        for data in versions.values():
+            is_match = (
+                data['name'] == name and
+                data['task'] == task and
+                data['ext'] == ext
+            )
+            if is_match:
+                version = max(version, data['version'])
+
+        return version + 1
 
     def new_version(self, user, name, version, file_type, file):
         relative_path = os.path.relpath(file, self.path)

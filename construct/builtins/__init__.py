@@ -74,3 +74,5 @@ class Builtins(Extension):
         self.add_task(files.Open, files.open_file)
 
         self.add_action(files.Save)
+        self.add_task(files.Save, files.build_filename)
+        self.add_task(files.Save, files.save_file)
