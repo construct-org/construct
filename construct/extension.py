@@ -173,51 +173,55 @@ class HostExtension(Extension):
     name = 'Nice Name'
     host_name = 'name'
 
-    def save_file(file):
+    def modified(self):
+        '''Check if current file is modified'''
+        return NotImplemented
+
+    def save_file(self, file):
         '''Save a file'''
         return NotImplemented
 
-    def open_file(file):
+    def open_file(self, file):
         '''Open a file'''
         return NotImplemented
 
-    def get_selection():
+    def get_selection(self):
         '''Get the host's current selection'''
         return NotImplemented
 
-    def set_selection(selection):
+    def set_selection(self, selection):
         '''Set the host's current selection'''
         return NotImplemented
 
-    def get_workspace():
+    def get_workspace(self):
         '''Get the host's workspace'''
         return NotImplemented
 
-    def set_workspace(directory):
+    def set_workspace(self, directory):
         '''Set the host's workspace'''
         return NotImplemented
 
-    def get_filepath():
+    def get_filepath(self):
         '''Get the path to the host's current file'''
         return NotImplemented
 
-    def get_filename():
+    def get_filename(self):
         '''Get the name of the host's current file'''
         return NotImplemented
 
-    def get_frame_range():
+    def get_frame_range(self):
         '''Get the frame range of the host'''
         return NotImplemented
 
-    def set_frame_range(start_frame, end_frame):
+    def set_frame_range(self, start_frame, end_frame):
         '''Set the frame range the host'''
         return NotImplemented
 
-    def get_qt_parent(widget_cls=None):
+    def get_qt_parent(self):
         '''Get the host's main QT widget'''
         return NotImplemented
 
-    def get_qt_loop(self):
+    def get_qt_app(self):
         from Qt import QtWidgets
         return QtWidgets.QApplication.instance()
 

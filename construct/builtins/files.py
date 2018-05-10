@@ -165,12 +165,13 @@ def build_filename(workspace, name, version, ext):
 
     task = workspace.parent('task')
     path_template = get_path_template('workspace_file')
-    return path_template.format(dict(
+    filename = path_template.format(dict(
         task=task.short,
         name=name,
         version='{:0>3d}'.format(version),
         ext=ext
     ))
+    return utils.unipath(workspace.path, filename)
 
 
 @task
