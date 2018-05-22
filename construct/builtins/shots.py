@@ -34,6 +34,12 @@ class NewShot(Action):
                 'required': True,
                 'type': types.Entry,
             },
+            collection={
+                'label': 'Collection',
+                'help': 'Collection Name',
+                'required': True,
+                'type': types.String
+            },
             sequence={
                 'label': 'Sequence',
                 'required': True,
@@ -61,6 +67,13 @@ class NewShot(Action):
             params['project']['default'] = ctx.project
             params['project']['required'] = False
 
+            collection_types = [e.name for e in ctx.project.collections]
+            params['collection']['options'] = collection_types
+
+        if ctx.collection:
+            params['collection']['default'] = ctx.collection.name
+            params['collection']['required'] = False
+
         if ctx.sequence:
             params['sequence']['default'] = ctx.sequence
             params['sequence']['required'] = False
@@ -68,7 +81,7 @@ class NewShot(Action):
         templates = list(api.get_templates('shot').keys())
         if templates:
             params['template']['options'] = templates
-            params['template']['default'] = templates[0]
+            params['template']['default'] = sorted(templates)[0]
 
         return params
 
@@ -76,8 +89,8 @@ class NewShot(Action):
     def available(ctx):
         return (
             ctx.project and
+            ctx.collection and
             ctx.sequence and
-            not ctx.asset and
             not ctx.shot
         )
 
@@ -85,11 +98,12 @@ class NewShot(Action):
 @task(priority=types.STAGE)
 @pass_kwargs
 @returns(store('shot_item'))
-def stage_shot(project, sequence, name, template=None):
+def stage_shot(project, collection, sequence, name, template=None):
 
     path_template = api.get_path_template('shot')
     shot_path = path_template.format(dict(
         project=project.path,
+        collection=collection,
         sequence=sequence.name,
         shot=name
     ))

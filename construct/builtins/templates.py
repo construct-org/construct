@@ -59,12 +59,7 @@ class NewTemplate(Action):
 
     @staticmethod
     def available(ctx):
-        return ctx.host == 'cli' and ctx.project and any([
-            ctx.shot,
-            ctx.asset,
-            ctx.task,
-            ctx.workspace
-        ])
+        return False
 
 
 @task(priority=types.STAGE)

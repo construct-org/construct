@@ -34,6 +34,12 @@ class NewSequence(Action):
                 'required': True,
                 'type': types.Entry,
             },
+            collection={
+                'label': 'Collection',
+                'help': 'Collection Name',
+                'required': True,
+                'type': types.String
+            },
             name={
                 'label': 'Sequence Name',
                 'required': True,
@@ -55,6 +61,13 @@ class NewSequence(Action):
             params['project']['default'] = ctx.project
             params['project']['required'] = False
 
+            collection_types = [e.name for e in ctx.project.collections]
+            params['collection']['options'] = collection_types
+
+        if ctx.collection:
+            params['collection']['default'] = ctx.collection.name
+            params['collection']['required'] = False
+
         templates = list(api.get_templates('sequence').keys())
         if templates:
             params['template']['default'] = templates[0]
@@ -66,20 +79,20 @@ class NewSequence(Action):
     def available(ctx):
         return (
             ctx.project and
-            not ctx.sequence and
-            not ctx.shot and
-            not ctx.asset
+            ctx.collection and
+            not ctx.sequence
         )
 
 
 @task(priority=types.STAGE)
 @pass_kwargs
 @returns(store('sequence_item'))
-def stage_sequence(project, name, template=None):
+def stage_sequence(project, collection, name, template=None):
 
     path_template = api.get_path_template('sequence')
     sequence_path = path_template.format(dict(
         project=project.path,
+        collection=collection,
         sequence=name
     ))
 

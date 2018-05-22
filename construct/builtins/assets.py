@@ -34,6 +34,12 @@ class NewAssetType(Action):
                 'required': True,
                 'type': types.Entry,
             },
+            collection={
+                'label': 'Collection',
+                'help': 'Collection Name',
+                'required': True,
+                'type': types.String
+            },
             name={
                 'label': 'Asset Type Name',
                 'required': True,
@@ -49,28 +55,32 @@ class NewAssetType(Action):
             params['project']['default'] = ctx.project
             params['project']['required'] = False
 
+        if ctx.collection:
+            params['collection']['default'] = ctx.collection.name
+            params['collection']['required'] = False
+
         return params
 
     @staticmethod
     def available(ctx):
         return (
             ctx.project and
+            ctx.collection and
             not ctx.asset_type and
-            not ctx.sequence and
-            not ctx.shot and
-            not ctx.asset
+            not ctx.sequence
         )
 
 
 @task(priority=types.STAGE)
 @pass_kwargs
 @returns(store('asset_type'))
-def stage_asset_type(project, name):
+def stage_asset_type(project, collection, name):
     '''Stage new asset_type Entry'''
 
     path_template = api.get_path_template('asset_type')
     asset_type_path = path_template.format(dict(
         project=project.path,
+        collection=collection,
         asset_type=name,
     ))
 
@@ -115,6 +125,12 @@ class NewAsset(Action):
                 'required': True,
                 'type': types.Entry,
             },
+            collection={
+                'label': 'Collection',
+                'help': 'Collection Name',
+                'required': True,
+                'type': types.String
+            },
             asset_type={
                 'label': 'Asset Type',
                 'required': True,
@@ -142,8 +158,15 @@ class NewAsset(Action):
             params['project']['default'] = ctx.project
             params['project']['required'] = False
 
+            collection_types = [e.name for e in ctx.project.collections]
+            params['collection']['options'] = collection_types
+
             asset_types = [e.name for e in ctx.project.asset_types]
             params['asset_type']['options'] = asset_types
+
+        if ctx.collection:
+            params['collection']['default'] = ctx.collection.name
+            params['collection']['required'] = False
 
         if ctx.asset_type:
             params['asset_type']['default'] = ctx.asset_type.name
@@ -152,7 +175,7 @@ class NewAsset(Action):
         templates = list(api.get_templates('asset').keys())
         if templates:
             params['template']['options'] = templates
-            params['template']['default'] = templates[0]
+            params['template']['default'] = sorted(templates)[0]
 
         return params
 
@@ -160,8 +183,8 @@ class NewAsset(Action):
     def available(ctx):
         return (
             ctx.project and
-            not ctx.sequence and
-            not ctx.shot and
+            ctx.collection and
+            ctx.asset_type and
             not ctx.asset
         )
 
@@ -169,12 +192,13 @@ class NewAsset(Action):
 @task(priority=types.STAGE)
 @pass_kwargs
 @returns(store('asset_item'))
-def stage_asset(project, asset_type, name, template=None):
+def stage_asset(project, collection, asset_type, name, template=None):
     '''Stage a new Asset'''
 
     path_template = api.get_path_template('asset')
     asset_path = path_template.format(dict(
         project=project.path,
+        collection=collection,
         asset_type=asset_type,
         asset=name
     ))
@@ -208,7 +232,7 @@ def validate_asset(asset_item):
 @params(store('asset_item'))
 @returns(artifact('asset'))
 def commit_asset(asset_item):
-    '''Make new task'''
+    '''Make new asset'''
 
     if asset_item['template']:
         asset = asset_item['template'].copy(asset_item['path'])

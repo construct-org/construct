@@ -77,6 +77,10 @@ factory.Entry = Entry
 class Project(Entry):
 
     @property
+    def collections(self):
+        return self.children('collection')
+
+    @property
     def asset_types(self):
         return self.children('asset_type')
 
@@ -91,6 +95,17 @@ class Project(Entry):
     @property
     def shots(self):
         return self.children('shot')
+
+
+class Collection(Entry):
+
+    @property
+    def sequences(self):
+        return self.children('sequence')
+
+    @property
+    def asset_types(self):
+        return self.children('asset_type')
 
 
 class Sequence(Entry):

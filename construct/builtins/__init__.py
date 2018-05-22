@@ -3,14 +3,15 @@ from __future__ import absolute_import
 from construct.extension import Extension
 from construct.utils import package_path
 from construct.builtins import (
+    assets,
+    collections,
+    files,
     projects,
     sequences,
     shots,
-    assets,
     tasks,
     templates,
     workspaces,
-    files,
 )
 
 
@@ -31,6 +32,11 @@ class Builtins(Extension):
         self.add_task(projects.NewProject, projects.stage_project)
         self.add_task(projects.NewProject, projects.validate_project)
         self.add_task(projects.NewProject, projects.commit_project)
+
+        self.add_action(collections.NewCollection)
+        self.add_task(collections.NewCollection, collections.stage_collection)
+        self.add_task(collections.NewCollection, collections.validate_collection)
+        self.add_task(collections.NewCollection, collections.commit_collection)
 
         self.add_action(sequences.NewSequence)
         self.add_task(sequences.NewSequence, sequences.stage_sequence)
