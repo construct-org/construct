@@ -63,6 +63,7 @@ _log = logging.getLogger(__name__)
 _initialized = False
 _context = None
 config = Config()
+config_file = None
 extensions = ExtensionCollector()
 actions = ActionCollector(extensions)
 
@@ -76,6 +77,7 @@ def init(root=None, host=None, extension_paths=None, logging=None):
         raise RuntimeError('Construct has already been initialized.')
 
     # Load configuration
+    global config_file
     config_file = os.environ.get('CONSTRUCT_CONFIG')
     if config_file:
         with open(config_file, 'r') as f:
@@ -139,6 +141,9 @@ def uninit():
     global config
     _log.debug('Setting default config...')
     config = Config()
+
+    global config_file
+    config_file = None
 
     global _context
     _log.debug('Clearing context...')
