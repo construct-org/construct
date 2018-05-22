@@ -7,6 +7,7 @@ __all__ = [
     'AsyncTask',
     'Request',
     'Task',
+    'TaskCollection',
     'task',
     'async_task',
     'sort_tasks',
@@ -306,7 +307,7 @@ class Task(object):
     def __init__(self, fn, identifier=None, description=None,
                  priority=DEFAULT_PRIORITY, requires=None, skips=None,
                  arg_getters=None, kwarg_getters=None, callbacks=None,
-                 available=True):
+                 available=True, parent=None):
         self.fn = fn
         if not isinstance(priority, Priority):
             priority = Priority(priority)
@@ -319,18 +320,34 @@ class Task(object):
         self.kwarg_getters = kwarg_getters or {}
         self.callbacks = callbacks or []
         self._available = available
-
-    def __repr__(self):
-        return (
-            'Task(identifier={}, fn={}, requires={})'
-        ).format(
-            repr(self.identifier),
-            self.fn,
-            self.requires,
-        )
+        self.parent = None
 
     def __call__(self, *args, **kwargs):
         return self.fn(*args, **kwargs)
+
+    def __repr__(self):
+        return '<{} {} at 0x{}>(identifier={!r})'.format(
+            ('unbound', 'bound')[self.bound],
+            self.__class__.__name__,
+            id(self),
+            self.identifier
+        )
+
+    def __get__(self, obj, type):
+        if obj is None:
+            return self
+
+        bind_task = self.clone(parent=obj)
+
+        for name, member in inspect.getmembers(type):
+            if member is self:
+                setattr(obj, name, bind_task)
+
+        return bind_task
+
+    @property
+    def bound(self):
+        return self.parent is not None
 
     def clone(self, **kwargs):
         '''Create a new Task instance, overriding any kwargs you need to'''
@@ -345,6 +362,7 @@ class Task(object):
         kwargs.setdefault('kwarg_getters', self.kwarg_getters)
         kwargs.setdefault('callbacks', self.callbacks)
         kwargs.setdefault('available', self._available)
+        kwargs.setdefault('parent', self.parent)
         return self.__class__(**kwargs)
 
     def ready(self, ctx):
@@ -401,6 +419,30 @@ class Task(object):
         return self.request_cls(self, ctx, args, kwargs)
 
 
+class TaskCollection(object):
+
+    identifier = None
+
+    def __init__(self, identifier=None, tasks=None):
+        self.identifier = identifier or self.identifier
+        self.tasks = []
+
+        # Bind tasks
+        if tasks:
+            if isinstance(tasks, (list, tuple, set)):
+                for task in tasks:
+                    bound_task = task.clone(parent=self)
+                    self.tasks.append(bound_task)
+            else:
+                raise ValueError('Tasks must be a list of task objects')
+
+        # Bind classmethod tasks
+        for name, member in inspect.getmembers(self):
+            if isinstance(member, Task):
+                bound_task = getattr(self, name)
+                self.tasks.append(bound_task)
+
+
 class AsyncTask(Task):
 
     request_cls = AsyncRequest
@@ -430,7 +472,7 @@ def task(identifier=None, priority=None, description=None, cls=Task):
     def make_task(fn, identifier):
         return cls(
             fn,
-            identifier=get_callable_name(fn),
+            identifier=identifier or get_callable_name(fn),
             description=description or fn.__doc__,
             requires=pop_attr(fn, '__task_requires__', None),
             skips=pop_attr(fn, '__task_skips__', None),
