@@ -188,7 +188,7 @@ class Push(Command):
 
         ctx = construct.get_context()
 
-        if fsfs.DEFAULT_SELECTOR_SEP in args.name and not args.tags:
+        if not args.tags and args.name:
             query = dict(
                 selector=args.name,
                 root=args.root,
@@ -283,7 +283,7 @@ class Search(Command):
             name=args.name,
             tags=args.tags,
             direction=args.direction,
-            depth=args.depth or (3 if ctx.project else 2),
+            depth=args.depth or (3 if ctx.project else 1),
         )
         entries = construct.search(**query)
 

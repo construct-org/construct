@@ -1,31 +1,38 @@
+Construct Changes
+=================
+
+0.1.20 (22 May 2018)
+
+- Add support for Collection Entry type
+    - Allows more customizable groupings of sequences and assets
+- new.* Actions accept a collection parameter where appropriate
+- Add models.Collection
+- Add Collection to Context
+
+
 0.1.14
-======
 
 - Adjust availability of new.template, file.* and publish.file
 
 
 0.1.13
-======
 
 - Add more info to STATUSES and TASK_TYPES config vars
 - Fixed mac os mangled some paths causes fsfs search to fail
-  - fixed upstream in fsfs
+    - fixed upstream in fsfs
 
 
 0.1.11
-======
 
 - Fixed fsfs was not setup prior to pulling context from env vars
 
 
 0.1.10
-======
 
 - *construct push* now goes to the shortest path found
 
 
 0.1.0
-=====
 
 - Include cli in main package
 - Improved Task api

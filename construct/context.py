@@ -28,6 +28,7 @@ class Context(object):
         'root',
         'user',
         'project',
+        'collection',
         'sequence',
         'shot',
         'asset_type',
@@ -39,6 +40,7 @@ class Context(object):
     ]
     entry_keys = [
         'project',
+        'collection',
         'sequence',
         'shot',
         'asset_type',
