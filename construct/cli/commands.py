@@ -102,7 +102,7 @@ class Version(Command):
                 ('version', construct.__version__),
                 ('url', construct.__url__),
                 ('package', os.path.dirname(construct.__file__)),
-                ('config', construct.config_file or 'default'),
+                ('config', os.environ.get('CONSTRUCT_CONFIG', 'default')),
             ],
             lcolor=styled('{bright}')
         )

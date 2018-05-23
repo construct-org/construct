@@ -22,6 +22,7 @@ __all__ = [
     'Context',
     'config',
     'Config',
+    'config_file',
     'extensions',
     'Extension',
     'HostExtension',
