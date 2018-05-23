@@ -155,7 +155,7 @@ def update_dict(d, u):
 
 
 @contextmanager
-def isolated_imports(path=None):
+def isolated_imports(path=None, restore=True):
     '''Contextmanager that isolates all import'''
 
     old_path_cache = {k: v for k, v in sys.path_importer_cache.items()}
@@ -172,32 +172,33 @@ def isolated_imports(path=None):
 
         sys.path[:] = old_path
 
-        for k, v in list(sys.modules.items()):
-            if k in old_modules:
-                sys.modules[k] = old_modules[k]
-            else:
-                del(sys.modules[k])
+        if restore:
+            for k, v in list(sys.modules.items()):
+                if k in old_modules:
+                    sys.modules[k] = old_modules[k]
+                else:
+                    del(sys.modules[k])
 
-        for k, v in list(sys.path_importer_cache.items()):
-            if k in old_path_cache:
-                sys.path_importer_cache[k] = old_path_cache[k]
-            else:
-                del(sys.path_importer_cache[k])
+            for k, v in list(sys.path_importer_cache.items()):
+                if k in old_path_cache:
+                    sys.path_importer_cache[k] = old_path_cache[k]
+                else:
+                    del(sys.path_importer_cache[k])
 
 
 def unload_modules(*names):
-    '''Removes mouldes and their children from sys.modules
+    '''Removes modules and their children from sys.modules
 
     This is intended for use within the isolated_imports contextmanager.
     '''
 
     for name in names:
-        for k, v in sys.modules.items():
+        for k, v in list(sys.modules.items()):
             if k.startswith(name):
                 del(sys.modules[k])
 
 
-def import_file(path, remove=True):
+def import_file(path, isolated=True):
     '''Import python module by absolute path. The imported module is removed
     from sys.modules before being returned. This means the same module
     imported using import_file multiple times will return different module
@@ -208,7 +209,7 @@ def import_file(path, remove=True):
     root, basename = os.path.split(path)
     name, _ = os.path.splitext(basename)
 
-    with isolated_imports(root):
+    with isolated_imports(root, restore=isolated):
         unload_modules(name)
         mod = __import__(name, globals(), locals(), [])
 
@@ -224,11 +225,11 @@ def iter_modules(*paths):
 
     for path in paths:
         for py_file in glob(path + '/*.py'):
-            mod = import_file(py_file)
+            mod = import_file(py_file, isolated=False)
             yield mod
 
         for py_pkg in glob(path + '/*/__init__.py'):
-            mod = import_file(os.path.dirname(py_pkg))
+            mod = import_file(os.path.dirname(py_pkg), isolated=False)
             yield mod
 
 

@@ -24,5 +24,5 @@ def pkg_resources():
         import pkg_resources
         return pkg_resources
 
-    pkg_resources = import_file(pkg_resources_path, remove=True)
+    pkg_resources = import_file(pkg_resources_path)
     return pkg_resources
