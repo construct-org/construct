@@ -9,6 +9,7 @@ Construct Changelog
 - new.* Actions accept a collection parameter where appropriate
 - Add models.Collection
 - Add Collection to Context
+- Fix #19 extension imports missing globals
 
 
 0.1.14
