@@ -193,7 +193,7 @@ def unload_modules(*names):
     '''
 
     for name in names:
-        for k, v in sys.modules.items():
+        for k, v in list(sys.modules.items()):
             if k.startswith(name):
                 del(sys.modules[k])
 
