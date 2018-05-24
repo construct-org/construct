@@ -90,9 +90,9 @@ TASK_TYPES:
 PATH_TEMPLATES:
     collection: '{project}/{collection}'
     asset_type: '{project}/{collection}/{asset_type}'
-    asset: '{collection}/{asset_type}/{asset}'
-    sequence: '{collection}/{sequence}'
-    shot: '{collection}/{sequence}/{shot}'
+    asset: '{project}/{collection}/{asset_type}/{asset}'
+    sequence: '{project}/{collection}/{sequence}'
+    shot: '{project}/{collection}/{sequence}/{shot}'
     task: '{parent}/{task}'
     publish: '{task}/publish/{file_type}/{task:[^_/]+}_{name}/v{versio:\d+}'
     publish_file: '{task:[^_/]+}_{name}_v{version:\d+}{ext:\.\w+}'

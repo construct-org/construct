@@ -320,10 +320,13 @@ class Task(object):
         self.kwarg_getters = kwarg_getters or {}
         self.callbacks = callbacks or []
         self._available = available
-        self.parent = None
+        self.parent = parent
 
     def __call__(self, *args, **kwargs):
-        return self.fn(*args, **kwargs)
+        if self.bound_method:
+            return self.fn(self.parent, *args, **kwargs)
+        else:
+            return self.fn(*args, **kwargs)
 
     def __repr__(self):
         return '<{} {} at 0x{}>(identifier={!r})'.format(
@@ -348,6 +351,15 @@ class Task(object):
     @property
     def bound(self):
         return self.parent is not None
+
+    @property
+    def bound_method(self):
+        spec = inspect.getargspec(self.fn)
+        return self.bound and 'self' in spec.args
+
+    @property
+    def func_name(self):
+        return get_callable_name(self.fn)
 
     def clone(self, **kwargs):
         '''Create a new Task instance, overriding any kwargs you need to'''
@@ -419,6 +431,11 @@ class Task(object):
         return self.request_cls(self, ctx, args, kwargs)
 
 
+class AsyncTask(Task):
+
+    request_cls = AsyncRequest
+
+
 class TaskCollection(object):
 
     identifier = None
@@ -429,23 +446,93 @@ class TaskCollection(object):
 
         # Bind tasks
         if tasks:
-            if isinstance(tasks, (list, tuple, set)):
+            if isinstance(tasks, (list, tuple, set, self.__class__)):
                 for task in tasks:
-                    bound_task = task.clone(parent=self)
-                    self.tasks.append(bound_task)
+                    self._bind_task(task)
             else:
                 raise ValueError('Tasks must be a list of task objects')
 
         # Bind classmethod tasks
-        for name, member in inspect.getmembers(self):
+        for name, member in inspect.getmembers(self.__class__):
             if isinstance(member, Task):
                 bound_task = getattr(self, name)
                 self.tasks.append(bound_task)
 
+    def __iter__(self):
+        return iter(self.tasks)
 
-class AsyncTask(Task):
+    def __len__(self):
+        return len(self.tasks)
 
-    request_cls = AsyncRequest
+    def __getitem__(self, index):
+        return self.tasks.__getitem__(index)
+
+    def __contains__(self, task):
+        if task in self.tasks:
+            return True
+
+        for t in self.tasks:
+            if t.identifier == task.identifier:
+                return True
+
+        return False
+
+    def index(self, task):
+        for i, bound_task in enumerate(self.tasks):
+            if bound_task.identifier == task.identifier:
+                return i
+        raise ValueError('%s is not in TaskCollection' % task.identifier)
+
+    def sort(self):
+        '''Sort tasks by priority'''
+
+        self.tasks.sort(key=lambda t: t.priority)
+
+    def _bind_task(self, task):
+        '''Bind and add task to this collection'''
+
+        if task in self:
+            return
+
+        bind_name = task.func_name
+        if hasattr(self, bind_name):
+            raise NameError(
+                'TaskCollection already has a method %s' % bind_name
+            )
+
+        if task.parent is not self:
+            task = task.clone(parent=self)
+            setattr(self, bind_name, task)
+
+        self.tasks.append(task)
+
+    def _unbind_task(self, task):
+        '''Unbind and remove a task from this collection'''
+
+        try:
+            index = self.index(task)
+            task = self.tasks.pop(index)
+            bind_name = task.func_name
+            if getattr(self, bind_name, None) is task:
+                delattr(self, bind_name)
+        except ValueError:
+            pass
+
+    def append(self, task):
+        '''Bind and add a task to this collection'''
+
+        self._bind_task(task)
+
+    def remove(self, task):
+        '''Remove a task from this collection'''
+
+        self._unbind_task(task)
+
+    def extend(self, tasks):
+        '''Bind and add a list of tasks to this collection'''
+
+        for task in tasks:
+            self._bind_task(task)
 
 
 # Decorator interface

@@ -25,7 +25,7 @@ from construct.cli.widgets import TaskLine, ProgressBar
 import win_unicode_console
 
 
-console_widgets = {}
+CONSOLE_WIDGETS = {}
 
 
 @signals.route('action.before')
@@ -79,12 +79,12 @@ def on_action_before(ctx):
         print(group.description)
         for task in tasks:
             w = TaskLine(task, console)
-            console_widgets[task.identifier] = w
+            CONSOLE_WIDGETS[task.identifier] = w
             console.add_widget(w)
 
     print()
     progress = ProgressBar('Tasks', len(ctx.tasks), console)
-    console_widgets['progress'] = progress
+    CONSOLE_WIDGETS['progress'] = progress
     console.add_widget(progress)
 
 
@@ -122,7 +122,7 @@ def on_action_after(ctx):
 def on_request_status_change(request, last_status, status):
 
     console = stout.get_console()
-    w = console_widgets[request.task.identifier]
+    w = CONSOLE_WIDGETS[request.task.identifier]
     w.set_status(status)
 
     if status == FAILED:
@@ -130,7 +130,7 @@ def on_request_status_change(request, last_status, status):
         console.insert(w.row, err)
 
     ctx = get_context()
-    progress = console_widgets['progress']
+    progress = CONSOLE_WIDGETS['progress']
     i = 0
     for request in ctx.requests.values():
         if request._status in [FAILED, SUCCESS, SKIPPED]:

@@ -2,7 +2,7 @@
 from __future__ import absolute_import, division, print_function
 import time
 from timeit import default_timer
-from construct.tasks import Task, AsyncTask
+from construct.tasks import Task, AsyncTask, task, TaskCollection
 from construct.errors import TimeoutError
 from construct.constants import *
 from nose.tools import raises
@@ -133,3 +133,142 @@ def test_AsyncRequest_returns_asap():
 
     assert default_timer() - st < 1
     assert value
+
+
+def test_task_decorator():
+    '''Task function decorator'''
+
+    @task
+    def null_task():
+        return True
+
+    assert not null_task.bound
+    assert null_task.identifier == 'null_task'
+    assert null_task.priority == 0
+    assert null_task()
+    assert null_task.ready(None)
+
+    r = null_task.request()
+    assert r.get()
+
+
+def test_task_method():
+    '''Task method decorator'''
+
+    class ObjectWithTasks(object):
+
+        @task(priority=0)
+        def task_a(self):
+            return True
+
+    tc = ObjectWithTasks()
+
+    assert tc.task_a is tc.task_a
+    assert tc.task_a.bound
+    assert tc.task_a.identifier == 'task_a'
+    assert tc.task_a()
+
+    tc2 = ObjectWithTasks()
+
+    assert tc.task_a is not tc2.task_a
+
+
+@task
+def null_task():
+    return True
+
+
+class TestCollection(TaskCollection):
+
+    identifier = 'test_collection'
+
+    @task(priority=0)
+    def task_a(self):
+        return True
+
+    @task(priority=1)
+    def task_b(self):
+        return False
+
+    @task(priority=2)
+    def task_c(self):
+        return False
+
+
+def test_task_collection_methods():
+    '''TaskCollection automagical task registration'''
+
+    tc = TestCollection()
+
+    # Membership tests use task identifiers
+    assert TestCollection.task_a in tc
+    assert TestCollection.task_b in tc
+    assert TestCollection.task_c in tc
+    assert tc.task_a()
+    assert not tc.task_b()
+    assert not tc.task_c()
+
+    # All task methods are automagically bound in __init__
+    assert tc.task_a.bound and tc.task_a.parent is tc
+    assert tc.task_b.bound and tc.task_b.parent is tc
+    assert tc.task_c.bound and tc.task_c.parent is tc
+    assert len(tc) == 3
+
+
+def test_task_collection_add_remove():
+    '''TaskCollection append and remove'''
+
+    tc = TestCollection()
+
+    # Add a task
+    tc.append(null_task)
+    assert null_task in tc
+    assert len(tc) == 4
+    assert hasattr(tc, null_task.func_name)
+    assert tc.null_task()
+
+    # Does nothing
+    tc.append(null_task)
+    assert len(tc) == 4
+
+    # Remove a task
+    tc.remove(null_task)
+    assert null_task not in tc
+    assert len(tc) == 3
+    assert not hasattr(tc, null_task.func_name)
+
+    # Does nothing
+    tc.remove(null_task)
+    assert len(tc) == 3
+
+
+def test_task_collection_init_args():
+    '''TaskCollection init args'''
+
+    @task(priority=0)
+    def task_a():
+        return True
+
+    @task(priority=1)
+    def task_b():
+        return False
+
+    @task(priority=2)
+    def task_c():
+        return False
+
+    tc = TaskCollection('identifier', [task_a, task_b, task_c])
+    print(tc.tasks)
+    assert tc.identifier == 'identifier'
+    assert len(tc) == 3
+    assert tc.task_a()
+    assert not tc.task_b()
+    assert not tc.task_c()
+
+    tc.remove(task_a)
+    tc.remove(task_b)
+    tc.remove(task_c)
+    assert len(tc) == 0
+    assert not hasattr(tc, task_a.func_name)
+    assert not hasattr(tc, task_b.func_name)
+    assert not hasattr(tc, task_c.func_name)
