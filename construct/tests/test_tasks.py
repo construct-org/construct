@@ -258,7 +258,6 @@ def test_task_collection_init_args():
         return False
 
     tc = TaskCollection('identifier', [task_a, task_b, task_c])
-    print(tc.tasks)
     assert tc.identifier == 'identifier'
     assert len(tc) == 3
     assert tc.task_a()

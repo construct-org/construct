@@ -27,7 +27,8 @@ from collections import Mapping, deque
 from construct.utils import update_dict
 
 # Use for type checking with isinstance
-from construct.models import Entry  # Bring this in for api convenience
+# Bring this in for api convenience
+from construct.models import Entry
 Number = (int, float)
 
 # Alias some six types

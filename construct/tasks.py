@@ -625,12 +625,10 @@ def requires(*funcs):
         ...     pass
     '''
 
-    [ensure_callable(func) for func in funcs]
-
     def requires(fn):
         if not hasattr(fn, '__task_requires__'):
             fn.__task_requires__ = []
-        fn.__task_requires__.extend(funcs)
+        fn.__task_requires__.extend([_getter_for('requires', f) for f in funcs])
         return fn
 
     return requires
@@ -638,12 +636,10 @@ def requires(*funcs):
 
 def skips(*funcs):
 
-    [ensure_callable(func) for func in funcs]
-
     def skips(fn):
         if not hasattr(fn, '__task_skips__'):
             fn.__task_skips__ = []
-        fn.__task_skips__.extend(funcs)
+        fn.__task_skips__.extend([_getter_for('skips', f) for f in funcs])
         return fn
 
     return skips
@@ -721,40 +717,18 @@ def params(*args, **kwargs):
 
     '''
 
-    def to_getter(arg):
-        if callable(arg):
-            spec = inspect.getargspec(arg)
-            if not spec.args or len(args) != 1:
-                raise TypeError(
-                    arg.__name__ +
-                    ' must accept one argument: ctx'
-                )
-            return arg
-        elif isinstance(arg, CtxAction):
-            if not arg.gets:
-                raise TypeError(
-                    type(arg).__name__ +
-                    ' can not be used as an argument to params()...'
-                )
-            return arg.get
-        else:
-            raise TypeError(
-                'params received unsupported type: ' + type(arg).__name__
-            )
-
     def describe_params(fn):
         if not hasattr(fn, '__task_arg_getters__'):
             fn.__task_arg_getters__ = []
+
+        for arg in args:
+            fn.__task_arg_getters__.append(_getter_for('params', arg))
+
         if not hasattr(fn, '__task_kwarg_getters__'):
             fn.__task_kwarg_getters__ = {}
 
-        for arg in args:
-            getter = to_getter(arg)
-            fn.__task_arg_getters__.append(getter)
-
         for name, arg in kwargs.items():
-            getter = to_getter(arg)
-            fn.__task_kwarg_getters__[name] = getter
+            fn.__task_kwarg_getters__[name] = _getter_for('params', arg)
 
         return fn
 
@@ -771,26 +745,8 @@ def returns(*callbacks):
             fn.__task_callbacks__ = []
 
         for callback in callbacks:
-            if callable(callback):
-                spec = inspect.getargspec(callback)
-                if spec.args and len(spec.args) == 2:
-                    fn.__task_callbacks__.append(callback)
-                else:
-                    return TypeError(
-                        'Callback must accept two arguments: ctx and value'
-                    )
-            elif isinstance(callback, CtxAction):
-                if not callback.sets:
-                    raise TypeError(
-                        type(callback).__name__ +
-                        ' can not be used as an argument to returns()...'
-                    )
-                fn.__task_callbacks__.append(callback.set)
-            else:
-                raise TypeError(
-                    'returns received unsupported type: ' +
-                    type(callback).__name__
-                )
+            fn.__task_callbacks__.append(_setter_for('returns', callback))
+
         return fn
 
     return returns
@@ -959,6 +915,58 @@ class kwarg(CtxAction):
 
     def set(self, ctx, value):
         raise NotImplementedError('Can not use kwarg with the returns deco')
+
+
+def _getter_for(name, obj):
+    '''Returns a callable object for use with task decorators. Getters
+    must accept one argument ctx.'''
+
+    if callable(obj):
+        spec = inspect.getargspec(obj)
+        if spec.args and len(spec.args) == 1:
+            return obj
+
+        raise TypeError('%s must accept ctx as an argument' % name)
+
+    if isinstance(obj, CtxAction):
+        if obj.gets:
+            return obj.get
+
+        raise TypeError(
+            '%s can not be used as an argument to %s()...' %
+            (type(obj).__name__, name)
+        )
+
+    raise TypeError(
+        '%s received unsupported type: %s\nMust be a callable or CtxAction' %
+        (type(obj).__name__, name)
+    )
+
+
+def _setter_for(name, obj):
+    '''Returns a callable object for use with task decorators. Setters
+    must accept two arguments ctx and value.'''
+
+    if callable(obj):
+        spec = inspect.getargspec(obj)
+        if spec.args and len(spec.args) == 2:
+            return obj
+
+        raise TypeError('%s must accept two args: ctx and value' % name)
+
+    if isinstance(obj, CtxAction):
+        if obj.sets:
+            return obj.set
+
+        raise TypeError(
+            '%s can not be used as an argument to %s()...' %
+            (type(obj).__name__, name)
+        )
+
+    raise TypeError(
+        '%s received unsupported type: %s\nMust be a callable or CtxAction' %
+        (type(obj).__name__, name)
+    )
 
 
 # Sort methods
