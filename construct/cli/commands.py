@@ -40,7 +40,7 @@ class Command(object):
             help='verbose output',
             action='store_true',
         )
-        self.setup_parser(self.parser)
+        self._parser_setup = False
 
     @classmethod
     def _available(cls):
@@ -81,8 +81,18 @@ class Command(object):
         text = '\n'.join([short, body])
         return text
 
+    def _setup_parser(self, parser):
+        if not self._parser_setup:
+            self.setup_parser(self.parser)
+        self._parser_setup = True
+
     def setup_parser(self, parser):
         return NotImplemented
+
+    def parse(self, args):
+        self._setup_parser(self.parser)
+        args, extra_args = self.parser.parse_known_args(args)
+        return args, extra_args
 
     def run(self, args, *extra_args):
         return NotImplemented

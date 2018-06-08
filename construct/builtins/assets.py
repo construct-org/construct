@@ -158,11 +158,12 @@ class NewAsset(Action):
             params['project']['default'] = ctx.project
             params['project']['required'] = False
 
-            collection_types = [e.name for e in ctx.project.collections]
-            params['collection']['options'] = collection_types
+            # TODO: fix search speed upstream...
+            # collection_types = [e.name for e in ctx.project.collections]
+            # params['collection']['options'] = collection_types
 
-            asset_types = [e.name for e in ctx.project.asset_types]
-            params['asset_type']['options'] = asset_types
+            # asset_types = [e.name for e in ctx.project.asset_types]
+            # params['asset_type']['options'] = asset_types
 
         if ctx.collection:
             params['collection']['default'] = ctx.collection.name

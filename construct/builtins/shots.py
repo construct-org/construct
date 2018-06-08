@@ -67,8 +67,9 @@ class NewShot(Action):
             params['project']['default'] = ctx.project
             params['project']['required'] = False
 
-            collection_types = [e.name for e in ctx.project.collections]
-            params['collection']['options'] = collection_types
+            # TODO: fix search speed upstream...
+            # collection_types = [e.name for e in ctx.project.collections]
+            # params['collection']['options'] = collection_types
 
         if ctx.collection:
             params['collection']['default'] = ctx.collection.name

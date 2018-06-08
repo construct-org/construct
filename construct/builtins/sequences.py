@@ -61,8 +61,9 @@ class NewSequence(Action):
             params['project']['default'] = ctx.project
             params['project']['required'] = False
 
-            collection_types = [e.name for e in ctx.project.collections]
-            params['collection']['options'] = collection_types
+            # TODO: fix search speed upstream...
+            # collection_types = [e.name for e in ctx.project.collections]
+            # params['collection']['options'] = collection_types
 
         if ctx.collection:
             params['collection']['default'] = ctx.collection.name
@@ -80,7 +81,8 @@ class NewSequence(Action):
         return (
             ctx.project and
             ctx.collection and
-            not ctx.sequence
+            not ctx.sequence and
+            not ctx.asset_type
         )
 
 

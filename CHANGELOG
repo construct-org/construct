@@ -11,6 +11,7 @@ Construct Changelog
 - Add Collection to Context
 - Fix #19 extension imports missing globals
 - Fix #17 task decorators support CtxActions
+- Improve CLI speeds by disabling some searches in Action parameter methods
 
 
 0.1.14

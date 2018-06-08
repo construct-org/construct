@@ -239,8 +239,8 @@ def main():
         sys.exit(1)
 
     command = subcommands[command_name]
-    args, extra_args = command.parser.parse_known_args(command_args)
-    args.__dict__.pop('verbose')  # We already used the verbose flag
+    args, extra_args = command.parse(command_args)
+    args.__dict__.pop('verbose')
     command.run(args, *extra_args)
 
 
