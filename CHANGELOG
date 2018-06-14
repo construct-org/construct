@@ -1,55 +1,62 @@
-===================
-Construct Changelog
-===================
+
+Release Notes
+=============
 
 0.1.20 (05-22-2018)
 
-- Add support for Collection Entry type
-    - Allows more customizable groupings of sequences and assets
-- new.* Actions accept a collection parameter where appropriate
-- Add models.Collection
-- Add Collection to Context
-- Fix #19 extension imports missing globals
-- Fix #17 task decorators support CtxActions
-- Improve CLI speeds by disabling some searches in Action parameter methods
+* Add support for Collection Entry type
+
+    * Allows more customizable groupings of sequences and assets
+
+* new.* Actions accept a collection parameter where appropriate
+* Add models.Collection
+* Add Collection to Context
+* Fix #19 extension imports missing globals
+* Fix #17 task decorators support CtxActions
+* Improve CLI speeds by disabling some searches in Action parameter methods
 
 
 0.1.14
 
-- Adjust availability of new.template, file.* and publish.file
+* Adjust availability of new.template, file.* and publish.file
 
 
 0.1.13
 
-- Add more info to STATUSES and TASK_TYPES config vars
-- Fixed mac os mangled some paths causes fsfs search to fail
-    - fixed upstream in fsfs
+* Add more info to STATUSES and TASK_TYPES config vars
+* Fixed mac os mangled some paths causes fsfs search to fail
+    * fixed upstream in fsfs
 
 
 0.1.11
 
-- Fixed fsfs was not setup prior to pulling context from env vars
+* Fixed fsfs was not setup prior to pulling context from env vars
 
 
 0.1.10
 
-- *construct push* now goes to the shortest path found
+* *construct push* now goes to the shortest path found
 
 
 0.1.0
 
-- Include cli in main package
-- Improved Task api
-- Added Exception control flow to ActionRunner
-- Refactored Extensions
-- Added ExtensionCollector and ActionCollector
-    - Improves flexibility in extension and action discovery
-- Improved api
-- Added contextual config object
-    - access through construct.config
-    - loaded from CONSTRUCT_CONFIG env var
-    - Config var lookup order
-        - ctx.project
-        - config
-        - defaults
-- Refactor signals module
+* Include cli in main package
+* Improved Task api
+* Added Exception control flow to ActionRunner
+* Refactored Extensions
+* Added ExtensionCollector and ActionCollector
+
+    * Improves flexibility in extension and action discovery
+
+* Improved api
+* Added contextual config object
+
+    * access through construct.config
+    * loaded from CONSTRUCT_CONFIG env var
+    * Config var lookup order
+
+        * ctx.project
+        * config
+        * defaults
+
+* Refactor signals module
