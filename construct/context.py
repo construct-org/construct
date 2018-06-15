@@ -136,11 +136,17 @@ class Context(object):
     def from_env(cls, exclude=None):
         '''Create new context from environment variables'''
 
+        exclude = exclude or []
         data = dict(
             root=os.environ.get('CONSTRUCT_ROOT', DEFAULT_ROOT),
             host=os.environ.get('CONSTRUCT_HOST', DEFAULT_HOST),
         )
+
         for entry in cls.entry_keys:
+
+            if entry in exclude:
+                continue
+
             env_var = 'CONSTRUCT_' + entry.upper()
             value = os.environ.get(env_var, None)
             if value:
@@ -153,7 +159,7 @@ class Context(object):
     def from_path(cls, path):
         '''Extract context from file path'''
 
-        ctx = Context.from_env()
+        ctx = Context.from_env(exclude=cls.entry_keys)
 
         if os.path.isfile(path):
             ctx.file = unipath(path)

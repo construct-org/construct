@@ -135,7 +135,7 @@ class Save(Action):
         if ctx.file:
             path_template = get_path_template('workspace_file')
             try:
-                data = path_template.parse(ctx.file)
+                data = path_template.parse(str(ctx.file))
             except ParseError:
                 pass
             else:
