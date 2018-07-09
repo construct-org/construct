@@ -163,7 +163,7 @@ class Save(Action):
 def build_filename(workspace, name, version, ext):
     '''Builds the full save path'''
 
-    task = workspace.parent('task')
+    task = workspace.parent()
     path_template = get_path_template('workspace_file')
     filename = path_template.format(dict(
         task=task.short,

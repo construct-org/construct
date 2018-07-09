@@ -78,48 +78,48 @@ class Project(Entry):
 
     @property
     def collections(self):
-        return self.children('collection')
+        return self.children().tags('collection')
 
     @property
     def asset_types(self):
-        return self.children('asset_type')
+        return self.children().tags('asset_type')
 
     @property
     def assets(self):
-        return self.children('asset')
+        return self.children().tags('asset')
 
     @property
     def sequences(self):
-        return self.children('sequence')
+        return self.children().tags('sequence')
 
     @property
     def shots(self):
-        return self.children('shot')
+        return self.children().tags('shot')
 
 
 class Collection(Entry):
 
     @property
     def sequences(self):
-        return self.children('sequence')
+        return self.children().tags('sequence')
 
     @property
     def asset_types(self):
-        return self.children('asset_type')
+        return self.children().tags('asset_type')
 
 
 class Sequence(Entry):
 
     @property
     def shots(self):
-        return self.children('shot')
+        return self.children().tags('shot')
 
 
 class Shot(Entry):
 
     @property
     def tasks(self, *tags):
-        return self.children('task', *tags)
+        return self.children().tags('task', *tags)
 
 
 class AssetType(Entry):
@@ -128,18 +128,18 @@ class AssetType(Entry):
 
     @property
     def assets(self):
-        return self.children('asset')
+        return self.children().tags('asset')
 
 
 class Asset(Entry):
 
     @property
     def tasks(self, *tags):
-        return self.children('task', *tags)
+        return self.children().tags('task', *tags)
 
     @cached_property
     def type(self):
-        return self.parent('asset_type').name
+        return self.parent().name
 
 
 class Task(Entry):
@@ -169,11 +169,11 @@ class Task(Entry):
 
     @property
     def workspaces(self, *tags):
-        return self.children('workspace', *tags)
+        return self.children().tags('workspace', *tags)
 
     @property
     def publishes(self, *tags):
-        return self.children('publish', *tags)
+        return self.children().tags('publish', *tags)
 
     def get_latest_publish(self):
         publishes = list(self.publishes)
@@ -190,7 +190,7 @@ class Workspace(Entry):
         from construct import config
 
         software_cfg = config['SOFTWARE']
-        for app_name, app_cfg in config['SOFTWARE'].items():
+        for app_name, app_cfg in software_cfg.items():
             if app_cfg['host'] == self.name:
                 return app_cfg
             else:
@@ -216,9 +216,7 @@ class Workspace(Entry):
         return versions
 
     def get_next_version(self, name, ext):
-        import construct
-        path_template = construct.get_path_template('workspace_file')
-        task = self.parent('task').short
+        task = self.parent().short
         versions = self.get_work_files()
         version = 0
 
@@ -234,6 +232,7 @@ class Workspace(Entry):
         return version + 1
 
     def new_version(self, user, name, version, file_type, file):
+        import os
         relative_path = os.path.relpath(file, self.path)
         version = Version(
             user=user,

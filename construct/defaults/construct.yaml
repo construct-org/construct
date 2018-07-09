@@ -135,6 +135,23 @@ SOFTWARE:
             mac:
                 path: /Applications/Nuke11.1v3/Nuke11.1v3.app/Nuke11.1
                 args: []
+    houdini16.5:
+        host: 'houdini'
+        identifier: 'launch.houdini'
+        description: 'Launch SideFX Houdini 16.5'
+        default_workspace: 'houdini'
+        icon: './icons/houdini.png'
+        extensions: ['.hip', '.hipnc']
+        cmd:
+            win:
+                path: C:/Program Files/Side Effects Software/Houdini 16.5.496/bin/houdinifx.exe
+                args: []
+            linux:
+                path: houdini
+                args: []
+            mac:
+                path: houdini
+                args: []
     sublime3:
         host: 'sublime'
         identifier: 'launch.sublime'
