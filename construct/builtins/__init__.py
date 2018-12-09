@@ -12,6 +12,7 @@ from construct.builtins import (
     tasks,
     templates,
     workspaces,
+    time
 )
 
 
@@ -82,3 +83,10 @@ class Builtins(Extension):
         self.add_action(files.Save)
         self.add_task(files.Save, files.build_filename)
         self.add_task(files.Save, files.save_file)
+
+        self.add_action(time.Save)
+        self.add_task(time.Save, time.store_frame_range)
+
+        self.add_action(time.Sync)
+        self.add_task(time.Sync, time.get_frame_range)
+        self.add_task(time.Sync, time.apply_frame_range)

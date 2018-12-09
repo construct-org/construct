@@ -628,7 +628,7 @@ def requires(*funcs):
     def requires(fn):
         if not hasattr(fn, '__task_requires__'):
             fn.__task_requires__ = []
-        fn.__task_requires__.extend([_getter_for('requires', f) for f in funcs])
+        fn.__task_requires__.extend([_requires_for('requires', f) for f in funcs])
         return fn
 
     return requires
@@ -811,6 +811,7 @@ class CtxAction(object):
     actions = 'store', 'append', 'count'
     gets = True
     sets = True
+    requires = True
 
     def __init__(self, key, action='store'):
         self.key = key
@@ -829,6 +830,13 @@ class CtxAction(object):
             for key in keys:
                 section = section.get(key)
         return section, key
+
+    def exists(self, ctx):
+        try:
+            section, key = self.get_section_key(ctx)
+        except KeyError:
+            return False
+        return key in section
 
     def get(self, ctx):
         section, key = self.get_section_key(ctx)
@@ -915,6 +923,32 @@ class kwarg(CtxAction):
 
     def set(self, ctx, value):
         raise NotImplementedError('Can not use kwarg with the returns deco')
+
+
+def _requires_for(name, obj):
+    '''Returns a callable object for use with task decorators. Requirement
+    must accept one argument ctx.'''
+
+    if callable(obj):
+        spec = inspect.getargspec(obj)
+        if spec.args and len(spec.args) == 1:
+            return obj
+
+        raise TypeError('%s must accept ctx as an argument' % name)
+
+    if isinstance(obj, CtxAction):
+        if obj.requires:
+            return obj.exists
+
+        raise TypeError(
+            '%s can not be used as an argument to %s()' %
+            (type(obj).__name__, name)
+        )
+
+    raise TypeError(
+        '%s received unsupported type: %s\nMust be a callable or CtxAction' %
+        (type(obj).__name__, name)
+    )
 
 
 def _getter_for(name, obj):

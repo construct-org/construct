@@ -210,11 +210,22 @@ class HostExtension(Extension):
         return NotImplemented
 
     def get_frame_range(self):
-        '''Get the frame range of the host'''
+        '''Get the frame range of the host
+
+        Returns:
+            [min_frame, start_frame, end_frame, max_frame]
+        '''
         return NotImplemented
 
-    def set_frame_range(self, start_frame, end_frame):
-        '''Set the frame range the host'''
+    def set_frame_range(self, min, start, end, max):
+        '''Set the frame range of the host
+
+        Arguments:
+            min_frame (int): Min frame of timeline
+            start_frame (int): Start frame of animation
+            end_frame (int): End frame of animation
+            max_frame (int): Max frame of timeline
+        '''
         return NotImplemented
 
     def get_qt_parent(self):
@@ -249,6 +260,16 @@ class ExtensionCollector(object):
     def __iter__(self):
         for ext in self.by_name.values():
             yield ext
+
+    def get(self, name, default=missing):
+        if name in self.by_name:
+            return self.by_name[name]
+
+        if name in self.by_attr:
+            return self.by_attr[name]
+
+        if default is not missing:
+            return default
 
     def collect(self):
         return dict(self.by_name)

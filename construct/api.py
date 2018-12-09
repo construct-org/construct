@@ -207,7 +207,7 @@ def get_host(name=None):
 
     ctx = get_context()
     host = name or ctx.host
-    return extensions[host]
+    return extensions.get(host, None)
 
 
 @log_call

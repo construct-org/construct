@@ -78,48 +78,56 @@ class Project(Entry):
 
     @property
     def collections(self):
-        return self.children().tags('collection')
+        return self.children(levels=1).tags('collection')
 
     @property
     def asset_types(self):
-        return self.children().tags('asset_type')
+        return self.children(levels=2).tags('asset_type')
 
     @property
     def assets(self):
-        return self.children().tags('asset')
+        return self.children(levels=3).tags('asset')
 
     @property
     def sequences(self):
-        return self.children().tags('sequence')
+        return self.children(levels=2).tags('sequence')
 
     @property
     def shots(self):
-        return self.children().tags('shot')
+        return self.children(levels=3).tags('shot')
 
 
 class Collection(Entry):
 
     @property
     def sequences(self):
-        return self.children().tags('sequence')
+        return self.children(levels=1).tags('sequence')
 
     @property
     def asset_types(self):
-        return self.children().tags('asset_type')
+        return self.children(levels=1).tags('asset_type')
+
+    @property
+    def assets(self):
+        return self.children(levels=2).tags('asset')
+
+    @property
+    def shots(self):
+        return self.children(levels=2).tags('shot')
 
 
 class Sequence(Entry):
 
     @property
     def shots(self):
-        return self.children().tags('shot')
+        return self.children(levels=1).tags('shot')
 
 
 class Shot(Entry):
 
     @property
     def tasks(self, *tags):
-        return self.children().tags('task', *tags)
+        return self.children(levels=1).tags('task', *tags)
 
 
 class AssetType(Entry):
@@ -128,14 +136,14 @@ class AssetType(Entry):
 
     @property
     def assets(self):
-        return self.children().tags('asset')
+        return self.children(levels=1).tags('asset')
 
 
 class Asset(Entry):
 
     @property
     def tasks(self, *tags):
-        return self.children().tags('task', *tags)
+        return self.children(levels=1).tags('task', *tags)
 
     @cached_property
     def type(self):
@@ -169,11 +177,11 @@ class Task(Entry):
 
     @property
     def workspaces(self, *tags):
-        return self.children().tags('workspace', *tags)
+        return self.children(levels=1).tags('workspace', *tags)
 
     @property
     def publishes(self, *tags):
-        return self.children().tags('publish', *tags)
+        return self.children(levels=1).tags('publish', *tags)
 
     def get_latest_publish(self):
         publishes = list(self.publishes)
