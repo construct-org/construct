@@ -16,7 +16,7 @@ from construct import types, get_host, utils, get_path_template
 from construct.vendor.lucidity.error import ParseError
 
 
-class Save(Action):
+class SaveFrameRange(Action):
     '''Save the frame range for this shot or asset'''
 
     label = 'Save Frame Range'
@@ -81,7 +81,7 @@ class Save(Action):
         return ctx.host and ctx.task
 
 
-class Sync(Action):
+class SyncFrameRange(Action):
     '''Sync your scenes frame range'''
 
     label = 'Sync Frame Range'
@@ -146,3 +146,106 @@ def apply_frame_range(frame_range):
     host = get_host()
     host.set_frame_range(*frame_range)
     return {'frame_range': frame_range}
+
+
+class SaveFPS(Action):
+    '''Save the frame rate for this shot or asset'''
+
+    label = 'Save FPS'
+    identifier = 'time.savefps'
+
+    @staticmethod
+    def parameters(ctx):
+        params = dict(
+            asset_or_shot={
+                'label': 'Asset or Shot',
+                'required': True,
+                'type': types.Entry,
+                'help': 'Asset or Shot Entry'
+            },
+            fps={
+                'label': 'Frame Rate',
+                'required': True,
+                'type': types.Number,
+                'help': 'Frames per second'
+            }
+        )
+
+        if not ctx:
+            return params
+
+        params['asset_or_shot']['default'] = ctx.asset or ctx.shot
+
+        host = get_host()
+        if host:
+            frame_rate = host.get_frame_rate()
+
+            if frame_rate is NotImplemented:
+                return params
+
+            params['fps']['default'] = float(frame_rate)
+
+        return params
+
+    @staticmethod
+    def available(ctx):
+        return ctx.host and ctx.task
+
+
+class SyncFPS(Action):
+    '''Sync your scenes frame rate'''
+
+    label = 'Sync FPS'
+    identifier = 'time.syncfps'
+
+    @staticmethod
+    def parameters(ctx):
+        params = dict(
+            asset_or_shot={
+                'label': 'Asset or Shot',
+                'required': True,
+                'type': types.Entry,
+                'help': 'Asset or Shot Entry'
+            }
+        )
+
+        if not ctx:
+            return params
+
+        params['asset_or_shot']['default'] = ctx.asset or ctx.shot
+        return params
+
+    @staticmethod
+    def available(ctx):
+        return ctx.host != 'cli' and ctx.task
+
+
+@task
+@pass_kwargs
+def store_frame_rate(asset_or_shot, fps):
+    '''Stores the frame rate in the asset or shot'''
+
+    asset_or_shot.write(fps=fps)
+
+
+@task
+@pass_kwargs
+@pass_context
+@returns(store('fps'))
+def get_frame_rate(ctx, asset_or_shot):
+    '''Get the Asset or Shot frame rate'''
+
+    fps = asset_or_shot.data.get('fps', ctx.project.data.get('fps', 24))
+    return fps
+
+
+@task
+@requires(store('fps'))
+@params(store('fps'))
+@returns(artifact('fps'))
+def apply_frame_rate(fps):
+    '''Applies the frame rate to your current scene'''
+
+    host = get_host()
+    host.set_frame_rate(fps)
+    return {'fps': fps}

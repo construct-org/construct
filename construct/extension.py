@@ -209,6 +209,22 @@ class HostExtension(Extension):
         '''Get the name of the host's current file'''
         return NotImplemented
 
+    def get_frame_rate(self):
+        '''Get the frame rate of the host
+
+        Returns:
+            float - fps
+        '''
+        return NotImplemented
+
+    def set_frame_rate(self, fps):
+        '''Set the frame rate of the host
+
+        Arguments:
+            fps (float) - Frames per second
+        '''
+        return NotImplemented
+
     def get_frame_range(self):
         '''Get the frame range of the host
 

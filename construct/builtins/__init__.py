@@ -84,9 +84,16 @@ class Builtins(Extension):
         self.add_task(files.Save, files.build_filename)
         self.add_task(files.Save, files.save_file)
 
-        self.add_action(time.Save)
-        self.add_task(time.Save, time.store_frame_range)
+        self.add_action(time.SaveFrameRange)
+        self.add_task(time.SaveFrameRange, time.store_frame_range)
 
-        self.add_action(time.Sync)
-        self.add_task(time.Sync, time.get_frame_range)
-        self.add_task(time.Sync, time.apply_frame_range)
+        self.add_action(time.SyncFrameRange)
+        self.add_task(time.SyncFrameRange, time.get_frame_range)
+        self.add_task(time.SyncFrameRange, time.apply_frame_range)
+
+        self.add_action(time.SaveFPS)
+        self.add_task(time.SaveFPS, time.store_frame_rate)
+
+        self.add_action(time.SyncFPS)
+        self.add_task(time.SyncFPS, time.get_frame_rate)
+        self.add_task(time.SyncFPS, time.apply_frame_rate)
