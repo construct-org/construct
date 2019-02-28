@@ -54,7 +54,8 @@ setup(
         'colorama',
         'scandir',
         'backports.shutil_get_terminal_size',
-        'win_unicode_console'
+        'win_unicode_console',
+        'fsfs'
     ],
     entry_points={
         'console_scripts': [

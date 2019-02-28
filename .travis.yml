@@ -6,9 +6,9 @@ python:
   - "3.6"
 
 install:
+  - "python -m pip install -U pip"
   - "pip install --upgrade setuptools"
-  - "pip install pipenv"
-  - "pipenv install --dev --skip-lock --system"
+  - "pip install -r requirements.txt"
 
 script:
   - nosetests -v -s --logging-clear-handlers --with-doctest
