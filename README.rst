@@ -1,9 +1,9 @@
 .. image:: https://img.shields.io/github/license/construct-org/construct.svg?style=flat-square
-    :target: https://github.com/danbradham/construct/blob/master/LICENSE
+    :target: https://github.com/construct-org/construct/blob/master/LICENSE
     :alt: License
 
 .. image:: https://img.shields.io/travis/construct-org/construct.svg?style=flat-square
-    :target: https://travis-ci.org/danbradham/construct
+    :target: https://travis-ci.org/construct-org/construct
     :alt: Travis
 
 =========
