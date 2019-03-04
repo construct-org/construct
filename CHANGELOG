@@ -5,6 +5,7 @@ Release Notes
 1.0.0 (Unreleased)
 ------------------
 
+* Add tests package
 * Rewrite Construct with multisite studios in mind
 
 
