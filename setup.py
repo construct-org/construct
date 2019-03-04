@@ -47,14 +47,6 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'werkzeug',
-        'scrim',
-        'fstrings',
-        'chainmap',
-        'colorama',
-        'scandir',
-        'backports.shutil_get_terminal_size',
-        'win_unicode_console',
         'fsfs'
     ],
     entry_points={

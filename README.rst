@@ -9,39 +9,16 @@
 =========
 construct
 =========
-An extensible API for creative project and asset management.
+An extensible API for creative projects and asset libraries.
 
 
 Features
 ========
 
- - Manage Projects on your file system
+ - Manage Projects and Asset Libraries
+ - Create your own Extensions and Actions
  - Integrate with your Creative Software
- - Manage Workspaces and Publishes
- - Folder and Path Templating (fsfs_ and Lucidity_)
- - Contextual API
- - Extensions, Actions, and Tasks
- - Rock solid CLI
-
-     + manage and navigate your projects
-     + automatically generate commands from Actions
-
-Core Packages
-=============
-
-+----------------------+------------------------------------------------+
-| package              | description                                    |
-+======================+================================================+
-| construct_cpenv_     | Cpenv Integration for env management           |
-+----------------------+------------------------------------------------+
-| construct_launcher_  | Application launcher                           |
-+----------------------+------------------------------------------------+
-| construct_maya_      | Autodesk Maya integration                      |
-+----------------------+------------------------------------------------+
-| construct_nuke_      | The Foundry Nuke integration                   |
-+----------------------+------------------------------------------------+
-| construct_ui_        | Graphical user interface                       |
-+----------------------+------------------------------------------------+
+ - Manage Work files and Publish files
 
 
 Installation
@@ -57,12 +34,5 @@ Documentation
 `Visit the Full Documentation for more info and API Documentation <https://construct-org.github.io/construct>`_
 
 
-.. _construct_cli: https://github.com/construct-org/construct_cli
-.. _construct_cpenv: https://github.com/construct-org/construct_cpenv
-.. _construct_templates: https://github.com/construct-org/construct_templates
-.. _construct_launcher: https://github.com/construct-org/construct_launcher
-.. _construct_maya: https://github.com/construct-org/construct_maya
-.. _construct_nuke: https://github.com/construct-org/construct_nuke
 .. _construct_ui: https://github.com/construct-org/construct_ui
 .. _fsfs: https://github.com/danbradham/fsfs
-.. _Lucidity: https://gitlab.com/4degrees/lucidity
