@@ -107,6 +107,5 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# casts
-casts/casts
-casts/gifs
+# vscode
+.vscode

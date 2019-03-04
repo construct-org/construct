@@ -29,6 +29,14 @@ Installation
     $ pip install git+ssh://git@github.com/construct-org/construct.git
 
 
+Contribute
+==========
+
+ - Fork this repository
+ - Create a new branch
+ - Make a pull request
+
+
 .. toctree::
    :maxdepth: 2
 
@@ -38,8 +46,6 @@ Installation
    environment
    configuration
    api
-
-.. _fsfs: https://github.com/danbradham/fsfs
 
 
 * :ref:`genindex`

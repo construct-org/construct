@@ -34,5 +34,9 @@ Documentation
 `Visit the Full Documentation for more info and API Documentation <https://construct-org.github.io/construct>`_
 
 
-.. _construct_ui: https://github.com/construct-org/construct_ui
-.. _fsfs: https://github.com/danbradham/fsfs
+Contribute
+==========
+
+ - Fork this repository
+ - Create a new branch
+ - Make a pull request
