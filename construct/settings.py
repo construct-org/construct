@@ -6,7 +6,7 @@ import shutil
 import sys
 import logging
 
-from io import open
+from builtins import open, bytes
 import yaml
 
 from . import schemas
@@ -55,8 +55,9 @@ class Settings(dict):
             software_name = os.path.splitext(f)[0]
             software_file = unipath(software_folder, f)
 
-            with open(software_file) as sf:
-                software_data = yaml.load(sf.read())
+            with open(software_file, 'rb') as sf:
+                data = sf.read().decode('utf-8')
+                software_data = yaml.load(data)
 
             software_data = v.validated(software_data)
             if not software_data:
@@ -84,8 +85,8 @@ class Settings(dict):
 
         software_file = unipath(self.folder, 'software', name + '.yaml')
         data = yaml.dump(software, default_flow_style=False)
-        with open(software_file, 'w') as f:
-            f.write(data)
+        with open(software_file, 'wb') as f:
+            f.write(bytes(data, 'utf-8'))
 
     def delete_software(self, name):
 
@@ -110,8 +111,8 @@ class Settings(dict):
             self.file = potential_settings_file
             _log.debug('Loading settings from %s' % self.file)
 
-            with open(self.file) as f:
-                data = f.read()
+            with open(self.file, 'rb') as f:
+                data = f.read().decode('utf-8')
                 if data:
                     file_data = yaml.load(data)
                 else:
@@ -147,8 +148,8 @@ class Settings(dict):
 
     def save(self):
         if self.is_loaded:
-            data = self.yaml(exclude=['software'])
-            with open(self.file, 'w') as f:
+            data = bytes(self.yaml(exclude=['software']), 'utf-8')
+            with open(self.file, 'wb') as f:
                 f.write(data)
 
     def yaml(self, exclude=None):
@@ -170,8 +171,8 @@ def restore_default_settings(where):
 
     settings_file = unipath(where, SETTINGS_FILE)
     data = yaml.safe_dump(DEFAULT_SETTINGS, default_flow_style=False)
-    with open(settings_file, 'w') as f:
-        f.write(data)
+    with open(settings_file, 'wb') as f:
+        f.write(bytes(data, 'utf-8'))
 
 
 def find_in_paths(paths, resource):

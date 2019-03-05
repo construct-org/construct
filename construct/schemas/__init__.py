@@ -10,7 +10,7 @@ from cachetools import cached
 from cerberus import Validator, schema_registry
 from cerberus.schema import SchemaRegistry
 from bson.objectid import ObjectId
-from io import open
+from builtins import open, bytes
 
 
 schemas_root = os.path.abspath(os.path.dirname(__file__))
@@ -76,8 +76,8 @@ def get_schema(name):
     if not os.path.isfile(potential_path):
         raise SchemaNotFound('Could not find a schema named %s' % name)
 
-    with open(potential_path) as f:
-        schema_text = f.read()
+    with open(potential_path, 'rb') as f:
+        schema_text = f.read().decode('utf-8')
 
     return yaml.load(schema_text)
 
