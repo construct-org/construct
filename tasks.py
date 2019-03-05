@@ -2,5 +2,10 @@ from invoke import task
 
 
 @task
-def tests(c):
-    c.run('nosetests -v -s --logging-clear-handlers --with-doctest')
+def tests(ctx):
+    ctx.run('nosetests -v -s --logging-clear-handlers --with-doctest')
+
+
+@task
+def build_docs(ctx):
+    ctx.run('docs\make html')
