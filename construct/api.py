@@ -22,8 +22,6 @@ from .extensions import (
     Extensions,
 )
 
-from cachetools import cached
-
 
 __all__ = [
     'Api',
@@ -119,10 +117,12 @@ class Api(object):
         return self.settings['locations'][location][mount]
 
 
-@cached(cache=Api._apis)
 def get_api(name=DEFAULT_API_NAME, **kwargs):
-    return Api(name, **kwargs)
+    if name not in Api._apis:
+        Api._apis[name] = Api(name, **kwargs)
+    return Api._apis[name]
 
 
-def set_api(api, name='global'):
-    Api._apis[api.name] = api
+def set_api(api, name=None):
+    name = name or api.name
+    Api._apis[name] = api
