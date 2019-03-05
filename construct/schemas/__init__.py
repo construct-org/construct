@@ -10,6 +10,7 @@ from cachetools import cached
 from cerberus import Validator, schema_registry
 from cerberus.schema import SchemaRegistry
 from bson.objectid import ObjectId
+from io import open
 
 
 schemas_root = os.path.abspath(os.path.dirname(__file__))
@@ -70,11 +71,14 @@ def new_validator(schema, **kwargs):
 
 @cached(cache={})
 def get_schema(name):
+
     potential_path = os.path.join(schemas_root, name + '.yaml')
     if not os.path.isfile(potential_path):
         raise SchemaNotFound('Could not find a schema named %s' % name)
-    with open(potential_path, 'r') as f:
+
+    with open(potential_path) as f:
         schema_text = f.read()
+
     return yaml.load(schema_text)
 
 

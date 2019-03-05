@@ -6,7 +6,7 @@ import shutil
 import sys
 import logging
 
-from builtins import open
+from io import open
 import yaml
 
 from . import schemas
@@ -54,8 +54,10 @@ class Settings(dict):
 
             software_name = os.path.splitext(f)[0]
             software_file = unipath(software_folder, f)
-            with open(software_file, 'r') as sf:
+
+            with open(software_file) as sf:
                 software_data = yaml.load(sf.read())
+
             software_data = v.validated(software_data)
             if not software_data:
                 raise InvalidSettings(
@@ -81,8 +83,9 @@ class Settings(dict):
         self['software'][name] = software
 
         software_file = unipath(self.folder, 'software', name + '.yaml')
+        data = yaml.dump(software, default_flow_style=False)
         with open(software_file, 'w') as f:
-            f.write(yaml.dump(software, default_flow_style=False))
+            f.write(data)
 
     def delete_software(self, name):
 
@@ -107,8 +110,12 @@ class Settings(dict):
             self.file = potential_settings_file
             _log.debug('Loading settings from %s' % self.file)
 
-            with open(self.file, 'rb') as f:
-                file_data = yaml.load(f.read())
+            with open(self.file) as f:
+                data = f.read()
+                if data:
+                    file_data = yaml.load(data)
+                else:
+                    file_data = {}
 
             if not v.validate(file_data):
                 raise InvalidSettings(
@@ -140,8 +147,9 @@ class Settings(dict):
 
     def save(self):
         if self.is_loaded:
-            with open(self.file, 'wb') as f:
-                f.write(self.yaml(exclude=['software']))
+            data = self.yaml(exclude=['software'])
+            with open(self.file, 'w') as f:
+                f.write(data)
 
     def yaml(self, exclude=None):
         settings_to_encode = copy.deepcopy(dict(self))
@@ -161,9 +169,9 @@ def restore_default_settings(where):
     ensure_exists(*[unipath(where, f) for f in Settings.structure])
 
     settings_file = unipath(where, SETTINGS_FILE)
-    encoded = yaml.safe_dump(DEFAULT_SETTINGS, default_flow_style=False)
-    with open(settings_file, 'wb') as f:
-        f.write(encoded)
+    data = yaml.safe_dump(DEFAULT_SETTINGS, default_flow_style=False)
+    with open(settings_file, 'w') as f:
+        f.write(data)
 
 
 def find_in_paths(paths, resource):
