@@ -107,7 +107,7 @@ class Settings(dict):
             self.file = potential_settings_file
             _log.debug('Loading settings from %s' % self.file)
 
-            with open(self.file, 'r') as f:
+            with open(self.file, 'rb') as f:
                 file_data = yaml.load(f.read())
 
             if not v.validate(file_data):
@@ -140,7 +140,7 @@ class Settings(dict):
 
     def save(self):
         if self.is_loaded:
-            with open(self.file, 'w') as f:
+            with open(self.file, 'wb') as f:
                 f.write(self.yaml(exclude=['software']))
 
     def yaml(self, exclude=None):
@@ -162,7 +162,7 @@ def restore_default_settings(where):
 
     settings_file = unipath(where, SETTINGS_FILE)
     encoded = yaml.safe_dump(DEFAULT_SETTINGS, default_flow_style=False)
-    with open(settings_file, 'w') as f:
+    with open(settings_file, 'wb') as f:
         f.write(encoded)
 
 
