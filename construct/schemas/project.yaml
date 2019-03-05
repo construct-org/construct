@@ -1,0 +1,59 @@
+schema_version:
+    type: string
+    default: 0.1.0
+_id:
+    type: objectid
+    default_setter: objectid
+_type:
+    type: string
+    default: project
+created_at:
+    type: datetime
+    default_setter: utcnow
+created_by:
+    type: string
+    default_setter: getuser
+name:
+    type: string
+    required: True
+description:
+    type: string
+    default_setter: empty_string
+thumbnail:
+    type: binary
+software:
+    type: list
+    default_setter: empty_list
+locations:
+    type: dict
+    valueschema:
+        type: string
+    required: True
+tree:
+    type: dict
+    allow_unknown: True
+    valueschema:
+        type: string
+    schema:
+        groups:
+            type: string
+        asset:
+            type: string
+        asset_work:
+            type: string
+        asset_publish:
+            type: string
+        asset_review:
+            type: string
+        file:
+            type: string
+        sequence:
+            type: string
+    default:
+        folders: '{folder}'
+        asset: '{asset}'
+        asset_work: '{asset}/{task}/work/{host}'
+        asset_publish: '{asset}/{task}/publish/{ext}'
+        asset_reviews: '{asset}/{task}/review'
+        file: '{task}_{name}_v{version:0>3d}.{ext}'
+        sequence: '{task}_{name}_v{version:0>3}.{frame:0>4d}.{ext}'

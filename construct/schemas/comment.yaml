@@ -1,0 +1,12 @@
+schema_version:
+    type: string
+    default: 0.1.0
+created_at:
+    type: datetime
+    default_setter: utcnow
+created_by:
+    type: string
+    default_setter: getuser
+text:
+    type: string
+    required: True

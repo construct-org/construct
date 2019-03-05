@@ -1,0 +1,24 @@
+schema_version:
+    type: string
+    default: 0.1.0
+_id:
+    type: objectid
+    default_setter: objectid
+_type:
+    type: string
+    default: folder
+parent_id:
+    type: objectid
+project_id:
+    type: objectid
+created_at:
+    type: datetime
+    default_setter: utcnow
+created_by:
+    type: string
+    default_setter: getuser
+name:
+    type: string
+    required: True
+thumbnail:
+    type: binary

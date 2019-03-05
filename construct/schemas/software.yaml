@@ -1,0 +1,40 @@
+schema_version:
+    type: string
+    default: 0.1.0
+label:
+    type: string
+    required: True
+icon:
+    type: string
+    required: True
+host:
+    type: string
+    required: True
+cmd:
+    type: dict
+    required: True
+    schema:
+        linux:
+            anyof_type: [string, list]
+        mac:
+            anyof_type: [string, list]
+        win:
+            anyof_type: [string, list]
+args:
+    type: list
+env:
+    type: dict
+    valueschema:
+        anyof_type: [string, list]
+    default: {}
+files:
+    type: dict
+    valueschema:
+        type: string
+    default: {}
+folders:
+    type: list
+    default: []
+extensions:
+    type: list
+    default: []
