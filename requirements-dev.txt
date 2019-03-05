@@ -3,5 +3,9 @@ fsfs
 bson
 cachetools
 future
+nose
+invoke
 git+git://github.com/spyder-ide/qtsass@master#egg=qtsass
 pymongo
+sphinx
+sphinx_rtd_theme
