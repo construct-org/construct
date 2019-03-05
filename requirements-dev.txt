@@ -1,11 +1,12 @@
-pyyaml
-fsfs
 bson
 cachetools
+cerberus
+fsfs
 future
-nose
-invoke
 git+git://github.com/spyder-ide/qtsass@master#egg=qtsass
+invoke
+nose
 pymongo
+pyyaml
 sphinx
 sphinx_rtd_theme
