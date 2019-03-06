@@ -8,7 +8,14 @@ from .constants import DEFAULT_PATHS
 
 class Path(list):
 
+    def __init__(self, path=None):
+        self._custom = bool(path)
+        if path:
+            self.extend(path)
+
     def load(self):
+        if self._custom:
+            return
         try:
             env_paths = os.environ['CONSTRUCT_PATH'].strip(os.pathsep)
             self.extend(env_paths.split(os.pathsep))

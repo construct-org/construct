@@ -24,25 +24,27 @@ from .extensions import (
 )
 
 
-__all__ = [
-    'Api',
-    'get_api',
-    'set_api'
-]
+__all__ = ['API']
 
 logging.config.dictConfig(DEFAULT_LOGGING)
 _log = logging.getLogger(__name__)
-_initialized = False
+_cache = {}
 
 
-class Api(object):
+def _on_exit():
+    for api in list(_cache.values()):
+        api.uninit()
 
-    _apis = {}
 
-    def __init__(self, name, **kwargs):
+atexit.register(_on_exit)
+
+
+class API(object):
+
+    def __init__(self, name=None, **kwargs):
         self.name = name
         self.initialized = False
-        self.path = Path()
+        self.path = Path(kwargs.pop('path', None))
         self.settings = Settings(self.path)
         self.extensions = Extensions(self)
         self.context = Context()
@@ -52,8 +54,7 @@ class Api(object):
     def init(self):
 
         _log.debug('Hi!')
-        global _initialized
-        if _initialized:
+        if self.initialized:
             _log.error('Construct is already initialized...')
             return
 
@@ -72,17 +73,13 @@ class Api(object):
         _log.debug('Loading context...')
         self.context.load()
 
-        _log.debug('Adding exit handler...')
-        atexit.register(self.uninit)
-
-        _initialized = True
+        self.initialized = True
         _log.debug('Done initializing.')
 
 
     def uninit(self):
 
-        global _initialized
-        if not _initialized:
+        if not self.initialized:
             _log.debug('Construct is not initialized...')
             return
 
@@ -98,6 +95,7 @@ class Api(object):
         _log.debug('Unloading extensions...')
         self.extensions.unload()
 
+        _cache.pop(self.name, None)
         _initialized = False
         _log.debug('Done uninitializing.')
         _log.debug('Goodbye!')
@@ -116,14 +114,3 @@ class Api(object):
         location = location or self.settings.get('my_location')
         mount = mount or self.settings.get('my_mount')
         return self.settings['locations'][location][mount]
-
-
-def get_api(name=DEFAULT_API_NAME, **kwargs):
-    if name not in Api._apis:
-        Api._apis[name] = Api(name, **kwargs)
-    return Api._apis[name]
-
-
-def set_api(api, name=None):
-    name = name or api.name
-    Api._apis[name] = api

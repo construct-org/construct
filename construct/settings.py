@@ -104,7 +104,7 @@ class Settings(dict):
             )
 
         self.update(**DEFAULT_SETTINGS)
-        self.file = USER_SETTINGS_FILE
+        self.file = unipath(self.path[-1], SETTINGS_FILE)
         potential_settings_file = find_in_paths(self.path, SETTINGS_FILE)
 
         if potential_settings_file:
@@ -130,7 +130,7 @@ class Settings(dict):
                 'Settings file not found.'
                 ' Writing default settings to ' + self.file
             )
-            restore_default_settings(USER_PATH)
+            restore_default_settings(self.path[-1])
 
         self.folder = os.path.dirname(self.file)
 
