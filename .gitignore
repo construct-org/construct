@@ -90,6 +90,13 @@ Thumbs.db
 .venv
 env/
 venv/
+venv27/
+venv36/
+venv37/
+venv38/
+venv35/
+venv34/
+venv3/
 ENV/
 env.bak/
 venv.bak/
