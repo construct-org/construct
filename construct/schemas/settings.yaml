@@ -1,0 +1,23 @@
+schema_version:
+    type: string
+    default: 0.1.0
+my_location:
+    type: string
+    required: True
+my_mount:
+    type: string
+    required: True
+locations:
+    type: dict
+    valueschema:
+        type: dict
+    required: True
+mongodb_uri:
+    type: string
+    default_setter: empty_string
+extensions:
+    type: list
+    default_setter: empty_list
+logging:
+    type: dict
+    default_setter: empty_dict

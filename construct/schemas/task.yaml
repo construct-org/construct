@@ -1,0 +1,25 @@
+schema_version:
+    type: string
+    default: 0.1.0
+_id:
+    type: objectid
+    default_setter: objectid
+_type:
+    type: string
+    default: task
+parent_id:
+    type: objectid
+parent_type:
+    type: list
+    default: [group]
+project_id:
+    type: objectid
+child_type:
+    type: list
+    default: [task]
+created_at:
+    type: datetime
+    default_setter: utcnow
+created_by:
+    type: string
+    default_setter: getuser

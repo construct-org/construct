@@ -2,13 +2,21 @@
 Release Notes
 =============
 
+1.0.0 (Unreleased)
+------------------
+
+* Add tests package
+* Rewrite Construct with multisite studios in mind
+
 
 0.1.21 (2018-06-15)
+-------------------
 
 * Context.from_path - Exclude all entry keys
 
 
 0.1.20 (2018-05-22)
+-------------------
 
 * Add support for Collection Entry type
 
@@ -23,11 +31,13 @@ Release Notes
 
 
 0.1.14
+------
 
 * Adjust availability of new.template, file.* and publish.file
 
 
 0.1.13
+------
 
 * Add more info to STATUSES and TASK_TYPES config vars
 * Fixed mac os mangled some paths causes fsfs search to fail
@@ -35,16 +45,19 @@ Release Notes
 
 
 0.1.11
+------
 
 * Fixed fsfs was not setup prior to pulling context from env vars
 
 
 0.1.10
+------
 
 * *construct push* now goes to the shortest path found
 
 
 0.1.0
+-----
 
 * Include cli in main package
 * Improved Task api

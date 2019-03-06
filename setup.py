@@ -44,19 +44,9 @@ setup(
         'Operating System :: POSIX',
         'Programming Language :: Python',
     ],
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     include_package_data=True,
-    install_requires=[
-        'werkzeug',
-        'scrim',
-        'fstrings',
-        'chainmap',
-        'colorama',
-        'scandir',
-        'backports.shutil_get_terminal_size',
-        'win_unicode_console',
-        'fsfs'
-    ],
+    install_requires=[],
     entry_points={
         'console_scripts': [
             'pyconstruct = construct.cli.__main__:main'

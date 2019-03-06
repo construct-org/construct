@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-
+__version__ = '1.0.0'
 __title__ = 'construct'
-__description__ = 'Creative project and asset management'
-__version__ = '0.1.22'
+__description__ = 'Extensible api for projects and asset libraries'
 __author__ = 'Dan Bradham'
 __email__ = 'danielbradham@gmail.com'
-__license__ = 'MIT'
 __url__ = 'https://github.com/construct-org/construct'
 
 
-from construct.api import *
+from .api import Api, get_api, set_api

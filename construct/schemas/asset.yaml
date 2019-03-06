@@ -1,0 +1,38 @@
+schema_version:
+    type: string
+    default: 0.1.0
+_id:
+    type: objectid
+    default_setter: objectid
+_type:
+    type: string
+    default: asset
+parent_id:
+    type: objectid
+project_id:
+    type: objectid
+created_at:
+    type: datetime
+    default_setter: utcnow
+created_by:
+    type: string
+    default_setter: getuser
+name:
+    type: string
+    required: True
+type:
+    type: string
+    required: True
+thumbnail:
+    type: binary
+tags:
+    type: list
+    valueschema: string
+workfiles:
+    type: list
+    schema:
+        type: version
+publishes:
+    type: list
+    schema:
+        type: version
