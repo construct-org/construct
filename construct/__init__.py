@@ -8,4 +8,13 @@ __email__ = 'danielbradham@gmail.com'
 __url__ = 'https://github.com/construct-org/construct'
 
 
-from .api import Api, get_api, set_api
+from .constants import DEFAULT_API_NAME
+from . import api
+
+
+def API(name=DEFAULT_API_NAME, **kwargs):
+    '''Wrap api.API is a singleton'''
+
+    if name not in api._cache:
+        api._cache[name] = api.API(name, **kwargs)
+    return api._cache[name]
