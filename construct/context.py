@@ -4,67 +4,98 @@ import copy
 import getpass
 import os
 import sys
+import json
 
+from past.builtins import basestring
 from .constants import DEFAULT_HOST, PLATFORM
 
 __all__ = ['Context']
 
 
-class Context(object):
+def encode(obj):
+    return json.dumps(obj)
 
-    def __init__(self):
-        self._ctx = {}
 
-    def __str__(self):
-        return str(self._ctx)
+def decode(obj):
+    return json.loads(obj)
 
-    def load(self, ctx=None, env=None):
-        '''Update ctx with values stored in environment variables.'''
 
-        ctx = ctx or self._ctx
+class Context(dict):
+
+    _keys = [
+        'user',
+        'platform',
+        'host',
+        'user',
+        'platform',
+        'project',
+        'folder',
+        'asset',
+        'task',
+        'version',
+        'file',
+    ]
+    _defaults = {k: None for k in _keys}
+    _defaults['user'] = getpass.getuser()
+    _defaults['platform'] = PLATFORM
+    _defaults['host'] = DEFAULT_HOST
+
+    def __init__(self, **kwargs):
+        self.update(**self._defaults)
+        self.update(**kwargs)
+
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError:
+            raise AttributeError(name)
+
+    def __setattr__(self, name, value):
+        self[name] = value
+
+    def load(self, env=None):
+        '''Update ctx with values stored in environment variables. You can
+        optionally pass a dictionary to load from. This is different than using
+        update because it only updates standard context keys rather than
+        updating all keys.
+        '''
+
         env = env or os.environ
-        ctx['user'] = getpass.getuser()
-        ctx['platform'] = PLATFORM
-        ctx['host'] = env.get('CONSTRUCT_HOST', DEFAULT_HOST)
-        ctx['project'] = env.get('CONSTRUCT_PROJECT', None)
-        ctx['folder'] = env.get('CONSTRUCT_FOLDER', None)
-        ctx['asset'] = env.get('CONSTRUCT_ASSET', None)
-        ctx['task'] = env.get('CONSTRUCT_TASK', None)
-        ctx['version'] = env.get('CONSTRUCT_VERSION', None)
-        ctx['file'] = env.get('CONSTRUCT_FILE', None)
-
-    def unload(self, ctx=None):
-        '''Clear the given context.'''
-
-        ctx = ctx or self._ctx
-        ctx.clear()
-
-    def store(self, ctx=None, env=None):
-        '''Write ctx values to environment variables'''
-
-        ctx = ctx or self._ctx
-        env = env or os.environ
-        env.update(self.to_envvars(ctx))
-
-    def update(self, **values):
-        self._ctx.update(**values)
-
-    def set(self, ctx):
-        self._ctx = ctx
-
-    def to_envvars(self, ctx=None):
-
-        ctx = ctx or self._ctx
-        env = {}
-        for key in ['host', 'project', 'folder', 'asset', 'task', 'file']:
-            env_key = ('construct_' + key).upper()
-            value = ctx.get(key, None)
+        for key in self._keys:
+            value = env.get(('construct_' + key).upper(), None)
             if value:
-                env[env_key] = value
+                try:
+                    self[key] = decode(value)
+                except:
+                    self[key] = value
+
+    def unload(self):
+        '''Restore this Context to defaults'''
+
+        self.clear()
+        self.update(**self._defaults)
+
+    def store(self, env=None):
+        '''Store this Context in os.environ. You may also pass a dict.'''
+
+        env = env or os.environ
+        env.update(self.to_envvars())
+
+    def to_envvars(self):
+        '''Serialize ctx to strings storable as environment values.'''
+
+        env = {}
+        for key in self._keys:
+            env_key = ('construct_' + key).upper()
+            value = self.get(key, None)
+            if value:
+                if isinstance(value, basestring):
+                    env[env_key] = value
+                else:
+                    env[env_key] = encode(value)
         return env
 
-    def copy(self, ctx=None):
-        '''Copy a context or the active context.'''
+    def copy(self):
+        '''Copy this context'''
 
-        ctx = ctx or self._ctx
-        return copy.deepcopy(ctx)
+        return self.__class__(**copy.deepcopy(self))
