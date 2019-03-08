@@ -66,7 +66,7 @@ class LaunchAction(Action):
 
     def get_software_env(self, ctx):
         env = os.environ.copy()
-        update_values(env, **context.to_envvars(ctx))
+        update_values(env, **ctx.to_envvars(ctx))
         update_values(env, **self.software['env'])
         update_values(
             env,
