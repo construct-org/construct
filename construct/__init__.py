@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-__version__ = '1.0.0'
+__version__ = '0.2.0'
 __title__ = 'construct'
 __description__ = 'Extensible api for projects and asset libraries'
 __author__ = 'Dan Bradham'
