@@ -7,29 +7,46 @@ from . import schemas
 from .utils import iter_modules, unipath
 
 __all__ = [
-    'Action',
     'Extension',
-    'Setting',
-    'Extensions',
+    'ExtensionManager',
     'Host',
-    'is_extension',
     'is_extension_type',
+    'is_extension',
 ]
 
 
-missing = object()
 _log = logging.getLogger(__name__)
 
 
 class Extension(object):
+    '''The Extension class allows users to extend Construct with their own
+    behavior and functionality. When writing your own Extensions use the
+    `setup` method instead of `__init__` to perform any setup your Extension
+    requires like creating a database connection. The `load` method should be
+    used to register event handlers and extend the base API. The `unload`
+    method should be used to undo everything that was done in `load`.
+
+    Extensions commonly do the following:
+
+     - Emit custom events
+     - Provide event handlers
+     - Provide Methods and Objects to extend the base API
+
+    Look at construct.builtins to see the Extensions that provide the core
+    functionality of Construct.
+    '''
 
     identifier = ''
     label = ''
     icon = ''
 
-    def __init__(self, api):
+    def __init__(self, api=None):
         self.api = api
-        self.settings = api.settings
+
+    def setup(self, api):
+        '''Called by Construct prior to loading the extension. This is a good
+        place to set up dependencies like database connections.
+        '''
 
     def load(self, api):
         '''Called by Construct when loading the extension.
@@ -46,57 +63,15 @@ class Extension(object):
         '''
 
     def is_available(self, ctx):
-        '''Return True if the Action is available in the given context'''
+        '''Return True if the Extension is available in the given context'''
         return True
-
-    def get_actions(self, ctx):
-        '''Called by Construct when finding actions for a specific context.'''
-        return []
-
-
-class Setting(object):
-    '''Provides easy access to a key in the current Apis settings.
-
-    Examples:
-        class MyExtension(Extension):
-            software = Setting('software')
-    '''
-
-    def __init__(self, key):
-        self.key = key
-
-    def __get__(self, obj, type=None):
-        if obj is None:
-            return self
-        return obj.settings[self.key]
-
-
-class Action(Extension):
-
-    def __call__(self, *args, **kwargs):
-        ctx = kwargs.pop('ctx', self.api.context.copy())
-        ctx['args'] = args
-        ctx['kwargs'] = kwargs
-        ctx['interface'] = self.interface(ctx)
-
-        # TODO: validate args and kwargs
-        # use inspect.getargspec to map args to names
-        # v = schemas.new_validator(ctx['interface'])
-        # kwargs = v.validated(...)
-        # self.run(**kwargs)
-
-        self.run(*args, **kwargs)
-
-    def interface(self, ctx):
-        '''Return a list or dict describing the args this Action accepts.'''
-        return {}
-
-    def run(self, *args, **kwargs):
-        '''The main method of this action.'''
-        return NotImplemented
 
 
 class Host(Extension):
+    '''An Extension providing a unified api to access the Host software that
+    Construct is operating within like, Autodesk Maya or SideFX Houdini.
+    The active Host Extension is bound to API.host.
+    '''
 
     def modified(self):
         '''Check if current file is modified'''
@@ -111,11 +86,11 @@ class Host(Extension):
         return NotImplemented
 
     def get_selection(self):
-        '''Get the host's current selection'''
+        '''Get the host's selection'''
         return NotImplemented
 
     def set_selection(self, selection):
-        '''Set the host's current selection'''
+        '''Set the host's selection'''
         return NotImplemented
 
     def get_workspace(self):
@@ -174,7 +149,7 @@ class Host(Extension):
         return QtWidgets.QApplication.instance()
 
 
-EXTENSION_TYPES = (Extension, Host, Action)
+EXTENSION_TYPES = (Extension, Host)
 
 
 def is_extension_type(obj):
@@ -193,7 +168,7 @@ def is_extension(obj):
     return isinstance(obj, EXTENSION_TYPES)
 
 
-class Extensions(dict):
+class ExtensionManager(dict):
 
     def __init__(self, api):
         self.api = api
@@ -221,7 +196,6 @@ class Extensions(dict):
         if self.loaded(ext):
             _log.debug('Extension already loaded: %s' % ext)
 
-        # Initialize extension
         _log.debug('Loading extension: %s' % ext)
         if is_extension_type(ext):
             inst = ext(self.api)
@@ -231,12 +205,18 @@ class Extensions(dict):
             _log.error('Expected Extension type got %s' % ext)
             return
 
-        # Load extension
+        try:
+            inst.setup(self.api)
+        except:
+            _log.exception("Failed to setup extension: %s" % ext)
+            return
+
         try:
             inst.load(self.api)
             self[ext.identifier] = inst
         except:
             _log.exception("Failed to load extension: %s" % ext)
+            return
 
     def unregister(self, ext):
         '''Unregister an Extension'''
@@ -244,7 +224,11 @@ class Extensions(dict):
         identifier = getattr(ext, 'identifier', ext)
         inst = self.pop(identifier, None)
         _log.debug('Unloading extension: %s' % ext)
-        inst.unload(self.api)
+        try:
+            inst.unload(self.api)
+        except:
+            _log.exception("Failed to unload extension: %s" % ext)
+            return
 
     def loaded(self, ext):
         '''Check if an Extension has been loaded.'''
@@ -299,25 +283,3 @@ class Extensions(dict):
 
         ctx = ctx or self.api.context.copy()
         return [ext for ext in self.values() if ext.is_available(ctx)]
-
-    def get_actions(self, ctx=None):
-        '''Get actions available in the provided context.'''
-
-        ctx = ctx or self.api.context.copy()
-        actions = {}
-        for ext in self.get_available(ctx):
-
-            # Get normally registered Actions
-            if isinstance(ext, Action):
-                if ext.identifier not in actions:
-                    actions[ext.identifier] = ext
-
-            # Get dynamically generated actions
-            # from available Extensions
-            for action in ext.get_actions(ctx):
-                action = action()
-                if action.identifier not in actions:
-                    action.load()
-                    actions[action.identifier] = action
-
-        return actions

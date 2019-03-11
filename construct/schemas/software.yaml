@@ -22,19 +22,20 @@ cmd:
             anyof_type: [string, list]
 args:
     type: list
+    default_setter: empty_list
 env:
     type: dict
     valueschema:
         anyof_type: [string, list]
-    default: {}
+    default_setter: empty_dict
 files:
     type: dict
     valueschema:
         type: string
-    default: {}
+    default_setter: empty_dict
 folders:
     type: list
-    default: []
+    default_setter: empty_list
 extensions:
     type: list
-    default: []
+    default_setter: empty_list

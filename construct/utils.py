@@ -6,6 +6,8 @@ from os.path import abspath, expanduser, join as joinpath
 from contextlib import contextmanager
 from glob import glob
 
+from past.builtins import basestring
+
 __all__ = [
     'import_file',
     'isolated_imports',
@@ -13,7 +15,9 @@ __all__ = [
     'unipath',
     'ensure_exists',
     'unload_modules',
-    'get_lib_path'
+    'get_lib_path',
+    'update_env',
+    'update_envvar',
 ]
 this_package = os.path.dirname(__file__)
 
@@ -30,6 +34,28 @@ def ensure_exists(*folders):
     for folder in folders:
         if not os.path.isdir(folder):
             os.makedirs(folder)
+
+
+def update_env(d, **values):
+    '''Updates an environment dict with the specified values.'''
+
+    for k, v in values.items():
+        update_value(d, k, v)
+
+
+def update_envvar(d, k, v):
+    '''Update one value in an environment dict.'''
+
+    if isinstance(v, basestring):
+        d[k] = v
+    elif isinstance(v, list):
+        v = os.pathsep.join(v)
+        if k not in v:
+            d[k] = v
+        else:
+            d[k] = os.pathsep.join([v, d[k]])
+    else:
+        d[k] = str(v)
 
 
 @contextmanager
