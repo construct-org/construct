@@ -11,8 +11,8 @@ if platform == 'darwin':
 
 from past.types import basestring
 from .. import context, schemas
-from ..extensions import Extension, Action, Setting
-from ..utils import get_lib_path
+from ..extensions import Extension
+from ..utils import get_lib_path, update_env
 
 
 _log = logging.getLogger(__name__)
@@ -20,97 +20,143 @@ _log = logging.getLogger(__name__)
 
 class Software(Extension):
 
-    identifier = 'Launch'
-    label = 'Launch Software'
-    software = Setting('software')
+    identifier = 'software'
+    label = 'Software Extension'
 
     def is_available(self, ctx):
-        return ctx.get('project', False)
+        return ctx.project
 
-    def get_launch_actions(self, ctx):
+    def load(self, api):
+        api.extend('save_software', api.settings.save_software)
+        api.extend('delete_software', api.settings.delete_software)
+        api.extend('get_software', self.get_software)
+        api.extend('launch', self.launch)
+        api.extend('open_with', self.open_with)
 
-        actions = []
-        file = ctx.get('file', None) or ''
-        ext = os.path.splitext(file)[-1]
+    def unload(self, api):
+        api.unextend('save_software')
+        api.unextend('delete_software')
+        api.unextend('get_software')
+        api.unextend('launch')
+        api.unextend('open_with')
 
-        for software_key in ctx['project']['software']:
-            try:
-                software = self.software[software_key]
-            except KeyError:
-                _log.error('Missing software config for: ' + software_key)
+    def get_software(self, api, file=None):
+        '''Get the available software.
 
-            if file and ext not in software['extensions']:
+        If there is a project in the current context only return software in the
+        project's "software" list. If a file is provided only return software
+        that can handle the file's extension.
+        '''
+
+        ext = None
+        project_software = None
+        available_software = {}
+
+        if file:
+            ext = os.path.splitext(file)[-1]
+
+        if api.context.project:
+            project_software = api.context.project['software']
+
+        for software_name, software in api.settings['software'].items():
+            if ext and ext not in software['extensions']:
                 continue
+            if project_software and software_name not in project_software:
+                continue
+            available_software[software_name] = software
 
-            actions.append(new_launch_action(software))
+        return available_software
 
-        return actions
+    def launch(self, api, name, *args):
+        '''Launch the specified software.
 
-    def get_actions(self, ctx):
-        return self.get_launch_actions(ctx)
+        Arguments:
+            name (str): Name of software to launch
+            *args: Arguments to pass to software executable
+        '''
 
+        software = api.settings['software'].get(name, None)
+        if not software:
+            raise NameError('Could not find software named ' + name)
 
-class LaunchAction(Action):
-
-    software = None
-
-    def get_command(self):
-        cmd = self.software['cmd'][platform]
-        if isinstance(cmd, basestring):
-            if os.path.isfile(cmd):
-                return True, cmd
-        for item in cmd:
-            if os.path.isfile(item):
-                return True, item
-        return False, cmd
-
-    def get_software_env(self, ctx):
-        env = os.environ.copy()
-        update_values(env, **ctx.to_envvars(ctx))
-        update_values(env, **self.software['env'])
-        update_values(
-            env,
-            CONSTRUCT_HOST=self.software['host'],
-            PYTHONPATH=[get_lib_path()]
-        )
-        return env
-
-    def run(self, ctx, *args):
-        found, cmd = self.get_command()
+        found, cmd = _get_command(software)
         if not found:
             raise OSError(
-                "Can not find executable. "
-                "Are you sure it's installed?"
+                "Could not find executable for %s. Are you sure it's installed?"
+                % name
             )
 
-        cmd = [cmd] + self.software.get('args', [])
-        if args:
-            cmd += list(args)
-        kwargs = dict(env=self.get_software_env(ctx))
+        args = list(args or software['args'])
+        cmd = [cmd] + args
+        env = _get_software_env(software, api.context)
 
-        # TODO: Create workspace if it doesn't exist and we are launching
-        #       in the context of a task.
+        # TODO: run before_launch hooks
+        # TODO: create workspace if it does not exist
+        _log.debug('Launching %s' % name.title())
+        _run(cmd, env=env)
 
-        _log.debug('Launching %s' % self.software['name'].title())
-        run(cmd, **kwargs)
+    def open_with(self, api, name, file, *args):
+        '''Open a file with the specified software.
+
+        Arguments:
+            name (str): Name of software to launch
+            file (str): File to open with software
+            *args: Arguments to pass to software executable
+        '''
+
+        software = api.settings['software'].get(name, None)
+        if not software:
+            raise NameError('Could not find software named ' + name)
+
+        ext = os.path.splitext(file)[-1]
+        if ext not in software['extensions']:
+            raise OSError('Can not open %s with %s' % (name, file))
+
+        found, cmd = _get_command(software)
+        if not found:
+            raise OSError(
+                "Could not find executable for %s. Are you sure it's installed?"
+                % name
+            )
+
+        args = list(args or software['args'])
+        cmd = [cmd] + args
+        env = _get_software_env(software, api.context)
+
+        # TODO: run before_launch hooks
+        # TODO: create workspace if it does not exist
+        _log.debug('Launching %s' % name.title())
+        _run(cmd, env=env)
 
 
-def new_launch_action(software):
-    '''Create a new LaunchAction for a piece of software.'''
+def _get_command(software):
+    '''Get the platform specific command used to execute a piece of software.'''
 
-    return type(
-        'Launch' + software['name'].title(),
-        (LaunchAction,),
-        dict(
-            identifier='launch.' + software['name'],
-            label='Launch ' + software['label'],
-            icon=software['icon'],
-            software=software
-        )
+    cmd = software['cmd'][platform]
+    if isinstance(cmd, basestring):
+        if os.path.isfile(cmd):
+            return True, cmd
+    for item in cmd:
+        if os.path.isfile(item):
+            return True, item
+    return False, cmd
+
+
+def _get_software_env(software, ctx):
+    '''Get the environment for the specified software.'''
+
+    env = os.environ.copy()
+    update_env(env, **ctx.to_envvars())
+    update_env(env, **software['env'])
+    update_env(
+        env,
+        CONSTRUCT_HOST=software['host'],
+        PYTHONPATH=[get_lib_path()]
     )
+    return env
 
 
-def run(*args, **kwargs):
+def _run(*args, **kwargs):
     '''On Windows start a detached process in it's own process group.'''
 
     if platform == 'win':
@@ -121,21 +167,3 @@ def run(*args, **kwargs):
 
     kwargs.setdefault('shell', True)
     subprocess.Popen(*args, **kwargs)
-
-
-def update_values(d, **values):
-    for k, v in values.items():
-        update_value(d, k, v)
-
-
-def update_value(d, k, v):
-    if isinstance(v, basestring):
-        d[k] = v
-    elif isinstance(v, list):
-        v = os.pathsep.join(v)
-        if k not in v:
-            d[k] = v
-        else:
-            d[k] = os.pathsep.join([v, d[k]])
-    else:
-        d[k] = str(v)

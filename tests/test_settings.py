@@ -4,14 +4,14 @@ import sys
 import os
 import shutil
 
-from . import get_path
+from . import data_dir
 from construct.settings import Settings, restore_default_settings
 from construct.constants import DEFAULT_SETTINGS
 
 
-SETTINGS_FOLDER = get_path('data', '.cons')
-SETTINGS_FOLDERS = [get_path('data', '.cons', f) for f in Settings.structure]
-SETTINGS_FILE = get_path('data', '.cons', 'construct.yaml')
+SETTINGS_FOLDER = data_dir('.cons')
+SETTINGS_FOLDERS = [data_dir('.cons', f) for f in Settings.structure]
+SETTINGS_FILE = data_dir('.cons', 'construct.yaml')
 CONSTRUCT_PATH = [SETTINGS_FOLDER]
 SOFTWARE_NAME = 'testsoftware'
 SOFTWARE_SETTINGS = dict(
@@ -25,7 +25,7 @@ SOFTWARE_SETTINGS = dict(
     ),
     extensions=['.tsb']
 )
-SOFTWARE_FILE = get_path('data', '.cons', 'software', SOFTWARE_NAME + '.yaml')
+SOFTWARE_FILE = data_dir('.cons', 'software', SOFTWARE_NAME + '.yaml')
 NEW_LOCATIONS = dict(
     local=dict(
         projects='~/projects',

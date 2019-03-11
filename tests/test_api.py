@@ -4,12 +4,12 @@ import sys
 import os
 import shutil
 
-from . import get_path
+from . import data_dir
 from construct.settings import restore_default_settings
 import construct
 
 
-CUSTOM_USER_PATH = get_path('data', '.cons')
+CUSTOM_USER_PATH = data_dir('.cons')
 
 
 def setup_module():

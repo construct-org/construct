@@ -4,7 +4,9 @@ import atexit
 import os
 import yaml
 import logging
+import inspect
 from copy import deepcopy
+from functools import wraps
 from logging.config import dictConfig
 
 from .constants import (
@@ -20,7 +22,7 @@ from .path import Path
 from .extensions import (
     is_extension,
     is_extension_type,
-    Extensions,
+    ExtensionManager,
 )
 
 
@@ -46,9 +48,10 @@ class API(object):
         self.initialized = False
         self.path = Path(kwargs.pop('path', None))
         self.settings = Settings(self.path)
-        self.extensions = Extensions(self)
+        self.extensions = ExtensionManager(self)
         self.context = Context()
         self.schemas = schemas
+        self._registered_members = {}
         self.init()
 
     def init(self):
@@ -100,17 +103,68 @@ class API(object):
         _log.debug('Done uninitializing.')
         _log.debug('Goodbye!')
 
-    def get_host(self):
-        host_name = os.environ.get('CONSTRUCT_HOST', DEFAULT_HOST)
-        return self.extensions.get(host_name, None)
+    def extend(self, name, obj):
+        '''Register an obj with the API at the specified name. This provides
+        a way for Extensions to register objects to be first-class members of
+        the API.
 
-    def set_host(self, host_name_or_extension):
-        if is_extension(host_name_or_extension):
-            os.environ['CONSTRUCT_HOST'] = host_name_or_extension.name
+        Example:
+            def say(message):
+                print(message)
+            api.extend('say', say)
+            api.say('Hello world!')
+        '''
+
+        if hasattr(self, name):
+            raise NameError('API already has a member named "%s".' % name)
+
+        if requires_wrapper(obj):
+            obj = api_method_wrapper(self, obj)
+
+        _log.debug('Adding %s to api.' % name)
+        self._registered_members[name] = obj
+        setattr(self, name, obj)
+
+    def unextend(self, name):
+        '''Unregister a name that was registered using extend.
+
+        Example:
+            api.unextend('say')
+        '''
+
+        if name in self._registered_members:
+            _log.debug('Removing %s from api.' % name)
+            self._registered_members.pop(name, None)
+            self.__dict__.pop(name, None)
         else:
-            os.environ['CONSTRUCT_HOST'] = host_name_or_extension
+            _log.debug(name + ' was not registered with api.extend.')
+
+    @property
+    def host(self):
+        '''Get the active Host Extension.'''
+        return self.extensions.get(self.context.host, None)
 
     def get_mount(self, location=None, mount=None):
+        '''Get a file system path to a mount.
+
+        Arguments:
+            location (str): Name of location. Defaults to 'my_location' setting
+            mount (str): Name of mount. Defaults to 'my_mount' setting
+        '''
+
         location = location or self.settings.get('my_location')
         mount = mount or self.settings.get('my_mount')
         return self.settings['locations'][location][mount]
+
+
+def api_method_wrapper(api, fn):
+
+    @wraps(fn)
+    def api_method_call(*args, **kwargs):
+        return fn(api, *args, **kwargs)
+
+    return api_method_call
+
+
+def requires_wrapper(obj):
+    return callable(obj) and 'api' in inspect.getargspec(obj)[0]

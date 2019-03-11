@@ -35,11 +35,9 @@ DEFAULT_TREE = {
 }
 DEFAULT_LOGGING = dict(
     version=1,
-    formatters={
-        'simple': {
-            'format': '%(levelname).1s:%(name)s> %(message)s'
-        }
-    },
+    formatters={'simple': {
+        'format': '%(levelname).1s:%(name)s> %(message)s'
+    }},
     handlers={
         'console': {
             'class': 'logging.StreamHandler',
@@ -51,8 +49,7 @@ DEFAULT_LOGGING = dict(
             'level': os.environ.get('CONSTRUCT_LOGGING_LEVEL', 'DEBUG'),
             'handlers': ['console'],
         }
-    }
-)
+    })
 DEFAULT_SETTINGS = {
     'my_location': DEFAULT_LOCATION,
     'my_mount': DEFAULT_MOUNT,
