@@ -15,6 +15,7 @@ from .constants import (
     DEFAULT_PATHS,
     DEFAULT_API_NAME
 )
+from .events import EventManager
 from . import schemas
 from .context import Context
 from .settings import Settings
@@ -28,7 +29,6 @@ from .extensions import (
 
 __all__ = ['API']
 
-logging.config.dictConfig(DEFAULT_LOGGING)
 _log = logging.getLogger(__name__)
 _cache = {}
 
@@ -45,6 +45,7 @@ class API(object):
 
     def __init__(self, name=None, **kwargs):
         self.name = name
+        self.events = EventManager()
         self.initialized = False
         self.path = Path(kwargs.pop('path', None))
         self.settings = Settings(self.path)
@@ -61,7 +62,10 @@ class API(object):
             _log.error('Construct is already initialized...')
             return
 
-        _log.debug('Setting up path...')
+        _log.debug('Loading events...')
+        self.events.load()
+
+        _log.debug('Loading path...')
         self.path.load()
 
         _log.debug('Loading settings...')
@@ -86,13 +90,16 @@ class API(object):
             _log.debug('Construct is not initialized...')
             return
 
-        _log.debug('Clearing path...')
+        _log.debug('Unloading events...')
+        self.events.load()
+
+        _log.debug('Unloading path...')
         self.path.unload()
 
         _log.debug('Unloading settings...')
         self.settings.unload()
 
-        _log.debug('Clearing context...')
+        _log.debug('Unloading context...')
         self.context.unload()
 
         _log.debug('Unloading extensions...')
@@ -103,7 +110,71 @@ class API(object):
         _log.debug('Done uninitializing.')
         _log.debug('Goodbye!')
 
-    def extend(self, name, obj):
+    def define(self, event, doc):
+        '''Define a new event
+
+        Arguments:
+            event (str): Name of the event
+            doc (str): Documentation for event
+        '''
+
+        self.events.define(event, event)
+
+    def undefine(self, event):
+        '''Undefine an event
+
+        Arguments:
+            event (str): Name of the event
+        '''
+
+        self.events.undefine(event)
+
+    def on(self, *args, **kwargs):
+        '''Adds a handler to the specified event. Can be used as a decorator.
+
+        Examples:
+            events = EventHandler()
+            events.on('greet', lambda person: print('Hello %s' % person))
+
+            @events.on('greet')
+            def greeter(person):
+                print('Hello %s' % person)
+
+        Arguments:
+            event (str): Name of event
+            handler (callable): Function to add as handler
+            priority (int): Priority of handler
+
+        Decorator Arguments:
+            event (str): Name of event
+            priority (int): Priority of handler
+        '''
+
+        self.events.on(*args)
+
+    def off(self, event, handler):
+        '''Remove a handler from an event.
+
+        Arguments:
+            event (str): Name of the event
+            handler (callable): Handler to remove
+        '''
+
+        self.events.off(event, handler)
+
+    def send(self, event, *args, **kwargs):
+        '''Send an event. Executes all the event handlers and returns a
+        list of the handlers results.
+
+        Arguments:
+            event (str): Name of event to send
+            *args: Event arguments
+            **kwargs: Event keyword arguments
+        '''
+
+        return self.events.send(event, *args, **kwargs)
+
+    def extend(self, name, member):
         '''Register an obj with the API at the specified name. This provides
         a way for Extensions to register objects to be first-class members of
         the API.
@@ -118,12 +189,12 @@ class API(object):
         if hasattr(self, name):
             raise NameError('API already has a member named "%s".' % name)
 
-        if requires_wrapper(obj):
-            obj = api_method_wrapper(self, obj)
+        if requires_wrapper(member):
+            member = api_method_wrapper(self, member)
 
         _log.debug('Adding %s to api.' % name)
-        self._registered_members[name] = obj
-        setattr(self, name, obj)
+        self._registered_members[name] = member
+        setattr(self, name, member)
 
     def unextend(self, name):
         '''Unregister a name that was registered using extend.
