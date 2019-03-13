@@ -120,7 +120,7 @@ class Software(Extension):
             )
 
         args = list(args or software['args'])
-        cmd = [cmd] + args
+        cmd = [cmd] + args + [file]
         env = _get_software_env(software, api.context)
 
         # TODO: run before_launch hooks
