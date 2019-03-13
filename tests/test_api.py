@@ -23,7 +23,11 @@ def teardown_module():
 def test_init():
     '''initialize API'''
 
-    api = construct.API(__name__, path=[CUSTOM_USER_PATH])
+    api = construct.API(
+        __name__,
+        path=[CUSTOM_USER_PATH],
+        logging=dict(version=1)
+    )
     assert api.settings
 
 

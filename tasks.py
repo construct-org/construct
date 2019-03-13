@@ -3,7 +3,7 @@ from invoke import task
 
 @task
 def tests(ctx):
-    ctx.run('nosetests -v -s --logging-clear-handlers --with-doctest')
+    ctx.run('nosetests -v -s --logging-clear-handlers')
 
 
 @task

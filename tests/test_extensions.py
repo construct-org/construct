@@ -14,7 +14,11 @@ CUSTOM_USER_PATH = data_dir('.cons')
 
 def setup_module():
     restore_default_settings(CUSTOM_USER_PATH)
-    construct.API(__name__, path=[CUSTOM_USER_PATH])
+    api = construct.API(
+        __name__,
+        path=[CUSTOM_USER_PATH],
+        logging=dict(version=1)
+    )
 
 
 def teardown_module():

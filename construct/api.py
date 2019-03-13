@@ -42,6 +42,29 @@ atexit.register(_on_exit)
 
 
 class API(object):
+    '''The API object is the central object in Construct. When initialized
+    the API does the following.
+
+    1. Sends the before_setup event
+    2. Initializes a search path from CONSTRUCT_PATH
+    3. Loads settings from a construct.yaml file found in the search path
+    4. Discovers and loads Extensions
+    5. Loads an initial Context from your environment
+    6. Sends the after_setup event
+
+    Usually API objects are constructed using the API function available
+    in the construct module.
+
+    >>> import construct
+    >>> api = construct.API()
+
+    Arguments:
+        name (str): Name of the API
+        path (list): A list of search paths. Defaults to:
+            CONSTRUCT_PATH + ['~/.construct']
+        logging: (dict): Logging configuration. Defaults to:
+            construct.constants.DEFAULT_LOGGING
+    '''
 
     def __init__(self, name=None, **kwargs):
         self.name = name
@@ -52,8 +75,15 @@ class API(object):
         self.extensions = ExtensionManager(self)
         self.context = Context()
         self.schemas = schemas
+        self._logging_dict = kwargs.pop('logging', None)
         self._registered_members = {}
         self.init()
+
+    def _setup_logging(self):
+        if self._logging_dict is not None:
+            dictConfig(self._logging_dict)
+        else:
+            dictConfig(self.settings.get('logging', DEFAULT_LOGGING))
 
     def init(self):
 
@@ -62,7 +92,8 @@ class API(object):
             _log.error('Construct is already initialized...')
             return
 
-        dictConfig(self.settings.get('logging', DEFAULT_LOGGING))
+        self._setup_logging()
+
         _log.debug('Loading events...')
         self.events.load()
 
@@ -75,7 +106,7 @@ class API(object):
         self.settings.load()
 
         _log.debug('Configuring logging...')
-        dictConfig(self.settings.get('logging', DEFAULT_LOGGING))
+        self._setup_logging()
 
         _log.debug('Loading extensions...')
         self.extensions.load()
@@ -142,7 +173,6 @@ class API(object):
 
         Examples:
             api.on('greet', lambda person: print('Hello %s' % person))
-
             @api.on('greet')
             def greeter(person):
                 print('Hello %s' % person)
@@ -186,11 +216,12 @@ class API(object):
         a way for Extensions to register objects to be first-class members of
         the API.
 
-        Example:
-            def say(message):
-                print(message)
-            api.extend('say', say)
-            api.say('Hello world!')
+        Examples:
+            >>> def say(message):
+            ...     return message
+            >>> api.extend('say', say)
+            >>> api.say('Hello world!')
+            'Hello world!
         '''
 
         if hasattr(self, name):
@@ -206,7 +237,7 @@ class API(object):
     def unextend(self, name):
         '''Unregister a name that was registered using extend.
 
-        Example:
+        Examples:
             api.unextend('say')
         '''
 
