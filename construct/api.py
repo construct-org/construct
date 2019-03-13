@@ -64,6 +64,18 @@ class API(object):
             CONSTRUCT_PATH + ['~/.construct']
         logging: (dict): Logging configuration. Defaults to:
             construct.constants.DEFAULT_LOGGING
+
+    Attributes:
+        name: Name of this API object.
+        path: :class:`construct.path.Path` object used for finding resources and
+            settings files.
+        settings: :class:`construct.settings.Settings` object used to access
+            and manipulate settings values.
+        extensions: :class:`construct.extensions.ExtensionManager` object used
+            to discover and register :class:`construct.extensions.Extension` s.
+        context: Access to the current :class:`construct.Context`.
+        schemas: Access to :mod:`construct.schemas` used for data validation
+            and normalization.
     '''
 
     def __init__(self, name=None, **kwargs):
@@ -172,10 +184,10 @@ class API(object):
         '''Adds a handler to the specified event. Can be used as a decorator.
 
         Examples:
-            api.on('greet', lambda person: print('Hello %s' % person))
-            @api.on('greet')
-            def greeter(person):
-                print('Hello %s' % person)
+            >>> api.on('greet', lambda person: print('Hello %s' % person))
+            >>> @api.on('greet')
+            ... def greeter(person):
+            ...     print('Hello %s' % person)
 
         Arguments:
             event (str): Name of event
@@ -238,7 +250,7 @@ class API(object):
         '''Unregister a name that was registered using extend.
 
         Examples:
-            api.unextend('say')
+            >>> api.unextend('say')
         '''
 
         if name in self._registered_members:

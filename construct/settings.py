@@ -24,7 +24,13 @@ _log = logging.getLogger(__name__)
 
 
 class Settings(dict):
-    '''Provides dict access to the settings file.'''
+    '''Provides dict access to your settings file.
+
+    Attributes:
+        path: :class:`construct.path.Path` used to locate settings
+        file: Path to construct.yaml file
+        folder: Path containing construct.yaml file
+    '''
 
     structure = [
         'software',
@@ -72,6 +78,12 @@ class Settings(dict):
         return software
 
     def save_software(self, name, **data):
+        '''Save a new software configuration.
+
+        Arguments:
+            name (str): The name of the software like "maya2019"
+            **data: Software settings must match the settings.yaml schema
+        '''
 
         v = schemas.get_validator('software')
         software = v.validated(data)
@@ -89,6 +101,11 @@ class Settings(dict):
             f.write(bytes(data, 'utf-8'))
 
     def delete_software(self, name):
+        '''Delete a software configuration
+
+        Arguments:
+            name (str): The name of the software like "maya2019"
+        '''
 
         self['software'].pop(name, None)
         software_file = unipath(self.folder, 'software', name + '.yaml')
@@ -147,12 +164,16 @@ class Settings(dict):
         self.is_loaded = False
 
     def save(self):
+        '''Save these settings.'''
+
         if self.is_loaded:
             data = bytes(self.yaml(exclude=['software']), 'utf-8')
             with open(self.file, 'wb') as f:
                 f.write(data)
 
     def yaml(self, exclude=None):
+        '''Serialize these settings as yaml.'''
+
         settings_to_encode = copy.deepcopy(dict(self))
         exclude = (exclude or [])
         for key in exclude:

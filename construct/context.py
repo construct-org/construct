@@ -21,12 +21,50 @@ def decode(obj):
 
 
 class Context(dict):
+    '''Represents a state used to interact with Construct. The Construct object
+    provides both item and attribute access.
+
+    >>> ctx = Context()
+    >>> ctx.project = {'name': 'my_project'}
+    >>> ctx['project'] == ctx.project
+
+    Context objects can be loaded from and stored in environment variables
+    prefixed with **CONSTRUCT_**.
+
+    +----------+------------------------------------------------------+
+    |   key    |                     description                      |
+    +==========+======================================================+
+    | user     | usually the same as the logged in user               |
+    +----------+------------------------------------------------------+
+    | platform | Current platform [win, linux, mac]                   |
+    +----------+------------------------------------------------------+
+    | host     | Host application like maya, nuke, standalone, etc... |
+    +----------+------------------------------------------------------+
+    | project  | Project entity                                       |
+    +----------+------------------------------------------------------+
+    | folder   | Folder entity                                        |
+    +----------+------------------------------------------------------+
+    | asset    | Asset entity                                         |
+    +----------+------------------------------------------------------+
+    | task     | Task entity                                          |
+    +----------+------------------------------------------------------+
+    | version  | Version entity                                       |
+    +----------+------------------------------------------------------+
+    | file     | Path to a file                                       |
+    +----------+------------------------------------------------------+
+
+    The above keys default to None so when checking context it can be convenient
+    to use attribute access.
+
+    >>> if ctx.project and ctx.task:
+    ...     # Do something that depends on a project and task
+
+    '''
 
     _keys = [
         'user',
         'platform',
         'host',
-        'user',
         'platform',
         'project',
         'folder',

@@ -51,15 +51,13 @@ class Extension(object):
     def load(self, api):
         '''Called by Construct when loading the extension.
 
-        This method should register actions and tasks and perform any
-        necessary setup.
+        This method should register event handlers and extend the base API.
         '''
 
     def unload(self, api):
         '''Called by Construct when unloading the extension.
 
-        This method should unregister actions and tasks and perform any
-        necessary teardown.
+        This method should undo everything that was done in `load`.
         '''
 
     def is_available(self, ctx):

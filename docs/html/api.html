@@ -1,0 +1,1146 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Documentation &mdash; construct 0.2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Configuration" href="configuration.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> construct
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">API Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">Environment Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api-function">API Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-object">API Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#context">Context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#builtin-events">Builtin Events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#eventmanager">EventManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extension-types">Extension Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extensionmanager">ExtensionManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#path">Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.utils">utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.errors">errors</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">construct</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-documentation">
+<h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="api-function">
+<h2>API Function<a class="headerlink" href="#api-function" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="construct.API">
+<code class="descclassname">construct.</code><code class="descname">API</code><span class="sig-paren">(</span><em>name='global'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.API" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps <a class="reference internal" href="#construct.api.API" title="construct.api.API"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct.api.API</span></code></a> and maintains a cache of API objects.</p>
+<p>This allows you to get the same API object each time you call API with the
+same name.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">construct</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">api</span> <span class="o">=</span> <span class="n">construct</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">api</span> <span class="ow">is</span> <span class="n">construct</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="api-object">
+<h2>API Object<a class="headerlink" href="#api-object" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.api.API">
+<em class="property">class </em><code class="descclassname">construct.api.</code><code class="descname">API</code><span class="sig-paren">(</span><em>name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.API" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The API object is the central object in Construct. When initialized
+the API does the following.</p>
+<ol class="arabic simple">
+<li>Sends the before_setup event</li>
+<li>Initializes a search path from CONSTRUCT_PATH</li>
+<li>Loads settings from a construct.yaml file found in the search path</li>
+<li>Discovers and loads Extensions</li>
+<li>Loads an initial Context from your environment</li>
+<li>Sends the after_setup event</li>
+</ol>
+<p>Usually API objects are constructed using the API function available
+in the construct module.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">construct</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">api</span> <span class="o">=</span> <span class="n">construct</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – Name of the API</li>
+<li><strong>path</strong> (<em>list</em>) – A list of search paths. Defaults to:
+CONSTRUCT_PATH + [‘~/.construct’]</li>
+<li><strong>logging</strong> – (dict): Logging configuration. Defaults to:
+construct.constants.DEFAULT_LOGGING</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="construct.api.API.name">
+<code class="descname">name</code><a class="headerlink" href="#construct.api.API.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of this API object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.api.API.path">
+<code class="descname">path</code><a class="headerlink" href="#construct.api.API.path" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#construct.path.Path" title="construct.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct.path.Path</span></code></a> object used for finding resources and
+settings files.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.api.API.settings">
+<code class="descname">settings</code><a class="headerlink" href="#construct.api.API.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#construct.settings.Settings" title="construct.settings.Settings"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct.settings.Settings</span></code></a> object used to access
+and manipulate settings values.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.api.API.extensions">
+<code class="descname">extensions</code><a class="headerlink" href="#construct.api.API.extensions" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#construct.extensions.ExtensionManager" title="construct.extensions.ExtensionManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct.extensions.ExtensionManager</span></code></a> object used
+to discover and register <a class="reference internal" href="#construct.extensions.Extension" title="construct.extensions.Extension"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct.extensions.Extension</span></code></a> s.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.api.API.context">
+<code class="descname">context</code><a class="headerlink" href="#construct.api.API.context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Access to the current <code class="xref py py-class docutils literal notranslate"><span class="pre">construct.Context</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.api.API.schemas">
+<code class="descname">schemas</code><a class="headerlink" href="#construct.api.API.schemas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Access to <code class="xref py py-mod docutils literal notranslate"><span class="pre">construct.schemas</span></code> used for data validation
+and normalization.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.api.API.define">
+<code class="descname">define</code><span class="sig-paren">(</span><em>event</em>, <em>doc</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.API.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define a new event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> (<em>str</em>) – Name of the event</li>
+<li><strong>doc</strong> (<em>str</em>) – Documentation for event</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.api.API.extend">
+<code class="descname">extend</code><span class="sig-paren">(</span><em>name</em>, <em>member</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.API.extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register an obj with the API at the specified name. This provides
+a way for Extensions to register objects to be first-class members of
+the API.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">say</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">message</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s1">&#39;say&#39;</span><span class="p">,</span> <span class="n">say</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+<span class="go">&#39;Hello world!</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.api.API.get_mount">
+<code class="descname">get_mount</code><span class="sig-paren">(</span><em>location=None</em>, <em>mount=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.API.get_mount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a file system path to a mount.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>location</strong> (<em>str</em>) – Name of location. Defaults to ‘my_location’ setting</li>
+<li><strong>mount</strong> (<em>str</em>) – Name of mount. Defaults to ‘my_mount’ setting</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.api.API.host">
+<code class="descname">host</code><a class="headerlink" href="#construct.api.API.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the active Host Extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.api.API.off">
+<code class="descname">off</code><span class="sig-paren">(</span><em>event</em>, <em>handler</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.API.off" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a handler from an event.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> (<em>str</em>) – Name of the event</li>
+<li><strong>handler</strong> (<em>callable</em>) – Handler to remove</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.api.API.on">
+<code class="descname">on</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.API.on" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a handler to the specified event. Can be used as a decorator.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;greet&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">person</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">person</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@api</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;greet&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">greeter</span><span class="p">(</span><span class="n">person</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">person</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> (<em>str</em>) – Name of event</li>
+<li><strong>handler</strong> (<em>callable</em>) – Function to add as handler</li>
+<li><strong>priority</strong> (<em>int</em>) – Priority of handler</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Decorator Arguments:</dt>
+<dd>event (str): Name of event
+priority (int): Priority of handler</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.api.API.send">
+<code class="descname">send</code><span class="sig-paren">(</span><em>event</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.API.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an event. Executes all the event handlers and returns a
+list of the handlers results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> (<em>str</em>) – Name of event to send</li>
+<li><strong>*args</strong> – Event arguments</li>
+<li><strong>**kwargs</strong> – Event keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.api.API.undefine">
+<code class="descname">undefine</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.API.undefine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Undefine an event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>str</em>) – Name of the event</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.api.API.unextend">
+<code class="descname">unextend</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.api.API.unextend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unregister a name that was registered using extend.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span><span class="o">.</span><span class="n">unextend</span><span class="p">(</span><span class="s1">&#39;say&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="context">
+<h2>Context<a class="headerlink" href="#context" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.context.Context">
+<em class="property">class </em><code class="descclassname">construct.context.</code><code class="descname">Context</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>Represents a state used to interact with Construct. The Construct object
+provides both item and attribute access.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span> <span class="o">=</span> <span class="n">Context</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;my_project&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ctx</span><span class="p">[</span><span class="s1">&#39;project&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ctx</span><span class="o">.</span><span class="n">project</span>
+</pre></div>
+</div>
+<p>Context objects can be loaded from and stored in environment variables
+prefixed with <strong>CONSTRUCT_</strong>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">key</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>user</td>
+<td>usually the same as the logged in user</td>
+</tr>
+<tr class="row-odd"><td>platform</td>
+<td>Current platform [win, linux, mac]</td>
+</tr>
+<tr class="row-even"><td>host</td>
+<td>Host application like maya, nuke, standalone, etc…</td>
+</tr>
+<tr class="row-odd"><td>project</td>
+<td>Project entity</td>
+</tr>
+<tr class="row-even"><td>folder</td>
+<td>Folder entity</td>
+</tr>
+<tr class="row-odd"><td>asset</td>
+<td>Asset entity</td>
+</tr>
+<tr class="row-even"><td>task</td>
+<td>Task entity</td>
+</tr>
+<tr class="row-odd"><td>version</td>
+<td>Version entity</td>
+</tr>
+<tr class="row-even"><td>file</td>
+<td>Path to a file</td>
+</tr>
+</tbody>
+</table>
+<p>The above keys default to None so when checking context it can be convenient
+to use attribute access.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">project</span> <span class="ow">and</span> <span class="n">ctx</span><span class="o">.</span><span class="n">task</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c1"># Do something that depends on a project and task</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="construct.context.Context.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy this context</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.context.Context.load">
+<code class="descname">load</code><span class="sig-paren">(</span><em>env=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update ctx with values stored in environment variables. You can
+optionally pass a dictionary to load from. This is different than using
+update because it only updates standard context keys rather than
+updating all keys.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.context.Context.store">
+<code class="descname">store</code><span class="sig-paren">(</span><em>env=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context.store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store this Context in os.environ. You may also pass a dict.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.context.Context.to_envvars">
+<code class="descname">to_envvars</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context.to_envvars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize ctx to strings storable as environment values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.context.Context.unload">
+<code class="descname">unload</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.context.Context.unload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restore this Context to defaults</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="builtin-events">
+<h2>Builtin Events<a class="headerlink" href="#builtin-events" title="Permalink to this headline">¶</a></h2>
+<p>The following events are builtin and may be useful in extending Construct.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="18%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">event</th>
+<th class="head">arguments</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>before_setup</td>
+<td>api</td>
+<td>Sent before api initialization.</td>
+</tr>
+<tr class="row-odd"><td>after_setup</td>
+<td>api</td>
+<td>Sent after api initialization.</td>
+</tr>
+<tr class="row-even"><td>before_close</td>
+<td>api</td>
+<td>Sent before api uninitialization.</td>
+</tr>
+<tr class="row-odd"><td>after_close</td>
+<td>api</td>
+<td>Sent after api uninitialization.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="eventmanager">
+<h2>EventManager<a class="headerlink" href="#eventmanager" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.events.EventManager">
+<em class="property">class </em><code class="descclassname">construct.events.</code><code class="descname">EventManager</code><a class="headerlink" href="#construct.events.EventManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The EventManager class maintains a priority list of handlers for events
+to be executed in order when an event is sent.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">events</span> <span class="o">=</span> <span class="n">EventManager</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">events</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s1">&#39;my_event&#39;</span><span class="p">,</span> <span class="s1">&#39;My simple event&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">events</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;my_event&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">msg</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">events</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;my_event&#39;</span><span class="p">,</span> <span class="s1">&#39;Hello world!&#39;</span><span class="p">)</span>
+<span class="go">[&#39;HELLO WORLD!&#39;]</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="construct.events.EventManager.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.events.EventManager.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all handlers from an event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.events.EventManager.define">
+<code class="descname">define</code><span class="sig-paren">(</span><em>event</em>, <em>doc</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.events.EventManager.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define a new event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> (<em>str</em>) – Name of the event</li>
+<li><strong>doc</strong> (<em>str</em>) – Documentation for event</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.events.EventManager.handlers">
+<code class="descname">handlers</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.events.EventManager.handlers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the handlers for an event in order of priority.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.events.EventManager.off">
+<code class="descname">off</code><span class="sig-paren">(</span><em>event</em>, <em>handler</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.events.EventManager.off" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a handler from an event.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> (<em>str</em>) – Name of the event</li>
+<li><strong>handler</strong> (<em>callable</em>) – Handler to remove</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.events.EventManager.on">
+<code class="descname">on</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.events.EventManager.on" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a handler to the specified event. Can be used as a decorator.</p>
+<p class="rubric">Examples</p>
+<p>events = EventHandler()
+events.on(‘greet’, lambda person: print(‘Hello %s’ % person))</p>
+<p>&#64;events.on(‘greet’)
+def greeter(person):</p>
+<blockquote>
+<div>print(‘Hello %s’ % person)</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> (<em>str</em>) – Name of event</li>
+<li><strong>handler</strong> (<em>callable</em>) – Function to add as handler</li>
+<li><strong>priority</strong> (<em>int</em>) – Priority of handler</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Decorator Arguments:</dt>
+<dd>event (str): Name of event
+priority (int): Priority of handler</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.events.EventManager.send">
+<code class="descname">send</code><span class="sig-paren">(</span><em>event</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.events.EventManager.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an event. Executes all the event handlers and returns a
+list of the handlers results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> (<em>str</em>) – Name of event to send</li>
+<li><strong>*args</strong> – Event arguments</li>
+<li><strong>**kwargs</strong> – Event keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.events.EventManager.undefine">
+<code class="descname">undefine</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.events.EventManager.undefine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Undefine an event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event</strong> (<em>str</em>) – Name of the event</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="extension-types">
+<h2>Extension Types<a class="headerlink" href="#extension-types" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.extensions.Extension">
+<em class="property">class </em><code class="descclassname">construct.extensions.</code><code class="descname">Extension</code><span class="sig-paren">(</span><em>api=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Extension class allows users to extend Construct with their own
+behavior and functionality. When writing your own Extensions use the
+<cite>setup</cite> method instead of <cite>__init__</cite> to perform any setup your Extension
+requires like creating a database connection. The <cite>load</cite> method should be
+used to register event handlers and extend the base API. The <cite>unload</cite>
+method should be used to undo everything that was done in <cite>load</cite>.</p>
+<p>Extensions commonly do the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Emit custom events</li>
+<li>Provide event handlers</li>
+<li>Provide Methods and Objects to extend the base API</li>
+</ul>
+</div></blockquote>
+<p>Look at construct.builtins to see the Extensions that provide the core
+functionality of Construct.</p>
+<dl class="method">
+<dt id="construct.extensions.Extension.is_available">
+<code class="descname">is_available</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Extension.is_available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the Extension is available in the given context</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Extension.load">
+<code class="descname">load</code><span class="sig-paren">(</span><em>api</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Extension.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by Construct when loading the extension.</p>
+<p>This method should register event handlers and extend the base API.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Extension.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>api</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Extension.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by Construct prior to loading the extension. This is a good
+place to set up dependencies like database connections.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Extension.unload">
+<code class="descname">unload</code><span class="sig-paren">(</span><em>api</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Extension.unload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by Construct when unloading the extension.</p>
+<p>This method should undo everything that was done in <cite>load</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="construct.extensions.Host">
+<em class="property">class </em><code class="descclassname">construct.extensions.</code><code class="descname">Host</code><span class="sig-paren">(</span><em>api=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#construct.extensions.Extension" title="construct.extensions.Extension"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct.extensions.Extension</span></code></a></p>
+<p>An Extension providing a unified api to access the Host software that
+Construct is operating within like, Autodesk Maya or SideFX Houdini.
+The active Host Extension is bound to API.host.</p>
+<dl class="method">
+<dt id="construct.extensions.Host.get_filename">
+<code class="descname">get_filename</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.get_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of the host’s current file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.get_filepath">
+<code class="descname">get_filepath</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.get_filepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the path to the host’s current file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.get_frame_range">
+<code class="descname">get_frame_range</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.get_frame_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the frame range of the host
+:returns: [min_frame, start_frame, end_frame, max_frame]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.get_frame_rate">
+<code class="descname">get_frame_rate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.get_frame_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the frame rate of the host
+:returns: float - fps</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.get_qt_parent">
+<code class="descname">get_qt_parent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.get_qt_parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the host’s main QT widget</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.get_selection">
+<code class="descname">get_selection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.get_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the host’s selection</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.get_workspace">
+<code class="descname">get_workspace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.get_workspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the host’s workspace</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.modified">
+<code class="descname">modified</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if current file is modified</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.open_file">
+<code class="descname">open_file</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.open_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open a file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.save_file">
+<code class="descname">save_file</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.save_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.set_frame_range">
+<code class="descname">set_frame_range</code><span class="sig-paren">(</span><em>min</em>, <em>start</em>, <em>end</em>, <em>max</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.set_frame_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the frame range of the host
+:param min_frame: Min frame of timeline
+:type min_frame: int
+:param start_frame: Start frame of animation
+:type start_frame: int
+:param end_frame: End frame of animation
+:type end_frame: int
+:param max_frame: Max frame of timeline
+:type max_frame: int</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.set_frame_rate">
+<code class="descname">set_frame_rate</code><span class="sig-paren">(</span><em>fps</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.set_frame_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the frame rate of the host
+:param fps:
+:type fps: float</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.set_selection">
+<code class="descname">set_selection</code><span class="sig-paren">(</span><em>selection</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.set_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the host’s selection</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.Host.set_workspace">
+<code class="descname">set_workspace</code><span class="sig-paren">(</span><em>directory</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.Host.set_workspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the host’s workspace</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="extensionmanager">
+<h2>ExtensionManager<a class="headerlink" href="#extensionmanager" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.extensions.ExtensionManager">
+<em class="property">class </em><code class="descclassname">construct.extensions.</code><code class="descname">ExtensionManager</code><span class="sig-paren">(</span><em>api</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.ExtensionManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dl class="method">
+<dt id="construct.extensions.ExtensionManager.discover">
+<code class="descname">discover</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.ExtensionManager.discover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find and iterate over all Extension subclasses</p>
+<ol class="arabic simple">
+<li>Yields Builtin Extensions</li>
+<li>Yields Extensions in python files in CONSTRUCT_PATH</li>
+<li>Yields Extensions in settings[‘extensions’]</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.ExtensionManager.get_available">
+<code class="descname">get_available</code><span class="sig-paren">(</span><em>ctx=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.ExtensionManager.get_available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get extensions available in the provided context.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.ExtensionManager.load">
+<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.ExtensionManager.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discover and load all Extensions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.ExtensionManager.loaded">
+<code class="descname">loaded</code><span class="sig-paren">(</span><em>ext</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.ExtensionManager.loaded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if an Extension has been loaded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.ExtensionManager.ls">
+<code class="descname">ls</code><span class="sig-paren">(</span><em>typ=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.ExtensionManager.ls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of available extensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>typ</strong> (<a class="reference internal" href="#construct.extensions.Extension" title="construct.extensions.Extension"><em>Extension</em></a><em>, </em><em>Optional</em>) – List only a specific type of Extension.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>ls()  # lists all extensions
+ls(Host)  # list only Host extensions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.ExtensionManager.register">
+<code class="descname">register</code><span class="sig-paren">(</span><em>ext</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.ExtensionManager.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register an Extension</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.ExtensionManager.unload">
+<code class="descname">unload</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.ExtensionManager.unload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unload all Extensions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.extensions.ExtensionManager.unregister">
+<code class="descname">unregister</code><span class="sig-paren">(</span><em>ext</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.extensions.ExtensionManager.unregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unregister an Extension</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.settings">
+<span id="settings"></span><h2>Settings<a class="headerlink" href="#module-construct.settings" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.settings.Settings">
+<em class="property">class </em><code class="descclassname">construct.settings.</code><code class="descname">Settings</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>Provides dict access to your settings file.</p>
+<dl class="attribute">
+<dt id="construct.settings.Settings.path">
+<code class="descname">path</code><a class="headerlink" href="#construct.settings.Settings.path" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#construct.path.Path" title="construct.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct.path.Path</span></code></a> used to locate settings</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.settings.Settings.file">
+<code class="descname">file</code><a class="headerlink" href="#construct.settings.Settings.file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to construct.yaml file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.settings.Settings.folder">
+<code class="descname">folder</code><a class="headerlink" href="#construct.settings.Settings.folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path containing construct.yaml file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.settings.Settings.delete_software">
+<code class="descname">delete_software</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.delete_software" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a software configuration</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – The name of the software like “maya2019”</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.settings.Settings.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save these settings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.settings.Settings.save_software">
+<code class="descname">save_software</code><span class="sig-paren">(</span><em>name</em>, <em>**data</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.save_software" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a new software configuration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – The name of the software like “maya2019”</li>
+<li><strong>**data</strong> – Software settings must match the settings.yaml schema</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.settings.Settings.yaml">
+<code class="descname">yaml</code><span class="sig-paren">(</span><em>exclude=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize these settings as yaml.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.settings.find_in_paths">
+<code class="descclassname">construct.settings.</code><code class="descname">find_in_paths</code><span class="sig-paren">(</span><em>paths</em>, <em>resource</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.find_in_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a resource in a list of paths</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.settings.restore_default_settings">
+<code class="descclassname">construct.settings.</code><code class="descname">restore_default_settings</code><span class="sig-paren">(</span><em>where</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.restore_default_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a default configuration in the provided folder.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="path">
+<h2>Path<a class="headerlink" href="#path" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.path.Path">
+<em class="property">class </em><code class="descclassname">construct.path.</code><code class="descname">Path</code><span class="sig-paren">(</span><em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.path.Path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>A list of folders used to lookup resources like settings, icons, and
+extensions.</p>
+<dl class="method">
+<dt id="construct.path.Path.find">
+<code class="descname">find</code><span class="sig-paren">(</span><em>resource</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.path.Path.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a resource in one of this objects paths.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">([</span><span class="s1">&#39;~/.construct&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;construct.yaml&#39;</span><span class="p">)</span>
+<span class="go">&#39;~/.construct/construct.yaml&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.utils">
+<span id="utils"></span><h2>utils<a class="headerlink" href="#module-construct.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="construct.utils.import_file">
+<code class="descclassname">construct.utils.</code><code class="descname">import_file</code><span class="sig-paren">(</span><em>path</em>, <em>isolated=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.import_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import python module by absolute path. The imported module is removed
+from sys.modules before being returned. This means the same module
+imported using import_file multiple times will return different module
+objects. I haven’t decided on whether this is desirable for our use
+case yet, Extension loading. There have been no apparent downsides yet.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.isolated_imports">
+<code class="descclassname">construct.utils.</code><code class="descname">isolated_imports</code><span class="sig-paren">(</span><em>path=None</em>, <em>restore=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.isolated_imports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contextmanager that isolates all import</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.iter_modules">
+<code class="descclassname">construct.utils.</code><code class="descname">iter_modules</code><span class="sig-paren">(</span><em>*paths</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.iter_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over paths yielding all contained python modules and packages.</p>
+<p>The modules are removed from sys.modules after importing and before
+they are yielded.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.unload_modules">
+<code class="descclassname">construct.utils.</code><code class="descname">unload_modules</code><span class="sig-paren">(</span><em>*names</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.unload_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes modules and their children from sys.modules</p>
+<p>This is intended for use within the isolated_imports contextmanager.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.update_env">
+<code class="descclassname">construct.utils.</code><code class="descname">update_env</code><span class="sig-paren">(</span><em>d</em>, <em>**values</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.update_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates an environment dict with the specified values. List values
+are combined with the existing values in d. String values override
+values in d.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">update_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">PATH</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;some_path&#39;</span><span class="p">],</span> <span class="n">VAR</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>d</strong> (<em>dict</em>) – Environment dict to update</li>
+<li><strong>**values</strong> – Values to update d with</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.update_envvar">
+<code class="descclassname">construct.utils.</code><code class="descname">update_envvar</code><span class="sig-paren">(</span><em>d</em>, <em>k</em>, <em>v</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.update_envvar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by update_env to update a single key with the specified value.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.errors">
+<span id="errors"></span><h2>errors<a class="headerlink" href="#module-construct.errors" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="construct.errors.InvalidSettings">
+<em class="property">exception </em><code class="descclassname">construct.errors.</code><code class="descname">InvalidSettings</code><a class="headerlink" href="#construct.errors.InvalidSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raise when your settings are invalid.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="configuration.html" class="btn btn-neutral float-left" title="Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Dan Bradham
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

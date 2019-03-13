@@ -37,14 +37,26 @@ def ensure_exists(*folders):
 
 
 def update_env(d, **values):
-    '''Updates an environment dict with the specified values.'''
+    '''Updates an environment dict with the specified values. List values
+    are combined with the existing values in d. String values override
+    values in d.
+
+    Example:
+        >>> import os
+        >>> env = os.environ.copy()
+        >>> update_env(env, PATH=['some_path'], VAR='value')
+
+    Arguments:
+        d (dict): Environment dict to update
+        **values: Values to update d with
+    '''
 
     for k, v in values.items():
         update_envvar(d, k, v)
 
 
 def update_envvar(d, k, v):
-    '''Update one value in an environment dict.'''
+    '''Used by update_env to update a single key with the specified value.'''
 
     if isinstance(v, basestring):
         d[k] = v

@@ -8,6 +8,9 @@ from .constants import DEFAULT_PATHS
 
 
 class Path(list):
+    '''A list of folders used to lookup resources like settings, icons, and
+    extensions.
+    '''
 
     def __init__(self, path=None):
         super().__init__()
@@ -29,6 +32,13 @@ class Path(list):
         self[:] = []
 
     def find(self, resource):
+        '''Find a resource in one of this objects paths.
+
+        Examples:
+            >>> path = Path(['~/.construct'])
+            >>> path.find('construct.yaml')
+            '~/.construct/construct.yaml'
+        '''
         for path in self:
             potential_path = unipath(path, resource)
             if os.path.exists(potential_path):
