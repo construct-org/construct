@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from operator import itemgetter
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import logging
 
 from . import utils
@@ -22,17 +22,21 @@ class EventManager(object):
     # TODO: Needs a better docstring
 
     def __init__(self):
-        self._events = {}
+        self._events = OrderedDict()
         self._priority_map = defaultdict(set)
         self._handlers_map = defaultdict(dict)
 
     def load(self):
-        # TODO: define builtin events
-        pass
+        self.define('before_setup', '(api): Sent before api initialization.')
+        self.define('after_setup', '(api): Sent after api initialization.')
+        self.define('before_close', '(api): Sent before api uninitialization.')
+        self.define('after_close', '(api): Sent after api uninitialization.')
 
     def unload(self):
-        # TODO: undefine builtin events
-        pass
+        self.undefine('before_setup')
+        self.undefine('after_setup')
+        self.undefine('before_close')
+        self.undefine('after_close')
 
     def define(self, event, doc):
         '''Define a new event
@@ -130,7 +134,7 @@ class EventManager(object):
             **kwargs: Event keyword arguments
         '''
 
-        _log.debug('Sending event "%s" with *%s and **%s', event, args, kwargs)
+        _log.debug('Sending event "%s"', event)
         results = []
         for handler in self.handlers(event):
             _log.debug('Calling %s', handler)
@@ -145,5 +149,12 @@ class EventManager(object):
 
     def clear(self, event):
         '''Remove all handlers from an event.'''
+
         self._handlers_map.pop(event, None)
         self._priority_map.pop(event, None)
+
+    def ls(self):
+        return list(self._events.items())
+
+    def show(self):
+        print('\n'.join([' '.join(e) for e in self.ls()]))
