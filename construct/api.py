@@ -62,8 +62,11 @@ class API(object):
             _log.error('Construct is already initialized...')
             return
 
+        dictConfig(self.settings.get('logging', DEFAULT_LOGGING))
         _log.debug('Loading events...')
         self.events.load()
+
+        self.events.send('before_setup', self)
 
         _log.debug('Loading path...')
         self.path.load()
@@ -83,6 +86,7 @@ class API(object):
         self.initialized = True
         _log.debug('Done initializing.')
 
+        self.events.send('after_setup', self)
 
     def uninit(self):
 
@@ -90,8 +94,7 @@ class API(object):
             _log.debug('Construct is not initialized...')
             return
 
-        _log.debug('Unloading events...')
-        self.events.load()
+        self.events.send('before_close', self)
 
         _log.debug('Unloading path...')
         self.path.unload()
@@ -104,6 +107,11 @@ class API(object):
 
         _log.debug('Unloading extensions...')
         self.extensions.unload()
+
+        self.events.send('after_close', self)
+
+        _log.debug('Unloading events...')
+        self.events.unload()
 
         _cache.pop(self.name, None)
         _initialized = False
@@ -133,10 +141,9 @@ class API(object):
         '''Adds a handler to the specified event. Can be used as a decorator.
 
         Examples:
-            events = EventHandler()
-            events.on('greet', lambda person: print('Hello %s' % person))
+            api.on('greet', lambda person: print('Hello %s' % person))
 
-            @events.on('greet')
+            @api.on('greet')
             def greeter(person):
                 print('Hello %s' % person)
 
@@ -213,6 +220,7 @@ class API(object):
     @property
     def host(self):
         '''Get the active Host Extension.'''
+
         return self.extensions.get(self.context.host, None)
 
     def get_mount(self, location=None, mount=None):
