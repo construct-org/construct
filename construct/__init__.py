@@ -13,7 +13,17 @@ from . import api
 
 
 def API(name=DEFAULT_API_NAME, **kwargs):
-    '''Wrap api.API is a singleton'''
+    '''Wraps :class:`construct.api.API` and maintains a cache of API objects.
+
+    This allows you to get the same API object each time you call API with the
+    same name.
+
+    Examples:
+        >>> import construct
+        >>> api = construct.API()
+        >>> api is construct.API()
+        True
+    '''
 
     if name not in api._cache:
         api._cache[name] = api.API(name, **kwargs)

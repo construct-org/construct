@@ -40,7 +40,7 @@ def update_env(d, **values):
     '''Updates an environment dict with the specified values.'''
 
     for k, v in values.items():
-        update_value(d, k, v)
+        update_envvar(d, k, v)
 
 
 def update_envvar(d, k, v):
