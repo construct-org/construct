@@ -39,7 +39,7 @@ class EventManager(object):
         self.undefine('after_close')
 
     def define(self, event, doc):
-        '''Define a new event
+        '''Define a new event.
 
         Arguments:
             event (str): Name of the event
@@ -64,12 +64,12 @@ class EventManager(object):
         '''Adds a handler to the specified event. Can be used as a decorator.
 
         Examples:
-            events = EventHandler()
-            events.on('greet', lambda person: print('Hello %s' % person))
+            >>> events = EventHandler()
+            >>> events.on('greet', lambda person: print('Hello %s' % person))
 
-            @events.on('greet')
-            def greeter(person):
-                print('Hello %s' % person)
+            >>> @events.on('greet')
+            ... def greeter(person):
+            ...     print('Hello %s' % person)
 
         Arguments:
             event (str): Name of event

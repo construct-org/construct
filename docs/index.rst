@@ -42,7 +42,6 @@ Contribute
 
    concepts
    guide
-   environment
    configuration
    api
 
