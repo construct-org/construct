@@ -40,6 +40,30 @@ EventManager
     :members:
     :show-inheritance:
 
+Settings
+--------
+.. automodule:: construct.settings
+    :members:
+    :show-inheritance:
+
+Path
+----
+.. autoclass:: construct.path.Path
+    :members:
+    :show-inheritance:
+
+Utils
+-----
+.. automodule:: construct.utils
+    :members:
+    :show-inheritance:
+
+Errors
+------
+.. automodule:: construct.errors
+    :members:
+    :show-inheritance:
+
 Extension Types
 ---------------
 .. autoclass:: construct.extensions.Extension
@@ -56,26 +80,8 @@ ExtensionManager
     :members:
     :show-inheritance:
 
-Settings
---------
-.. automodule:: construct.settings
-    :members:
-    :show-inheritance:
-
-Path
-----
-.. autoclass:: construct.path.Path
-    :members:
-    :show-inheritance:
-
-utils
------
-.. automodule:: construct.utils
-    :members:
-    :show-inheritance:
-
-errors
-------
-.. automodule:: construct.errors
+Builtin Extensions
+------------------
+.. autoclass:: construct.extensions.software.Software
     :members:
     :show-inheritance:

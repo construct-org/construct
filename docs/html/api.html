@@ -94,12 +94,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#context">Context</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#builtin-events">Builtin Events</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#eventmanager">EventManager</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#extension-types">Extension Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#extensionmanager">ExtensionManager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-construct.settings">Settings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#path">Path</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-construct.utils">utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-construct.errors">errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.utils">Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-construct.errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extension-types">Extension Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extensionmanager">ExtensionManager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#builtin-extensions">Builtin Extensions</a></li>
 </ul>
 </li>
 </ul>
@@ -681,6 +682,189 @@ list of the handlers results.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-construct.settings">
+<span id="settings"></span><h2>Settings<a class="headerlink" href="#module-construct.settings" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.settings.Settings">
+<em class="property">class </em><code class="descclassname">construct.settings.</code><code class="descname">Settings</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>Provides dict access to your settings file.</p>
+<dl class="attribute">
+<dt id="construct.settings.Settings.path">
+<code class="descname">path</code><a class="headerlink" href="#construct.settings.Settings.path" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#construct.path.Path" title="construct.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct.path.Path</span></code></a> used to locate settings</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.settings.Settings.file">
+<code class="descname">file</code><a class="headerlink" href="#construct.settings.Settings.file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to construct.yaml file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="construct.settings.Settings.folder">
+<code class="descname">folder</code><a class="headerlink" href="#construct.settings.Settings.folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path containing construct.yaml file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.settings.Settings.delete_software">
+<code class="descname">delete_software</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.delete_software" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a software configuration</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – The name of the software like “maya2019”</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.settings.Settings.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save these settings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.settings.Settings.save_software">
+<code class="descname">save_software</code><span class="sig-paren">(</span><em>name</em>, <em>**data</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.save_software" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a new software configuration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – The name of the software like “maya2019”</li>
+<li><strong>**data</strong> – Software settings must match the settings.yaml schema</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="construct.settings.Settings.yaml">
+<code class="descname">yaml</code><span class="sig-paren">(</span><em>exclude=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize these settings as yaml.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.settings.find_in_paths">
+<code class="descclassname">construct.settings.</code><code class="descname">find_in_paths</code><span class="sig-paren">(</span><em>paths</em>, <em>resource</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.find_in_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a resource in a list of paths</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.settings.restore_default_settings">
+<code class="descclassname">construct.settings.</code><code class="descname">restore_default_settings</code><span class="sig-paren">(</span><em>where</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.restore_default_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a default configuration in the provided folder.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="path">
+<h2>Path<a class="headerlink" href="#path" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="construct.path.Path">
+<em class="property">class </em><code class="descclassname">construct.path.</code><code class="descname">Path</code><span class="sig-paren">(</span><em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.path.Path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>A list of folders used to lookup resources like settings, icons, and
+extensions.</p>
+<dl class="method">
+<dt id="construct.path.Path.find">
+<code class="descname">find</code><span class="sig-paren">(</span><em>resource</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.path.Path.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a resource in one of this objects paths.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">([</span><span class="s1">&#39;~/.construct&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;construct.yaml&#39;</span><span class="p">)</span>
+<span class="go">&#39;~/.construct/construct.yaml&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.utils">
+<span id="utils"></span><h2>Utils<a class="headerlink" href="#module-construct.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="construct.utils.import_file">
+<code class="descclassname">construct.utils.</code><code class="descname">import_file</code><span class="sig-paren">(</span><em>path</em>, <em>isolated=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.import_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import python module by absolute path. The imported module is removed
+from sys.modules before being returned. This means the same module
+imported using import_file multiple times will return different module
+objects. I haven’t decided on whether this is desirable for our use
+case yet, Extension loading. There have been no apparent downsides yet.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.isolated_imports">
+<code class="descclassname">construct.utils.</code><code class="descname">isolated_imports</code><span class="sig-paren">(</span><em>path=None</em>, <em>restore=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.isolated_imports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contextmanager that isolates all import</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.iter_modules">
+<code class="descclassname">construct.utils.</code><code class="descname">iter_modules</code><span class="sig-paren">(</span><em>*paths</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.iter_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over paths yielding all contained python modules and packages.</p>
+<p>The modules are removed from sys.modules after importing and before
+they are yielded.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.unload_modules">
+<code class="descclassname">construct.utils.</code><code class="descname">unload_modules</code><span class="sig-paren">(</span><em>*names</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.unload_modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes modules and their children from sys.modules</p>
+<p>This is intended for use within the isolated_imports contextmanager.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.update_env">
+<code class="descclassname">construct.utils.</code><code class="descname">update_env</code><span class="sig-paren">(</span><em>d</em>, <em>**values</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.update_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates an environment dict with the specified values. List values
+are combined with the existing values in d. String values override
+values in d.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">update_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">PATH</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;some_path&#39;</span><span class="p">],</span> <span class="n">VAR</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>d</strong> (<em>dict</em>) – Environment dict to update</li>
+<li><strong>**values</strong> – Values to update d with</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="construct.utils.update_envvar">
+<code class="descclassname">construct.utils.</code><code class="descname">update_envvar</code><span class="sig-paren">(</span><em>d</em>, <em>k</em>, <em>v</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.update_envvar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by update_env to update a single key with the specified value.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-construct.errors">
+<span id="errors"></span><h2>Errors<a class="headerlink" href="#module-construct.errors" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="construct.errors.InvalidSettings">
+<em class="property">exception </em><code class="descclassname">construct.errors.</code><code class="descname">InvalidSettings</code><a class="headerlink" href="#construct.errors.InvalidSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raise when your settings are invalid.</p>
+</dd></dl>
+
+</div>
 <div class="section" id="extension-types">
 <h2>Extension Types<a class="headerlink" href="#extension-types" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -911,188 +1095,8 @@ ls(Host)  # list only Host extensions</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-construct.settings">
-<span id="settings"></span><h2>Settings<a class="headerlink" href="#module-construct.settings" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="construct.settings.Settings">
-<em class="property">class </em><code class="descclassname">construct.settings.</code><code class="descname">Settings</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
-<p>Provides dict access to your settings file.</p>
-<dl class="attribute">
-<dt id="construct.settings.Settings.path">
-<code class="descname">path</code><a class="headerlink" href="#construct.settings.Settings.path" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#construct.path.Path" title="construct.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct.path.Path</span></code></a> used to locate settings</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="construct.settings.Settings.file">
-<code class="descname">file</code><a class="headerlink" href="#construct.settings.Settings.file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Path to construct.yaml file</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="construct.settings.Settings.folder">
-<code class="descname">folder</code><a class="headerlink" href="#construct.settings.Settings.folder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Path containing construct.yaml file</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="construct.settings.Settings.delete_software">
-<code class="descname">delete_software</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.delete_software" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete a software configuration</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – The name of the software like “maya2019”</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="construct.settings.Settings.save">
-<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save these settings.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="construct.settings.Settings.save_software">
-<code class="descname">save_software</code><span class="sig-paren">(</span><em>name</em>, <em>**data</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.save_software" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save a new software configuration.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>str</em>) – The name of the software like “maya2019”</li>
-<li><strong>**data</strong> – Software settings must match the settings.yaml schema</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="construct.settings.Settings.yaml">
-<code class="descname">yaml</code><span class="sig-paren">(</span><em>exclude=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.Settings.yaml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Serialize these settings as yaml.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="construct.settings.find_in_paths">
-<code class="descclassname">construct.settings.</code><code class="descname">find_in_paths</code><span class="sig-paren">(</span><em>paths</em>, <em>resource</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.find_in_paths" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find a resource in a list of paths</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="construct.settings.restore_default_settings">
-<code class="descclassname">construct.settings.</code><code class="descname">restore_default_settings</code><span class="sig-paren">(</span><em>where</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.settings.restore_default_settings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a default configuration in the provided folder.</p>
-</dd></dl>
-
-</div>
-<div class="section" id="path">
-<h2>Path<a class="headerlink" href="#path" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="construct.path.Path">
-<em class="property">class </em><code class="descclassname">construct.path.</code><code class="descname">Path</code><span class="sig-paren">(</span><em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.path.Path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
-<p>A list of folders used to lookup resources like settings, icons, and
-extensions.</p>
-<dl class="method">
-<dt id="construct.path.Path.find">
-<code class="descname">find</code><span class="sig-paren">(</span><em>resource</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.path.Path.find" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find a resource in one of this objects paths.</p>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">([</span><span class="s1">&#39;~/.construct&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;construct.yaml&#39;</span><span class="p">)</span>
-<span class="go">&#39;~/.construct/construct.yaml&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-construct.utils">
-<span id="utils"></span><h2>utils<a class="headerlink" href="#module-construct.utils" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="construct.utils.import_file">
-<code class="descclassname">construct.utils.</code><code class="descname">import_file</code><span class="sig-paren">(</span><em>path</em>, <em>isolated=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.import_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Import python module by absolute path. The imported module is removed
-from sys.modules before being returned. This means the same module
-imported using import_file multiple times will return different module
-objects. I haven’t decided on whether this is desirable for our use
-case yet, Extension loading. There have been no apparent downsides yet.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="construct.utils.isolated_imports">
-<code class="descclassname">construct.utils.</code><code class="descname">isolated_imports</code><span class="sig-paren">(</span><em>path=None</em>, <em>restore=True</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.isolated_imports" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contextmanager that isolates all import</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="construct.utils.iter_modules">
-<code class="descclassname">construct.utils.</code><code class="descname">iter_modules</code><span class="sig-paren">(</span><em>*paths</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.iter_modules" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterate over paths yielding all contained python modules and packages.</p>
-<p>The modules are removed from sys.modules after importing and before
-they are yielded.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="construct.utils.unload_modules">
-<code class="descclassname">construct.utils.</code><code class="descname">unload_modules</code><span class="sig-paren">(</span><em>*names</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.unload_modules" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes modules and their children from sys.modules</p>
-<p>This is intended for use within the isolated_imports contextmanager.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="construct.utils.update_env">
-<code class="descclassname">construct.utils.</code><code class="descname">update_env</code><span class="sig-paren">(</span><em>d</em>, <em>**values</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.update_env" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates an environment dict with the specified values. List values
-are combined with the existing values in d. String values override
-values in d.</p>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">update_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">PATH</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;some_path&#39;</span><span class="p">],</span> <span class="n">VAR</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>d</strong> (<em>dict</em>) – Environment dict to update</li>
-<li><strong>**values</strong> – Values to update d with</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="construct.utils.update_envvar">
-<code class="descclassname">construct.utils.</code><code class="descname">update_envvar</code><span class="sig-paren">(</span><em>d</em>, <em>k</em>, <em>v</em><span class="sig-paren">)</span><a class="headerlink" href="#construct.utils.update_envvar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used by update_env to update a single key with the specified value.</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-construct.errors">
-<span id="errors"></span><h2>errors<a class="headerlink" href="#module-construct.errors" title="Permalink to this headline">¶</a></h2>
-<dl class="exception">
-<dt id="construct.errors.InvalidSettings">
-<em class="property">exception </em><code class="descclassname">construct.errors.</code><code class="descname">InvalidSettings</code><a class="headerlink" href="#construct.errors.InvalidSettings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Raise when your settings are invalid.</p>
-</dd></dl>
-
+<div class="section" id="builtin-extensions">
+<h2>Builtin Extensions<a class="headerlink" href="#builtin-extensions" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

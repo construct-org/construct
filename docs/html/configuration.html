@@ -88,7 +88,37 @@
 <li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide.html">API Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="environment.html">Environment Variables</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#settings-folder-structure">Settings folder structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#extensions-folder">extensions folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#icons-folder">icons folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#templates-folder">templates folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#software-folder">software folder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#construct-yaml">construct.yaml</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#builtin-settings">Builtin Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#locations">locations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#my-location">my_location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#my-mount">my_mount</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extensions">extensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logging">logging</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#software-settings">Software Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#label">label</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#icon">icon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#host">host</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cmd">cmd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#args">args</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#files">files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#folders">folders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">extensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#env">env</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a></li>
 </ul>
 
@@ -156,6 +186,193 @@
             
   <div class="section" id="configuration">
 <h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<p>When starting up Construct will look for a construct.yaml file in the following locations:</p>
+<ol class="arabic simple">
+<li>Paths stored in the CONSTRUCT_PATH environment variable</li>
+<li>Your USER_PATH <code class="docutils literal notranslate"><span class="pre">~/.construct</span></code></li>
+</ol>
+<p>The first construct.yaml that is found becomes your settings folder. If no construct.yaml file is found a default settings structure is created in the last path checked (default: <cite>~/.construct</cite>). The settings folder contains user icons, extensions, templates and software configurations.</p>
+<p>To share a configuration accross your stuiod set CONSTRUCT_PATH on your workstations to a network folder. You can also override the default lookup behavior by providing your own list of paths when initializing the Construct API.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">construct</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">construct</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;~/.custom_path&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Settings files are validated prior to being loaded. This prevents Construct from running with faulty settings.</p>
+</div>
+<div class="section" id="settings-folder-structure">
+<h2>Settings folder structure<a class="headerlink" href="#settings-folder-structure" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extensions</span><span class="o">/</span>
+<span class="n">icons</span><span class="o">/</span>
+<span class="n">templates</span><span class="o">/</span>
+<span class="n">software</span><span class="o">/</span>
+<span class="n">construct</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<div class="section" id="extensions-folder">
+<h3>extensions folder<a class="headerlink" href="#extensions-folder" title="Permalink to this headline">¶</a></h3>
+<p>Python modules and packages containing extensions folders. This is the location where Construct discovers and loads Extensions.</p>
+</div>
+<div class="section" id="icons-folder">
+<h3>icons folder<a class="headerlink" href="#icons-folder" title="Permalink to this headline">¶</a></h3>
+<p>One of the locations where Construct will look for icons. When configuring software you can place custom
+icons here and reference them using <cite>icons/myicon.png</cite>.</p>
+</div>
+<div class="section" id="templates-folder">
+<h3>templates folder<a class="headerlink" href="#templates-folder" title="Permalink to this headline">¶</a></h3>
+<p>Template files like a maya workspace.mel. These templates can be used in software configurations.</p>
+</div>
+<div class="section" id="software-folder">
+<h3>software folder<a class="headerlink" href="#software-folder" title="Permalink to this headline">¶</a></h3>
+<p>Individual software configuration files.</p>
+</div>
+<div class="section" id="construct-yaml">
+<h3>construct.yaml<a class="headerlink" href="#construct-yaml" title="Permalink to this headline">¶</a></h3>
+<p>The main settings file. By default it looks like this.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">locations</span><span class="p">:</span>
+    <span class="n">local</span><span class="p">:</span>
+        <span class="n">lib</span><span class="p">:</span> <span class="o">~/</span><span class="n">lib</span>
+        <span class="n">projects</span><span class="p">:</span> <span class="o">~/</span><span class="n">projects</span>
+<span class="n">my_location</span><span class="p">:</span> <span class="n">local</span>
+<span class="n">my_mount</span><span class="p">:</span> <span class="n">projects</span>
+<span class="n">extensions</span><span class="p">:</span> <span class="p">[]</span>
+<span class="n">logging</span><span class="p">:</span>
+    <span class="n">version</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="n">formatters</span><span class="p">:</span>
+        <span class="n">simple</span><span class="p">:</span>
+        <span class="nb">format</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%(levelname).1s</span><span class="s1">:</span><span class="si">%(name)s</span><span class="s1">&gt; </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+    <span class="n">handlers</span><span class="p">:</span>
+        <span class="n">console</span><span class="p">:</span>
+            <span class="n">class</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span>
+            <span class="n">formatter</span><span class="p">:</span> <span class="n">simple</span>
+    <span class="n">loggers</span><span class="p">:</span>
+        <span class="n">construct</span><span class="p">:</span>
+            <span class="n">handlers</span><span class="p">:</span>
+                <span class="o">-</span> <span class="n">console</span>
+            <span class="n">level</span><span class="p">:</span> <span class="n">DEBUG</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="builtin-settings">
+<h2>Builtin Settings<a class="headerlink" href="#builtin-settings" title="Permalink to this headline">¶</a></h2>
+<p>The builtin settings that must be included in your construct.yaml file.</p>
+<div class="section" id="locations">
+<h3>locations<a class="headerlink" href="#locations" title="Permalink to this headline">¶</a></h3>
+<p>A dictionary containing locations and file system mounts. These are used to lookup file system paths to projects, folders, assets, and files. The default locations value supports a simple local setup.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">locations</span><span class="p">:</span>
+    <span class="n">local</span><span class="p">:</span>
+        <span class="n">lib</span><span class="p">:</span> <span class="o">~/</span><span class="n">lib</span>
+        <span class="n">projects</span><span class="p">:</span> <span class="o">~/</span><span class="n">projects</span>
+</pre></div>
+</div>
+<p>For a multisite solution you can define multiple locations and OS specific mounts.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">locations</span><span class="p">:</span>
+    <span class="n">NY</span><span class="p">:</span>
+        <span class="n">lib</span><span class="p">:</span>
+            <span class="n">win</span><span class="p">:</span> <span class="o">//</span><span class="n">ny</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">lib</span>
+            <span class="n">mac</span><span class="p">:</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">ny</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">lib</span>
+            <span class="n">linux</span><span class="p">:</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">ny</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">lib</span>
+        <span class="n">projects</span><span class="p">:</span>
+            <span class="n">win</span><span class="p">:</span> <span class="o">//</span><span class="n">ny</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">projects</span>
+            <span class="n">mac</span><span class="p">:</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">ny</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">projects</span>
+            <span class="n">linux</span><span class="p">:</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">ny</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">projects</span>
+    <span class="n">LA</span><span class="p">:</span>
+        <span class="n">lib</span><span class="p">:</span>
+            <span class="n">win</span><span class="p">:</span> <span class="o">//</span><span class="n">la</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">lib</span>
+            <span class="n">mac</span><span class="p">:</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">la</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">lib</span>
+            <span class="n">linux</span><span class="p">:</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">la</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">lib</span>
+        <span class="n">projects</span><span class="p">:</span>
+            <span class="n">win</span><span class="p">:</span> <span class="o">//</span><span class="n">la</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">projects</span>
+            <span class="n">mac</span><span class="p">:</span> <span class="o">/</span><span class="n">Volumes</span><span class="o">/</span><span class="n">la</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">projects</span>
+            <span class="n">linux</span><span class="p">:</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">la</span><span class="o">-</span><span class="n">server</span><span class="o">/</span><span class="n">projects</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="my-location">
+<h3>my_location<a class="headerlink" href="#my-location" title="Permalink to this headline">¶</a></h3>
+<p>The default location that Construct will use.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">local</span></code></p>
+</div>
+<div class="section" id="my-mount">
+<h3>my_mount<a class="headerlink" href="#my-mount" title="Permalink to this headline">¶</a></h3>
+<p>The default mount that Construct will use.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">projects</span></code></p>
+</div>
+<div class="section" id="extensions">
+<h3>extensions<a class="headerlink" href="#extensions" title="Permalink to this headline">¶</a></h3>
+<p>A list of extensions to import and load when Construct starts. This is where you would list extensions
+installed using pip.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Builtin Extensions and Extensions located in your settings <cite>extensions</cite> folder will be loaded automatically, they do not need to be included here.</p>
+</div>
+<p>default: <code class="docutils literal notranslate"><span class="pre">[]</span></code></p>
+</div>
+<div class="section" id="logging">
+<h3>logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h3>
+<p>A dictConfig used to configure logging.</p>
+</div>
+</div>
+<div class="section" id="software-settings">
+<h2>Software Settings<a class="headerlink" href="#software-settings" title="Permalink to this headline">¶</a></h2>
+<p>Software is configured in individual yaml files stored in the software settings folder. Let’s take a look at how we would configure Autodesk Maya2019.</p>
+<p>software/maya2019.yaml:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">label</span><span class="p">:</span> <span class="n">Autodesk</span> <span class="n">Maya</span> <span class="mi">2019</span>
+<span class="n">icon</span><span class="p">:</span> <span class="n">icons</span><span class="o">/</span><span class="n">maya</span><span class="o">.</span><span class="n">png</span>
+<span class="n">host</span><span class="p">:</span> <span class="n">maya</span>
+<span class="n">cmd</span><span class="p">:</span>
+    <span class="n">linux</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">Autodesk</span><span class="o">/</span><span class="n">Maya2019</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">maya</span>
+    <span class="n">mac</span><span class="p">:</span> <span class="o">/</span><span class="n">applications</span><span class="o">/</span><span class="n">Autodesk</span><span class="o">/</span><span class="n">Maya2019</span><span class="o">.</span><span class="n">app</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">maya</span><span class="o">.</span><span class="n">exe</span>
+    <span class="n">win</span><span class="p">:</span> <span class="n">C</span><span class="p">:</span><span class="o">/</span><span class="n">Program</span> <span class="n">Files</span><span class="o">/</span><span class="n">Autodesk</span><span class="o">/</span><span class="n">Maya2019</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">maya</span><span class="o">.</span><span class="n">exe</span>
+<span class="n">args</span><span class="p">:</span> <span class="p">[]</span>
+<span class="n">files</span><span class="p">:</span>
+    <span class="n">templates</span><span class="o">/</span><span class="n">workspace</span><span class="o">.</span><span class="n">mel</span><span class="p">:</span> <span class="n">workspace</span><span class="o">.</span><span class="n">mel</span>
+<span class="n">folders</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">data</span>
+    <span class="o">-</span> <span class="n">cache</span>
+<span class="n">extensions</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;.ma&#39;</span><span class="p">,</span> <span class="s1">&#39;.mb&#39;</span><span class="p">,</span> <span class="s1">&#39;.fbx&#39;</span><span class="p">,</span> <span class="s1">&#39;.abc&#39;</span><span class="p">,</span> <span class="s1">&#39;.obj&#39;</span><span class="p">]</span>
+<span class="n">env</span><span class="p">:</span> <span class="p">{}</span>
+</pre></div>
+</div>
+<div class="section" id="label">
+<h3>label<a class="headerlink" href="#label" title="Permalink to this headline">¶</a></h3>
+<p>The nice name for the software.</p>
+</div>
+<div class="section" id="icon">
+<h3>icon<a class="headerlink" href="#icon" title="Permalink to this headline">¶</a></h3>
+<p>The path to an icon relative to your settings folder.</p>
+</div>
+<div class="section" id="host">
+<h3>host<a class="headerlink" href="#host" title="Permalink to this headline">¶</a></h3>
+<p>The identifier of a <code class="docutils literal notranslate"><span class="pre">Host</span></code> extension that handles this software. Usually you will have to write your own <code class="docutils literal notranslate"><span class="pre">Host</span></code> extensions to support any meaningful integration with a piece of software.</p>
+</div>
+<div class="section" id="cmd">
+<h3>cmd<a class="headerlink" href="#cmd" title="Permalink to this headline">¶</a></h3>
+<p>OS specific paths to the software executables.</p>
+</div>
+<div class="section" id="args">
+<h3>args<a class="headerlink" href="#args" title="Permalink to this headline">¶</a></h3>
+<p>Args to pass to the software executable.</p>
+</div>
+<div class="section" id="files">
+<h3>files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h3>
+<p>Files to copy to the workspace root when created. Each key is the path to a template file and it’s accompanying value is the path relative to the workspace root where it will be copied to.</p>
+</div>
+<div class="section" id="folders">
+<h3>folders<a class="headerlink" href="#folders" title="Permalink to this headline">¶</a></h3>
+<p>A list of folders to create in the workspace root.</p>
+</div>
+<div class="section" id="id1">
+<h3>extensions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>A list of extensions that this software is able to open.</p>
+</div>
+<div class="section" id="env">
+<h3>env<a class="headerlink" href="#env" title="Permalink to this headline">¶</a></h3>
+<p>Environment variables to set when launching this software. When values are lists they will be prepended to your current Environment variables value. When values are strings they will override an existing Environment variable value.</p>
+</div>
+</div>
 </div>
 
 
