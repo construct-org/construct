@@ -25,6 +25,7 @@ from .extensions import (
     is_extension_type,
     ExtensionManager,
 )
+from .io import IO
 
 
 __all__ = ['API']
@@ -87,6 +88,7 @@ class API(object):
         self.extensions = ExtensionManager(self)
         self.context = Context()
         self.schemas = schemas
+        self.io = IO(self)
         self._logging_dict = kwargs.pop('logging', None)
         self._registered_members = {}
         self.init()
@@ -117,6 +119,9 @@ class API(object):
         _log.debug('Loading settings...')
         self.settings.load()
 
+        _log.debug('Loading IO...')
+        self.io.load()
+
         _log.debug('Configuring logging...')
         self._setup_logging()
 
@@ -141,6 +146,9 @@ class API(object):
 
         _log.debug('Unloading path...')
         self.path.unload()
+
+        _log.debug('Unloading IO...')
+        self.io.unload()
 
         _log.debug('Unloading settings...')
         self.settings.unload()
@@ -169,7 +177,7 @@ class API(object):
             doc (str): Documentation for event
         '''
 
-        self.events.define(event, event)
+        self.events.define(event, doc)
 
     def undefine(self, event):
         '''Undefine an event
@@ -274,9 +282,25 @@ class API(object):
             mount (str): Name of mount. Defaults to 'my_mount' setting
         '''
 
-        location = location or self.settings.get('my_location')
-        mount = mount or self.settings.get('my_mount')
-        return self.settings['locations'][location][mount]
+        location = location or self.settings['my_location']
+        mount = mount or self.settings['my_mount']
+        path = self.settings['locations'][location][mount]
+        if isinstance(path, dict):
+            return path[self.context.platform]
+        else:
+            return path
+
+    def get_path_to(self, entity):
+        my_location = self.settings['my_location']
+
+        if entity['_type'] == 'project':
+            if my_location in entity['locations']:
+                location = my_location
+                mount = entity['locations'][location]
+            else:
+                location, mount = entity['locations'].items()[0]
+            root = self.get_mount(location, mount)
+            return root + '/' + entity['name']
 
 
 def api_method_wrapper(api, fn):

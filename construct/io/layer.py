@@ -2,16 +2,19 @@
 
 class IOLayer(object):
 
-    def get_projects(self, location=None, mount=None):
+    def get_projects(self, location, mount=None):
         return NotImplemented
 
-    def get_project(self, name, location=None, mount=None):
+    def get_project_by_id(self, _id, location=None, mount=None):
         return NotImplemented
 
-    def new_project(self, name, location, mount, **data):
+    def get_project(self, name, location, mount=None):
         return NotImplemented
 
-    def update_project(self, project, **data):
+    def new_project(self, name, location, mount, data):
+        return NotImplemented
+
+    def update_project(self, project, data):
         return NotImplemented
 
     def delete_project(self, project):
@@ -23,10 +26,10 @@ class IOLayer(object):
     def get_folder(self, name, parent):
         return NotImplemented
 
-    def new_folder(self, name, parent, **data):
+    def new_folder(self, name, parent, data):
         return NotImplemented
 
-    def update_folder(self, group, **data):
+    def update_folder(self, group, data):
         return NotImplemented
 
     def delete_folder(self, group):
@@ -38,10 +41,10 @@ class IOLayer(object):
     def get_asset(self, name, parent):
         return NotImplemented
 
-    def new_asset(self, name, parent, **data):
+    def new_asset(self, name, parent, data):
         return NotImplemented
 
-    def update_asset(self, asset, **data):
+    def update_asset(self, asset, data):
         return NotImplemented
 
     def delete_asset(self, asset):
@@ -77,11 +80,8 @@ class IOLayer(object):
     def get_next_publish(self, asset, name, task, file_type, instance=0):
         return NotImplemented
 
-    def new_workfile(self, asset, name, identifier, task, file_type, **data):
+    def new_workfile(self, asset, name, identifier, task, file_type, data):
         return NotImplemented
 
-    def new_publish(self, asset, name, identifier, task, file_type, **data):
-        return NotImplemented
-
-    def get_path_to(self, entity):
+    def new_publish(self, asset, name, identifier, task, file_type, data):
         return NotImplemented
