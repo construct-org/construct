@@ -53,6 +53,23 @@ class IO(object):
         location = location or self.settings['my_location']
         return self.fsfs.get_projects(location, mount)
 
+    def get_project_by_id(self, _id, location=None, mount=None):
+        '''Get one project that matches the given name. You can specify a
+        location and mount to narrow the search.
+
+        .. note:: Locations and mounts are configured in your construct.yaml
+
+        Arguments:
+            _id (str): Project id
+            location (str): Location of projects. Default: my_location setting
+            mount (str): Mount project resides in. Optional.
+
+        Returns:
+            Project dict or None
+        '''
+
+        return self.fsfs.get_project_by_id(_id, location, mount)
+
     def get_project(self, name, location=None, mount=None):
         '''Get one project that matches the given name. You can specify a
         location and mount to narrow the search.

@@ -20,8 +20,8 @@ DEFAULT_LOCATION = 'local'
 DEFAULT_MOUNT = 'projects'
 DEFAULT_LOCATIONS = {
     'local': {
-        'projects': unipath('~/projects'),
-        'lib': unipath('~/lib')
+        'projects': unipath('~/projects').as_posix(),
+        'lib': unipath('~/lib').as_posix()
     }
 }
 DEFAULT_TREE = {

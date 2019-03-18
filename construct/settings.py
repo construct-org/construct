@@ -49,28 +49,28 @@ class Settings(dict):
         v = schemas.get_validator('software')
 
         software = {}
-        software_folder = unipath(self.folder, 'software')
-        if not os.path.isdir(software_folder):
+        software_folder = self.folder / 'software'
+        if not software_folder.is_dir():
             return software
 
-        for f in os.listdir(software_folder):
+        for software_file in software_folder.iterdir():
 
-            if not f.endswith('.yml') and not f.endswith('.yaml'):
+            if software_file.suffix not in ('.yml', '.yaml'):
                 continue
 
-            software_name = os.path.splitext(f)[0]
-            software_file = unipath(software_folder, f)
+            software_name = software_file.stem
 
-            with open(software_file, 'rb') as sf:
-                data = sf.read().decode('utf-8')
-                software_data = yaml.load(data)
-
+            # Read and validate software settings
+            data = software_file.read_bytes().decode('utf-8')
+            software_data = yaml.load(data)
             software_data = v.validated(software_data)
             if not software_data:
                 raise InvalidSettings(
                     software_file + ' contains the following errors:\n' +
                     v.errors_yaml
                 )
+
+            # Add the file path and name for convenience
             software_data['file'] = software_file
             software_data['name'] = software_name
             software[software_name] = software_data
@@ -95,10 +95,11 @@ class Settings(dict):
 
         self['software'][name] = software
 
-        software_file = unipath(self.folder, 'software', name + '.yaml')
+        software_file = self.folder / 'software' / (name + '.yaml')
         data = yaml.dump(software, default_flow_style=False)
-        with open(software_file, 'wb') as f:
-            f.write(bytes(data, 'utf-8'))
+
+        # Write new software settings
+        software_file.write_bytes(bytes(data, 'utf-8'))
 
     def delete_software(self, name):
         '''Delete a software configuration
@@ -108,7 +109,7 @@ class Settings(dict):
         '''
 
         self['software'].pop(name, None)
-        software_file = unipath(self.folder, 'software', name + '.yaml')
+        software_file = self.folder / 'software' / (name + '.yaml')
         if os.path.isfile(software_file):
             os.remove(software_file)
 
@@ -121,19 +122,19 @@ class Settings(dict):
             )
 
         self.update(**DEFAULT_SETTINGS)
-        self.file = unipath(self.path[-1], SETTINGS_FILE)
+        self.file = self.path[-1] / SETTINGS_FILE
         potential_settings_file = find_in_paths(self.path, SETTINGS_FILE)
 
         if potential_settings_file:
             self.file = potential_settings_file
             _log.debug('Loading settings from %s' % self.file)
 
-            with open(self.file, 'rb') as f:
-                data = f.read().decode('utf-8')
-                if data:
-                    file_data = yaml.load(data)
-                else:
-                    file_data = {}
+            # Read settings from file
+            data = potential_settings_file.read_bytes().decode('utf-8')
+            if data:
+                file_data = yaml.load(data)
+            else:
+                file_data = {}
 
             if not v.validate(file_data):
                 raise InvalidSettings(
@@ -149,10 +150,10 @@ class Settings(dict):
             )
             restore_default_settings(self.path[-1])
 
-        self.folder = os.path.dirname(self.file)
+        self.folder = self.file.parent
 
         # Make sure our settings folders exist
-        ensure_exists(*[unipath(self.folder, f) for f in self.structure])
+        ensure_exists(*[self.folder / f for f in self.structure])
 
         self.update(software=self.get_software())
         self.is_loaded = True
@@ -168,8 +169,9 @@ class Settings(dict):
 
         if self.is_loaded:
             data = bytes(self.yaml(exclude=['software']), 'utf-8')
-            with open(self.file, 'wb') as f:
-                f.write(data)
+
+            # Write modified settings
+            self.file.write_bytes(data)
 
     def yaml(self, exclude=None):
         '''Serialize these settings as yaml.'''
@@ -184,22 +186,24 @@ class Settings(dict):
 def restore_default_settings(where):
     '''Create a default configuration in the provided folder.'''
 
-    if os.path.isdir(where):
+    where = unipath(where)
+    if where.is_dir():
         shutil.rmtree(where)
 
     ensure_exists(where)
-    ensure_exists(*[unipath(where, f) for f in Settings.structure])
+    ensure_exists(*[where / f for f in Settings.structure])
 
-    settings_file = unipath(where, SETTINGS_FILE)
+    settings_file = where / SETTINGS_FILE
     data = yaml.safe_dump(DEFAULT_SETTINGS, default_flow_style=False)
-    with open(settings_file, 'wb') as f:
-        f.write(bytes(data, 'utf-8'))
+
+    # Write default settings
+    settings_file.write_bytes(bytes(data, 'utf-8'))
 
 
 def find_in_paths(paths, resource):
     '''Find a resource in a list of paths'''
 
     for path in paths:
-        potential_path = unipath(path, resource)
-        if os.path.exists(potential_path):
+        potential_path = path / resource
+        if potential_path.exists():
             return potential_path

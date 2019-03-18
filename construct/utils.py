@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 import os
 import sys
+from .compat import Path
 from os.path import abspath, expanduser, join as joinpath
 from contextlib import contextmanager
 from glob import glob
@@ -19,21 +20,21 @@ __all__ = [
     'update_env',
     'update_envvar',
 ]
-this_package = os.path.dirname(__file__)
+this_package = Path(__file__).parent
 
 
 def get_lib_path():
-    return os.path.dirname(this_package).replace('\\', '/')
+    return this_package.parent
 
 
 def unipath(*paths):
-    return abspath(expanduser(joinpath(*paths))).replace('\\', '/')
+    return Path(*paths).expanduser().resolve()
 
 
 def ensure_exists(*folders):
     for folder in folders:
-        if not os.path.isdir(folder):
-            os.makedirs(folder)
+        folder = Path(folder)
+        folder.mkdir(exist_ok=True)
 
 
 def update_env(d, **values):
@@ -109,7 +110,7 @@ def unload_modules(*names):
     '''
 
     for name in names:
-        for k, v in list(sys.modules.items()):
+        for k in list(sys.modules.keys()):
             if k.startswith(name):
                 del(sys.modules[k])
 
@@ -122,8 +123,9 @@ def import_file(path, isolated=True):
     case yet, Extension loading. There have been no apparent downsides yet.
     '''
 
-    root, basename = os.path.split(path)
-    name, _ = os.path.splitext(basename)
+    path = Path(path)
+    root = path.parent
+    name = path.stem
 
     with isolated_imports(root, restore=isolated):
         unload_modules(name)
@@ -140,10 +142,11 @@ def iter_modules(*paths):
     '''
 
     for path in paths:
-        for py_file in glob(path + '/*.py'):
+        path = Path(path)
+        for py_file in path.glob('*.py'):
             mod = import_file(py_file, isolated=False)
             yield mod
 
-        for py_pkg in glob(path + '/*/__init__.py'):
-            mod = import_file(os.path.dirname(py_pkg), isolated=False)
+        for py_pkg in path.glob('*/__init__.py'):
+            mod = import_file(py_pkg.parent, isolated=False)
             yield mod

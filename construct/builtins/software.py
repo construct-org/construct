@@ -88,7 +88,7 @@ class Software(Extension):
 
         args = list(args or software['args'])
         cmd = [cmd] + args
-        env = _get_software_env(software, api.context)
+        env = _get_software_env(software, api.context, api.path)
 
         # TODO: run before_launch hooks
         # TODO: create workspace if it does not exist
@@ -121,7 +121,7 @@ class Software(Extension):
 
         args = list(args or software['args'])
         cmd = [cmd] + args + [file]
-        env = _get_software_env(software, api.context)
+        env = _get_software_env(software, api.context, api.path)
 
         # TODO: run before_launch hooks
         # TODO: create workspace if it does not exist
@@ -142,7 +142,7 @@ def _get_command(software):
     return False, cmd
 
 
-def _get_software_env(software, ctx):
+def _get_software_env(software, ctx, path):
     '''Get the environment for the specified software.'''
 
     env = os.environ.copy()
@@ -150,8 +150,9 @@ def _get_software_env(software, ctx):
     update_env(env, **software['env'])
     update_env(
         env,
+        CONSTRUCT_PATH=os.pathsep.join([str(p) for p in path]),
         CONSTRUCT_HOST=software['host'],
-        PYTHONPATH=[get_lib_path()]
+        PYTHONPATH=[get_lib_path().as_posix()]
     )
     return env
 

@@ -15,6 +15,7 @@ from .constants import (
     DEFAULT_PATHS,
     DEFAULT_API_NAME
 )
+from .utils import unipath
 from .events import EventManager
 from . import schemas
 from .context import Context
@@ -286,9 +287,9 @@ class API(object):
         mount = mount or self.settings['my_mount']
         path = self.settings['locations'][location][mount]
         if isinstance(path, dict):
-            return path[self.context.platform]
+            return unipath(path[self.context.platform])
         else:
-            return path
+            return unipath(path)
 
     def get_path_to(self, entity):
         my_location = self.settings['my_location']
@@ -300,7 +301,7 @@ class API(object):
             else:
                 location, mount = entity['locations'].items()[0]
             root = self.get_mount(location, mount)
-            return root + '/' + entity['name']
+            return root / entity['name']
 
 
 def api_method_wrapper(api, fn):

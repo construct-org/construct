@@ -246,7 +246,7 @@ class ExtensionManager(dict):
         for ext in builtins.extensions:
             yield ext
 
-        ext_paths = [unipath(p, 'extensions') for p in self.path]
+        ext_paths = [p / 'extensions' for p in self.path]
         for mod in iter_modules(*ext_paths):
             for _, ext in inspect.getmembers(mod, is_extension_type):
                 yield ext

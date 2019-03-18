@@ -13,17 +13,21 @@ class FsfsLayer(object):
         self.api = api
         self.settings = api.settings
 
-    def get_projects(self, location, mount=None):
+    def _get_projects(self, location, mount=None):
         if mount:
-            root = self.api.get_mount(location, mount)
+            root = self.api.get_mount(location, mount).as_posix()
             for entry in fsfs.search(root, levels=1).tags('project'):
-                yield entry.read()
+                yield entry
 
         for mount in self.settings['locations'][location].keys():
-            root = self.api.get_mount(location, mount)
+            root = self.api.get_mount(location, mount).as_posix()
             results = fsfs.search(root, levels=1).tags('project')
             for entry in results:
-                yield entry.read()
+                yield entry
+
+    def get_projects(self, location, mount=None):
+        for entry in self._get_projects(location, mount):
+            yield entry.read()
 
     def get_project_by_id(self, _id, location=None, mount=None):
 
@@ -34,38 +38,39 @@ class FsfsLayer(object):
             reverse=True
         )
         for location in locations:
-            for project in self.get_projects(location):
-                if project['_id'] == _id:
-                    return project
+            for project in self._get_projects(location):
+                if project.uuid == _id:
+                    return project.read()
 
     def get_project(self, name, location, mount=None):
         if mount:
-            root = self.api.get_mount(location, mount)
+            root = self.api.get_mount(location, mount).as_posix()
             entry = fsfs.search(root, levels=1).name(name).one()
             if entry:
                 return entry.read()
             return
 
         for mount in self.settings['locations'][location].keys():
-            root = self.api.get_mount(location, mount)
+            root = self.api.get_mount(location, mount).as_posix()
             entry = fsfs.search(root, levels=1).name(name).one()
             if entry:
                 return entry.read()
 
     def new_project(self, name, location, mount, data):
-        path = self.api.get_mount(location, mount) + '/' + name
-        entry = fsfs.get_entry(path)
+        path = self.api.get_mount(location, mount) / name
+        entry = fsfs.get_entry(path.as_posix())
 
         if entry.exists:
             raise OSError('Project already exists.')
 
         entry.tag('project')
         entry.write(**data)
+        entry.uuid = data['_id']
         return entry.read()
 
     def update_project(self, project, data):
         path = self.api.get_path_to(project)
-        entry = fsfs.get_entry(path)
+        entry = fsfs.get_entry(path.as_posix())
 
         if not entry.exists:
             raise OSError('Project does not exist.')
@@ -75,7 +80,7 @@ class FsfsLayer(object):
 
     def delete_project(self, project):
         path = self.api.get_path_to(project)
-        model = fsfs.get_entry(path)
+        model = fsfs.get_entry(path.as_posix())
         model.delete()
 
     def get_folders(self, parent):

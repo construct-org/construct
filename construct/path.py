@@ -19,11 +19,15 @@ class Path(list):
 
     def load(self):
         if self._custom:
-            self.extend(self._custom_path)
+            self.extend(
+                unipath(p) for p in self._custom_path
+            )
             return
         try:
             env_paths = os.environ['CONSTRUCT_PATH'].strip(os.pathsep)
-            self.extend(env_paths.split(os.pathsep))
+            self.extend(
+                unipath(p) for p in env_paths.split(os.pathsep)
+            )
         except KeyError:
             pass
         self.extend(DEFAULT_PATHS)
@@ -40,6 +44,6 @@ class Path(list):
             '~/.construct/construct.yaml'
         '''
         for path in self:
-            potential_path = unipath(path, resource)
-            if os.path.exists(potential_path):
+            potential_path = path / resource
+            if potential_path.exists():
                 return potential_path
