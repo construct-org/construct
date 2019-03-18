@@ -8,6 +8,7 @@ class FsfsLayer(object):
     # This maintains backwards compatability with construct 0.1.0
     # These tags should all be converted to folder when we make the switch
     _folder_tags = ['folder', 'collection', 'sequence', 'asset_type']
+    _asset_tags = ['asset', 'shot']
 
     def __init__(self, api):
         self.api = api
@@ -149,19 +150,45 @@ class FsfsLayer(object):
         entry.delete()
 
     def get_assets(self, parent):
-        return NotImplemented
+        parent_path = self.api.get_path_to(parent)
+        entries = fsfs.search(parent_path, levels=1, skip_root=True)
+        for entry in entries:
+            if set(entry.tags).intersection(set(self._asset_tags)):
+                yield entry.read()
 
     def get_asset(self, name, parent):
-        return NotImplemented
+        prospect = None
+        for asset in self.get_assets(parent):
+            if name in asset['name']:
+                prospect = asset
+            elif name == asset['name']:
+                return asset
+        return prospect
 
     def new_asset(self, name, parent, data):
-        return NotImplemented
+        parent_path = self.api.get_path_to(parent)
+        asset_path = parent_path / name
+
+        entry = fsfs.get_entry(asset_path.as_posix())
+        entry.tag('asset')
+        entry.write(**data)
+        entry.uuid = data['_id']
+        return entry.read()
 
     def update_asset(self, asset, data):
-        return NotImplemented
+        path = self.api.get_path_to(asset)
+        entry = fsfs.get_entry(path.as_posix())
+
+        if not entry.exists:
+            raise OSError('Asset does not exist.')
+
+        entry.write(**data)
+        return entry.read()
 
     def delete_asset(self, asset):
-        return NotImplemented
+        path = self.api.get_path_to(asset)
+        entry = fsfs.get_entry(path.as_posix())
+        entry.delete()
 
     def get_tasks(self, asset):
         return NotImplemented

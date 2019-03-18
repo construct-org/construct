@@ -37,7 +37,7 @@ thumbnail:
     type: binary
 images:
     type: list
-    valueschema:
+    schema:
         type: binary
 is_sequence:
     type: boolean

@@ -200,7 +200,7 @@ class IO(object):
             parent (dict): Project or Folder dict
 
         Returns:
-            Generator or cursor yielding projects
+            Generator or cursor yielding folders
         '''
 
         return self.fsfs.get_folders(parent)
@@ -222,8 +222,8 @@ class IO(object):
         '''Create a new folder in the specified parent.
 
         Events:
-            before_new_folder: Sent with api and project data
-            after_new_folder: Sent with api and result project data
+            before_new_folder: Sent with api and folder data
+            after_new_folder: Sent with api and result folder data
 
         Arguments:
             name (str): Full name of new folder.
@@ -233,13 +233,16 @@ class IO(object):
             New Folder dict.
         '''
 
+        # TODO: Use a better error here.
+        assert parent['_type'] in ['project', 'folder'], 'Parent must be a project or folder.'
+
         # Prepare data
         data = data or {}
         data.setdefault('name', name)
         data.setdefault('parent_id', parent['_id'])
         if parent['_type'] == 'project':
             data['project_id'] = parent['_id']
-        elif parent['_type'] == 'folder':
+        else:
             data['project_id'] = parent['project_id']
 
         self.api.send('before_new_folder', self.api, data)
@@ -302,3 +305,118 @@ class IO(object):
         '''
 
         return self.fsfs.delete_folder(folder)
+
+    def get_assets(self, parent):
+        '''Get all the assets in the specified parent.
+
+        Arguments:
+            parent (dict): Project or asset dict
+
+        Returns:
+            Generator or cursor yielding assets
+        '''
+
+        return self.fsfs.get_assets(parent)
+
+    def get_asset(self, name, parent):
+        '''Get one asset that matches the given name.
+
+        Arguments:
+            name (str): Partial name of asset.
+            parent (dict): Project or Asset dict
+
+        Returns:
+            Asset dict or None
+        '''
+
+        return self.fsfs.get_asset(name, parent)
+
+    def new_asset(self, name, asset_type, parent, data=None):
+        '''Create a new asset in the specified parent.
+
+        Events:
+            before_new_asset: Sent with api and asset data
+            after_new_asset: Sent with api and result asset data
+
+        Arguments:
+            name (str): Full name of new asset.
+            asset_type (str): Type of asset (asset, shot, etc.)
+            parent (dict): Project or asset dict.
+
+        Returns:
+            New asset dict.
+        '''
+
+        # TODO: Use a better error here.
+        assert parent['_type'] in ['project', 'folder'], 'Parent must be a project or folder.'
+
+        # Prepare data
+        data = data or {}
+        data.setdefault('name', name)
+        data.setdefault('asset_type', asset_type)
+        data.setdefault('parent_id', parent['_id'])
+        if parent['_type'] == 'project':
+            data['project_id'] = parent['_id']
+        else:
+            data['project_id'] = parent['project_id']
+
+        self.api.send('before_new_asset', self.api, data)
+
+        # Validate data
+        v = self.api.schemas.get_validator('asset', allow_unknown=True)
+        data = v.validated(data)
+        if not data:
+            raise ValidationError(
+                'Invalid asset data: %s' % v.errors,
+                errors=v.errors
+            )
+
+        # Create our new project
+        result = self.fsfs.new_asset(name, parent, data)
+
+        self.api.send('after_new_asset', self.api, result)
+        return result
+
+    def update_asset(self, asset, data):
+        '''Update a asset's data.
+
+        Events:
+            before_update_asset: Sent with api, asset, and update
+            after_update_asset: Sent with api, updated asset
+
+        Arguments:
+            asset (dict): asset data containing at least a name
+            data (dict): Data to update
+
+        Returns:
+            Updated asset data.
+        '''
+
+        self.api.send('before_update_asset', self.api, asset, data)
+
+        #Update and validate data
+        updated = asset.copy()
+        updated.update(data)
+
+        v = self.api.schemas.get_validator('asset', allow_unknown=True)
+        updated = v.validated(updated, update=True)
+        if not updated:
+            raise ValidationError(
+                'Invalid project data: %s' % v.errors,
+                errors=v.errors
+            )
+
+        # Update our project
+        result = self.fsfs.update_asset(asset, updated)
+        self.api.send('after_update_asset', self.api, result)
+        return result
+
+    def delete_asset(self, asset):
+        '''Delete a asset.
+
+        .. warning:: This does not delete your asset data on the file system.
+        It simply removes metadata. You are in charge of delete files on your
+        file system.
+        '''
+
+        return self.fsfs.delete_asset(asset)

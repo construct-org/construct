@@ -9,8 +9,10 @@ _type:
     default: asset
 parent_id:
     type: objectid
+    required: True
 project_id:
     type: objectid
+    required: True
 created_at:
     type: datetime
     default_setter: utcnow
@@ -20,19 +22,12 @@ created_by:
 name:
     type: string
     required: True
-type:
+asset_type:
     type: string
     required: True
 thumbnail:
     type: binary
 tags:
     type: list
-    valueschema: string
-workfiles:
-    type: list
     schema:
-        type: version
-publishes:
-    type: list
-    schema:
-        type: version
+        type: string
