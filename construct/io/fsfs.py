@@ -80,23 +80,73 @@ class FsfsLayer(object):
 
     def delete_project(self, project):
         path = self.api.get_path_to(project)
-        model = fsfs.get_entry(path.as_posix())
-        model.delete()
+        entry = fsfs.get_entry(path.as_posix())
+        entry.delete()
+
+    def _get_parent(self, entity):
+        if entity['_type'] == 'project':
+            return
+
+        if 'project_id' in entity:
+            project = self.get_project_by_id(entity['project_id'])
+            project_path = self.api.get_path_to(project)
+            if entity['parent_id'] == entity['project_id']:
+                return fsfs.get_entry(project_path.as_posix())
+
+            matches = (
+                project_path / project['tree']['folders']
+            ).rglob('uuid_' + entity['parent_id'])
+            if not matches:
+                raise OSError('Could not find parent of %s' % entity['name'])
+
+            entry_path = matches[0].parent.parent
+            entry = fsfs.get_entry(entry_path.as_posix())
+            return entry
 
     def get_folders(self, parent):
-        return NotImplemented
+        parent_path = self.api.get_path_to(parent)
+        if parent['_type'] == 'project':
+            parent_path = parent_path / parent['tree']['folders']
+        entries = fsfs.search(parent_path, levels=1, skip_root=True)
+        for entry in entries:
+            if set(entry.tags).intersection(set(self._folder_tags)):
+                yield entry.read()
 
     def get_folder(self, name, parent):
-        return NotImplemented
+        prospect = None
+        for folder in self.get_folders(parent):
+            if name in folder['name']:
+                prospect = folder
+            elif name == folder['name']:
+                return folder
+        return prospect
 
-    def new_folder(self, name, parent, **data):
-        return NotImplemented
+    def new_folder(self, name, parent, data):
+        parent_path = self.api.get_path_to(parent)
+        if parent['_type'] == 'project':
+            parent_path = parent_path / parent['tree']['folders']
+        folder_path = parent_path / name
 
-    def update_folder(self, group, **data):
-        return NotImplemented
+        entry = fsfs.get_entry(folder_path.as_posix())
+        entry.tag('folder')
+        entry.write(**data)
+        entry.uuid = data['_id']
+        return entry.read()
 
-    def delete_folder(self, group):
-        return NotImplemented
+    def update_folder(self, folder, data):
+        path = self.api.get_path_to(folder)
+        entry = fsfs.get_entry(path.as_posix())
+
+        if not entry.exists:
+            raise OSError('Folder does not exist.')
+
+        entry.write(**data)
+        return entry.read()
+
+    def delete_folder(self, folder):
+        path = self.api.get_path_to(folder)
+        entry = fsfs.get_entry(path.as_posix())
+        entry.delete()
 
     def get_assets(self, parent):
         return NotImplemented
@@ -104,10 +154,10 @@ class FsfsLayer(object):
     def get_asset(self, name, parent):
         return NotImplemented
 
-    def new_asset(self, name, parent, **data):
+    def new_asset(self, name, parent, data):
         return NotImplemented
 
-    def update_asset(self, asset, **data):
+    def update_asset(self, asset, data):
         return NotImplemented
 
     def delete_asset(self, asset):
@@ -143,8 +193,8 @@ class FsfsLayer(object):
     def get_next_publish(self, asset, name, task, file_type, instance=0):
         return NotImplemented
 
-    def new_workfile(self, asset, name, identifier, task, file_type, **data):
+    def new_workfile(self, asset, name, identifier, task, file_type, data):
         return NotImplemented
 
-    def new_publish(self, asset, name, identifier, task, file_type, **data):
+    def new_publish(self, asset, name, identifier, task, file_type, data):
         return NotImplemented

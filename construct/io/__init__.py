@@ -29,12 +29,32 @@ class IO(object):
             'after_update_project',
             '(api, project): Set after a project is updated.'
         )
+        self.api.define(
+            'before_new_folder',
+            '(api, folder): Sent before a folder is created.'
+        )
+        self.api.define(
+            'after_new_folder',
+            '(api, folder): Sent after a folder is created.'
+        )
+        self.api.define(
+            'before_update_folder',
+            '(api, folder, update): Sent before a folder is updated.'
+        )
+        self.api.define(
+            'after_update_folder',
+            '(api, folder): Set after a folder is updated.'
+        )
 
     def unload(self):
         self.api.undefine('before_new_project')
         self.api.undefine('after_new_project')
         self.api.undefine('before_update_project')
         self.api.undefine('after_update_project')
+        self.api.undefine('before_new_folder')
+        self.api.undefine('after_new_folder')
+        self.api.undefine('before_update_folder')
+        self.api.undefine('after_update_folder')
 
     def get_projects(self, location=None, mount=None):
         '''Get a list of projects in a location and mount. If no mount is
@@ -114,7 +134,7 @@ class IO(object):
         self.api.send('before_new_project', self.api, data)
 
         # Validate data
-        v = self.api.schemas.get_validator('project')
+        v = self.api.schemas.get_validator('project', allow_unknown=True)
         data = v.validated(data)
         if not data:
             raise ValidationError(
@@ -145,17 +165,21 @@ class IO(object):
 
         self.api.send('before_update_project', self.api, project, data)
 
-        #Validate data
-        v = self.api.schemas.get_validator('project')
-        data = v.validated(data, update=True)
-        if not data:
+
+        #Update and validate data
+        updated = project.copy()
+        updated.update(data)
+
+        v = self.api.schemas.get_validator('project', allow_unknown=True)
+        updated = v.validated(updated, update=True)
+        if not updated:
             raise ValidationError(
                 'Invalid project data: %s' % v.errors,
                 errors=v.errors
             )
 
         # Update our project
-        result = self.fsfs.update_project(project, data)
+        result = self.fsfs.update_project(project, updated)
         self.api.send('after_update_project', self.api, result)
         return result
 
@@ -168,3 +192,113 @@ class IO(object):
         '''
 
         return self.fsfs.delete_project(project)
+
+    def get_folders(self, parent):
+        '''Get all the folders in the specified parent.
+
+        Arguments:
+            parent (dict): Project or Folder dict
+
+        Returns:
+            Generator or cursor yielding projects
+        '''
+
+        return self.fsfs.get_folders(parent)
+
+    def get_folder(self, name, parent):
+        '''Get one folder that matches the given name.
+
+        Arguments:
+            name (str): Partial name of folder.
+            parent (dict): Project or Folder dict
+
+        Returns:
+            Folder dict or None
+        '''
+
+        return self.fsfs.get_folder(name, parent)
+
+    def new_folder(self, name, parent, data=None):
+        '''Create a new folder in the specified parent.
+
+        Events:
+            before_new_folder: Sent with api and project data
+            after_new_folder: Sent with api and result project data
+
+        Arguments:
+            name (str): Full name of new folder.
+            parent (dict): Project or Folder dict.
+
+        Returns:
+            New Folder dict.
+        '''
+
+        # Prepare data
+        data = data or {}
+        data.setdefault('name', name)
+        data.setdefault('parent_id', parent['_id'])
+        if parent['_type'] == 'project':
+            data['project_id'] = parent['_id']
+        elif parent['_type'] == 'folder':
+            data['project_id'] = parent['project_id']
+
+        self.api.send('before_new_folder', self.api, data)
+
+        # Validate data
+        v = self.api.schemas.get_validator('folder', allow_unknown=True)
+        data = v.validated(data)
+        if not data:
+            raise ValidationError(
+                'Invalid folder data: %s' % v.errors,
+                errors=v.errors
+            )
+
+        # Create our new project
+        result = self.fsfs.new_folder(name, parent, data)
+
+        self.api.send('after_new_folder', self.api, result)
+        return result
+
+    def update_folder(self, folder, data):
+        '''Update a folder's data.
+
+        Events:
+            before_update_folder: Sent with api, folder, and update
+            after_update_folder: Sent with api, updated folder
+
+        Arguments:
+            folder (dict): Folder data containing at least a name
+            data (dict): Data to update
+
+        Returns:
+            Updated folder data.
+        '''
+
+        self.api.send('before_update_folder', self.api, folder, data)
+
+        #Update and validate data
+        updated = folder.copy()
+        updated.update(data)
+
+        v = self.api.schemas.get_validator('folder', allow_unknown=True)
+        updated = v.validated(updated, update=True)
+        if not updated:
+            raise ValidationError(
+                'Invalid project data: %s' % v.errors,
+                errors=v.errors
+            )
+
+        # Update our project
+        result = self.fsfs.update_folder(folder, updated)
+        self.api.send('after_update_folder', self.api, result)
+        return result
+
+    def delete_folder(self, folder):
+        '''Delete a folder.
+
+        .. warning:: This does not delete your folder data on the file system.
+        It simply removes metadata. You are in charge of delete files on your
+        file system.
+        '''
+
+        return self.fsfs.delete_folder(folder)

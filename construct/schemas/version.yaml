@@ -48,3 +48,8 @@ end_frame:
     type: integer
 padding:
     type: integer
+locations:
+    type: dict
+    valueschema:
+        type: string
+    required: True

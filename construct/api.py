@@ -303,6 +303,16 @@ class API(object):
             root = self.get_mount(location, mount)
             return root / entity['name']
 
+        if 'project_id' in entity:
+            project = self.io.get_project_by_id(entity['project_id'])
+            project_path = self.get_path_to(project)
+            folders_path = project_path / project['tree']['folders']
+            matches = folders_path.rglob('uuid_' + entity['_id'])
+            for match in matches:
+                return match.parent.parent
+
+        raise OSError('Could not find ' + entity['name'])
+
 
 def api_method_wrapper(api, fn):
 
