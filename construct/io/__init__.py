@@ -306,17 +306,18 @@ class IO(object):
 
         return self.fsfs.delete_folder(folder)
 
-    def get_assets(self, parent):
+    def get_assets(self, parent, asset_type=None):
         '''Get all the assets in the specified parent.
 
         Arguments:
             parent (dict): Project or asset dict
+            asset_type (str): Optional asset_type filter
 
         Returns:
             Generator or cursor yielding assets
         '''
 
-        return self.fsfs.get_assets(parent)
+        return self.fsfs.get_assets(parent, asset_type)
 
     def get_asset(self, name, parent):
         '''Get one asset that matches the given name.
@@ -420,3 +421,39 @@ class IO(object):
         '''
 
         return self.fsfs.delete_asset(asset)
+
+    def get_parent(self, entity):
+        '''Get the parent of an entity.
+
+        Arguments:
+            entity (dict): Data dict including (_type, _id, name, etc.)
+
+        Returns:
+            dict: Parent entity
+        '''
+
+        return self.fsfs.get_parent(entity)
+
+    def get_children(self, entity):
+        '''Get the children of an entity.
+
+        Arguments:
+            entity (dict): Data dict including (_type, _id, name, etc.)
+
+        Returns:
+            dict containing children by type
+        '''
+
+        return self.fsfs.get_children(entity)
+
+    def get_path_to(self, entity):
+        '''Get a file system path to the provided entity.
+
+        Arguments:
+            entity (dict): Data dict including (_type, _id, name, etc.)
+
+        Returns:
+            pathlib.Path
+        '''
+
+        return self.fsfs.get_path_to(entity)

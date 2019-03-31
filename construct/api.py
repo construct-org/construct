@@ -5,9 +5,12 @@ import os
 import yaml
 import logging
 import inspect
+from collections import Mapping
 from copy import deepcopy
 from functools import wraps
 from logging.config import dictConfig
+
+from past.types import basestring
 
 from .constants import (
     DEFAULT_HOST,
@@ -291,27 +294,22 @@ class API(object):
         else:
             return unipath(path)
 
-    def get_path_to(self, entity):
-        my_location = self.settings['my_location']
+    def show(self, data):
+        '''Pretty print a dict or list of dicts.'''
 
-        if entity['_type'] == 'project':
-            if my_location in entity['locations']:
-                location = my_location
-                mount = entity['locations'][location]
-            else:
-                location, mount = entity['locations'].items()[0]
-            root = self.get_mount(location, mount)
-            return root / entity['name']
+        if isinstance(data, Mapping):
+            print(yaml.safe_dump(data, default_flow_style=False))
+            return
+        elif isinstance(data, basestring):
+            print(data)
+            return
 
-        if 'project_id' in entity:
-            project = self.io.get_project_by_id(entity['project_id'])
-            project_path = self.get_path_to(project)
-            folders_path = project_path / project['tree']['folders']
-            matches = folders_path.rglob('uuid_' + entity['_id'])
-            for match in matches:
-                return match.parent.parent
-
-        raise OSError('Could not find ' + entity['name'])
+        try:
+            for obj in data:
+                print('')
+                print(yaml.safe_dump(obj, default_flow_style=False))
+        except:
+            print('Can not format: %s' % data)
 
 
 def api_method_wrapper(api, fn):
