@@ -110,8 +110,8 @@ class Settings(dict):
 
         self['software'].pop(name, None)
         software_file = self.folder / 'software' / (name + '.yaml')
-        if os.path.isfile(software_file):
-            os.remove(software_file)
+        if software_file.is_file():
+            software_file.unlink()
 
     def load(self):
         v = schemas.get_validator('settings')
@@ -188,7 +188,7 @@ def restore_default_settings(where):
 
     where = unipath(where)
     if where.is_dir():
-        shutil.rmtree(where)
+        shutil.rmtree(str(where))
 
     ensure_exists(where)
     ensure_exists(*[where / f for f in Settings.structure])

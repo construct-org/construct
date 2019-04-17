@@ -190,6 +190,7 @@ class FsfsLayer(object):
     def get_assets(self, parent, asset_type=None):
         parent_path = self.get_path_to(parent)
         if parent['_type'] == 'project':
+            parent_path = parent_path / parent['tree']['folders']
             levels = 10
         else:
             levels = 1
@@ -234,16 +235,44 @@ class FsfsLayer(object):
         entry.delete()
 
     def get_tasks(self, asset):
-        return NotImplemented
+        parent_path = self.get_path_to(asset)
+        entries = fsfs.search(parent_path, levels=1).tags('task')
+        for entry in entries:
+            yield entry.read()
 
     def get_task(self, name, asset):
-        return NotImplemented
+        prospect = None
+        for task in self.get_tasks(asset):
+            if name in task['name']:
+                prospect = task
+            if name == task['name']:
+                return asset
+        return prospect
 
-    def new_task(self, name, asset):
-        return NotImplemented
+    def new_task(self, name, asset, data):
+        parent_path = self.get_path_to(asset)
+        task_path = parent_path / name
+
+        entry = fsfs.get_entry(task_path.as_posix())
+        entry.tag('task')
+        entry.write(**data)
+        entry.uuid = data['_id']
+        return entry.read()
+
+    def update_task(self, task, data):
+        path = self.get_path_to(task)
+        entry = fsfs.get_entry(path.as_posix())
+
+        if not entry.exists:
+            raise OSError('Task does not exist.')
+
+        entry.write(**data)
+        return entry.read()
 
     def delete_task(self, task):
-        return NotImplemented
+        path = self.get_path_to(task)
+        entry = fsfs.get_entry(path.as_posix())
+        entry.delete()
 
     def get_workfiles(self, asset):
         return NotImplemented
@@ -299,7 +328,12 @@ class FsfsLayer(object):
 
         if entity['_type'] == 'asset':
             return dict(
-                tasks=list(self.get_assets(entity))
+                tasks=list(self.get_tasks(entity))
+            )
+
+        if entity['_type'] == 'task':
+            return dict(
+                workfiles=list(self.get_workfiles(entity))
             )
 
     def get_path_to(self, entity):

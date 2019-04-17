@@ -4,27 +4,18 @@ import sys
 import os
 import shutil
 
-from . import data_dir
-from construct.settings import restore_default_settings
+from . import data_dir, setup_api, teardown_api
 from construct.extensions import Extension
 import construct
 
-CUSTOM_USER_PATH = data_dir('.cons')
 
 
 def setup_module():
-    restore_default_settings(CUSTOM_USER_PATH)
-    api = construct.API(
-        __name__,
-        path=[CUSTOM_USER_PATH],
-        logging=dict(version=1)
-    )
+    setup_api(__name__)
 
 
 def teardown_module():
-    shutil.rmtree(CUSTOM_USER_PATH)
-    api = construct.API(__name__)
-    api.uninit()
+    teardown_api(__name__)
 
 
 class Counter(Extension):

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
-import sys
-from .compat import Path
-from os.path import abspath, expanduser, join as joinpath
-from contextlib import contextmanager
+from os.path import normpath
 from glob import glob
+from contextlib import contextmanager
 
 from past.builtins import basestring
+
+from .compat import Path
+
 
 __all__ = [
     'import_file',
@@ -28,13 +29,19 @@ def get_lib_path():
 
 
 def unipath(*paths):
-    return Path(*paths).expanduser().resolve()
+    expanded = Path(*paths).expanduser()
+    try:
+        return expanded.resolve()
+    except WindowsError:
+        return Path(normpath(str(expanded)))
 
 
 def ensure_exists(*folders):
     for folder in folders:
-        folder = Path(folder)
-        folder.mkdir(exist_ok=True)
+        try:
+            os.makedirs(str(folder))
+        except:
+            pass
 
 
 def update_env(d, **values):

@@ -8,4 +8,4 @@ def tests(ctx):
 
 @task
 def build_docs(ctx):
-    ctx.run('docs\make html')
+    ctx.run('docs\\make html')

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-import sys
-import os
 import shutil
 
 from . import data_dir
@@ -17,7 +15,7 @@ def setup_module():
 
 
 def teardown_module():
-    shutil.rmtree(CUSTOM_USER_PATH)
+    shutil.rmtree(str(CUSTOM_USER_PATH))
 
 
 def test_init():

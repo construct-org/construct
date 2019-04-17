@@ -39,16 +39,16 @@ NEW_LOCATIONS = dict(
 
 
 def teardown_module():
-    shutil.rmtree(SETTINGS_FOLDER)
+    shutil.rmtree(str(SETTINGS_FOLDER))
 
 
 def test_create_default_settings():
     '''Create default settings'''
 
     restore_default_settings(SETTINGS_FOLDER)
-    assert os.path.isdir(SETTINGS_FOLDER)
-    assert os.path.isfile(SETTINGS_FILE)
-    assert all([os.path.isdir(f) for f in SETTINGS_FOLDERS])
+    assert SETTINGS_FOLDER.is_dir()
+    assert SETTINGS_FILE.is_file()
+    assert all([f.is_dir() for f in SETTINGS_FOLDERS])
 
     settings = Settings(CONSTRUCT_PATH)
     settings.load()
@@ -89,7 +89,7 @@ def test_save_software():
         **SOFTWARE_SETTINGS
     )
     assert SOFTWARE_NAME in settings['software']
-    assert os.path.isfile(SOFTWARE_FILE)
+    assert SOFTWARE_FILE.is_file()
 
 
 def test_delete_software():
@@ -98,8 +98,8 @@ def test_delete_software():
     settings = Settings(CONSTRUCT_PATH)
     settings.load()
     assert SOFTWARE_NAME in settings['software']
-    assert os.path.isfile(SOFTWARE_FILE)
+    assert SOFTWARE_FILE.is_file()
 
     settings.delete_software(SOFTWARE_NAME)
     assert SOFTWARE_NAME not in settings['software']
-    assert not os.path.isfile(SOFTWARE_FILE)
+    assert not SOFTWARE_FILE.is_file()
