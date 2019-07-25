@@ -19,7 +19,7 @@ class Config(object):
     defaults = {}
 
     with open(DEFAULT_CONFIG, 'r') as f:
-        defaults.update(yaml.load(f.read()))
+        defaults.update(yaml.safe_load(f.read()))
 
     def __init__(self, *args, **kwargs):
         self.dict = dict(*args, **kwargs)
