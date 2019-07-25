@@ -82,7 +82,7 @@ def init(root=None, host=None, extension_paths=None, logging=None):
     config_file = os.environ.get('CONSTRUCT_CONFIG')
     if config_file:
         with open(config_file, 'r') as f:
-            config_data = yaml.load(f.read())
+            config_data = yaml.safe_load(f.read())
         config.update(config_data)
 
     # Configure logging
