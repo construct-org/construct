@@ -8,6 +8,7 @@ from construct.cli.constants import (
 from construct.cli.utils import styled, style
 from construct.constants import WAITING, FAILED
 from construct import signals
+import time
 
 
 class TaskLine(Line):
@@ -89,5 +90,6 @@ class ProgressBar(Line):
         )
 
     def set_value(self, i):
+        time.sleep(0.05)
         self.i = i
         self.text = self.format_bar()

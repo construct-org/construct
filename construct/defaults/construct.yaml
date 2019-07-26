@@ -20,6 +20,7 @@ LOGGING:
             handlers: [console]
             propagate: False
 
+STYLE: ':/styles/dark'
 
 STATUSES:
     waiting:

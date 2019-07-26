@@ -46,6 +46,8 @@ __all__ = [
     'get_template',
     'get_host',
     'get_form',
+    'get_form_cls',
+    'show_form',
     'new_project',
     'new_sequence',
     'new_shot',
@@ -211,13 +213,47 @@ def get_host(name=None):
 
 
 @log_call
-def get_form(action_identifier):
+def get_form_cls(action_identifier):
     '''Get form for action_identifier'''
 
     for ext in extensions:
         form = ext.get_form(action_identifier)
         if form:
             return form
+
+
+@log_call
+def get_form(action_identifier, action=None, ctx=None, parent=None):
+    '''Return a form instance for an action_identifier.'''
+
+    from construct_ui import resources
+    resources.init()
+
+    action = action or actions.get(action_identifier)
+    parent = parent or get_host().get_qt_parent()
+    ctx = ctx or get_context()
+
+    form_cls = get_form_cls(action_identifier)
+    if not form_cls:
+        return
+
+    form = form_cls(action, ctx, parent)
+    form.setStyleSheet(resources.style(config['STYLE']))
+    return form
+
+
+@log_call
+def show_form(action_identifier, action=None, ctx=None, parent=None):
+    '''Show and return a form instance for an action_identifier.'''
+
+    form = get_form(action_identifier, action, ctx, parent)
+
+    if not form:
+        # TODO: replace with construct error
+        raise RuntimeError('Form does not exist for %s' % action_identifier)
+
+    form.show()
+    return form
 
 
 @log_call
