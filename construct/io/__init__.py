@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+from copy import deepcopy
+
 from .fsfs import FsfsLayer
 from .mongo import MongoLayer
 from ..errors import ValidationError
@@ -167,7 +169,7 @@ class IO(object):
 
 
         #Update and validate data
-        updated = project.copy()
+        updated = deepcopy(project)
         updated.update(data)
 
         v = self.api.schemas.get_validator('project', allow_unknown=True)
@@ -280,7 +282,7 @@ class IO(object):
         self.api.send('before_update_folder', self.api, folder, data)
 
         #Update and validate data
-        updated = folder.copy()
+        updated = deepcopy(folder)
         updated.update(data)
 
         v = self.api.schemas.get_validator('folder', allow_unknown=True)
@@ -396,7 +398,7 @@ class IO(object):
         self.api.send('before_update_asset', self.api, asset, data)
 
         #Update and validate data
-        updated = asset.copy()
+        updated = deepcopy(asset)
         updated.update(data)
 
         v = self.api.schemas.get_validator('asset', allow_unknown=True)
