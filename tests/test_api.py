@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import shutil
+import sys
 
-from . import data_dir
+from . import data_dir, testAPI
 from construct.settings import restore_default_settings
 import construct
 
@@ -21,10 +22,9 @@ def teardown_module():
 def test_init():
     '''initialize API'''
 
-    api = construct.API(
+    api = testAPI(
         __name__,
-        path=[CUSTOM_USER_PATH],
-        logging=dict(version=1)
+        path=[CUSTOM_USER_PATH]
     )
     assert api.settings
 
@@ -32,7 +32,7 @@ def test_init():
 def test_uninit():
     '''uninitialize API'''
 
-    api = construct.API(__name__)
+    api = testAPI(__name__)
     api.uninit()
 
     assert not api.settings
