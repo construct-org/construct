@@ -18,7 +18,7 @@ from .constants import (
     DEFAULT_PATHS,
     DEFAULT_API_NAME
 )
-from .utils import unipath
+from .utils import unipath, ensure_exists
 from .events import EventManager
 from . import schemas
 from .context import Context
@@ -290,8 +290,11 @@ class API(object):
         mount = mount or self.settings['my_mount']
         path = self.settings['locations'][location][mount]
         if isinstance(path, dict):
-            return unipath(path[self.context.platform])
+            path = path[self.context.platform]
+            ensure_exists(path)
+            return unipath(path)
         else:
+            ensure_exists(path)
             return unipath(path)
 
     def show(self, data):

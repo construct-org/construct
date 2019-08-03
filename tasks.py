@@ -2,8 +2,12 @@ from invoke import task
 
 
 @task
-def tests(ctx):
-    ctx.run('nosetests -v -s --logging-clear-handlers')
+def tests(ctx, level='WARNING'):
+    ctx.run(
+        'nosetests '
+        '--verbosity=2 '
+        '--nocapture '
+        '--logging-level=' + level)
 
 
 @task

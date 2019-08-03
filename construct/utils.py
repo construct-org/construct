@@ -29,11 +29,7 @@ def get_lib_path():
 
 
 def unipath(*paths):
-    expanded = Path(*paths).expanduser()
-    try:
-        return expanded.resolve()
-    except WindowsError:
-        return Path(normpath(str(expanded)))
+    return Path(*paths).expanduser().resolve()
 
 
 def ensure_exists(*folders):
