@@ -67,3 +67,6 @@ def test_store_and_load_context():
     assert new_ctx.project == project
     assert new_ctx.folder == folder
     assert new_ctx.asset == asset
+
+    # Make sure we don't leak context to other tests
+    new_ctx.clear_envvars()
