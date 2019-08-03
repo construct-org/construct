@@ -17,6 +17,7 @@ schemas_root = os.path.abspath(os.path.dirname(__file__))
 
 
 class SchemaNotFound(Exception): pass
+class SchemaError(Exception): pass
 
 
 class ConstructValidator(Validator):

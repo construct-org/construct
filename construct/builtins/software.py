@@ -12,7 +12,7 @@ if platform == 'darwin':
 from past.types import basestring
 from .. import context, schemas
 from ..extensions import Extension
-from ..utils import get_lib_path, update_env
+from ..utils import get_lib_path, update_env, update_dict
 
 
 _log = logging.getLogger(__name__)
@@ -27,9 +27,12 @@ class Software(Extension):
         return ctx.project
 
     def load(self, api):
-        api.extend('save_software', api.settings.save_software)
-        api.extend('delete_software', api.settings.delete_software)
-        api.extend('get_software', self.get_software)
+        api.settings.add_section('software', 'software')
+        api.extend('save_software', self.save)
+        api.extend('delete_software', self.delete)
+        api.extend('get_software', self.get)
+        api.extend('get_software_by_name', self.get_by_name)
+        api.extend('update_software', self.update)
         api.extend('launch', self.launch)
         api.extend('open_with', self.open_with)
 
@@ -37,65 +40,133 @@ class Software(Extension):
         api.unextend('save_software')
         api.unextend('delete_software')
         api.unextend('get_software')
+        api.unextend('get_software_by_name')
+        api.unextend('update_software')
         api.unextend('launch')
         api.unextend('open_with')
 
-    def get_software(self, api, file=None):
+    @property
+    def software(self):
+        return self.api.settings['software']
+
+    def _get_project_software(self, api, project):
+        project = api.io.get_project_by_id(project['_id'])
+        return project.get('software', {})
+
+    def update(self, api, name, data, project=None):
+        '''Update software stored in settings or a project.'''
+
+        if project:
+            # Get updated project software
+            software = self._get_project_software(api, project)
+            software_data = software.get(name, {})
+
+            # Update software data
+            update_dict(software_data, data)
+
+            # Validate software data
+            software_data = self.software.validate(software_data)
+            software[name] = software_data
+
+            # Update project with software
+            api.io.update_project(project, {'software': software})
+            return software[name]
+
+        software_data = self.software.get(name, {})
+        update_dict(software_data, data)
+        self.software.write(name, software_data)
+        return software_data
+
+    def save(self, api, name, data, project=None):
+        '''Save software to settings or a project.'''
+
+        if project:
+            software = self._get_project_software(api, project)
+            software[name] = self.software.validate(data)
+            api.io.update_project(project, {'software': software})
+            return software[name]
+
+        return self.software.write(name, data)
+
+    def delete(self, api, name, project=None):
+        '''Delete software by name from settings or a project.'''
+
+        if project:
+            software = self._get_project_software(api, project)
+            if name not in software:
+                return
+            software.pop(name)
+            api.io.update_project(project, {'software': software})
+
+        self.software.delete(name)
+
+    def get_by_name(self, api, name, project=None, file=None):
+        try:
+            return self.get(api, project, file)[name]
+        except KeyError:
+            raise NameError('Could not find software named ' + name)
+
+    def _available_software(self, software, ext=None):
+        available = {}
+        for software_name, software in software.items():
+            if ext and ext not in software['extensions']:
+                continue
+            available[software_name] = software
+        return available
+
+    def get(self, api, project=None, file=None):
         '''Get the available software.
 
+        If a project is provided get only software available in that project.
+
         If there is a project in the current context only return software in the
-        project's "software" list. If a file is provided only return software
+        project's "software" dict. If a file is provided only return software
         that can handle the file's extension.
+
+        If a file is provided, only return software that can open that file.
         '''
 
         ext = None
-        project_software = None
-        available_software = {}
+        project = project or api.context.project
 
         if file:
             ext = os.path.splitext(file)[-1]
 
-        if api.context.project:
-            project_software = api.context.project['software']
+        if project:
+            software = self._get_project_software(api, project)
+            return self._available_software(software, ext)
 
-        for software_name, software in api.settings['software'].items():
-            if ext and ext not in software['extensions']:
-                continue
-            if project_software and software_name not in project_software:
-                continue
-            available_software[software_name] = software
+        return self._available_software(self.software, ext)
 
-        return available_software
-
-    def launch(self, api, name, *args):
+    def launch(self, api, name, *args, **kwargs):
         '''Launch the specified software.
 
         Arguments:
             name (str): Name of software to launch
-            *args: Arguments to pass to software executable
+            args: Arguments to pass to software executable
+            context: Context to launch software in
         '''
 
-        software = api.settings['software'].get(name, None)
-        if not software:
-            raise NameError('Could not find software named ' + name)
+        software = self.get_by_name(api, name)
 
         found, cmd = _get_command(software)
         if not found:
             raise OSError(
-                "Could not find executable for %s. Are you sure it's installed?"
+                "Could not find executable for %s."
                 % name
             )
 
+        ctx = kwargs.pop('context', api.context).copy()
         args = list(args or software['args'])
         cmd = [cmd] + args
-        env = _get_software_env(software, api.context, api.path)
+        env = _get_software_env(software, ctx, api.path)
 
         # TODO: run before_launch hooks
         # TODO: create workspace if it does not exist
         _log.debug('Launching %s' % name.title())
         _run(cmd, env=env)
 
-    def open_with(self, api, name, file, *args):
+    def open_with(self, api, name, file, *args, **kwargs):
         '''Open a file with the specified software.
 
         Arguments:
@@ -119,9 +190,11 @@ class Software(Extension):
                 % name
             )
 
+        ctx = kwargs.pop('context', api.context).copy()
+        ctx.file = file
         args = list(args or software['args'])
         cmd = [cmd] + args + [file]
-        env = _get_software_env(software, api.context, api.path)
+        env = _get_software_env(software, ctx, api.path)
 
         # TODO: run before_launch hooks
         # TODO: create workspace if it does not exist
@@ -132,7 +205,7 @@ class Software(Extension):
 def _get_command(software):
     '''Get the platform specific command used to execute a piece of software.'''
 
-    cmd = software['cmd'][platform]
+    cmd = software['cmd'].get(platform, None)
     if isinstance(cmd, basestring):
         if os.path.isfile(cmd):
             return True, cmd
