@@ -133,6 +133,13 @@ class Context(dict):
                     env[env_key] = encode(value)
         return env
 
+    def clear_envvars(self):
+        '''Clear context stored in environment variables.'''
+
+        for key in self._keys:
+            env_key = ('construct_' + key).upper()
+            os.environ.pop(env_key, None)
+
     def copy(self):
         '''Copy this context'''
 
