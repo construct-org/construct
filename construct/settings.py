@@ -7,6 +7,7 @@ import sys
 import logging
 
 from builtins import open, bytes
+from future.utils import reraise
 from past.builtins import basestring
 import yaml
 
@@ -19,7 +20,7 @@ from .constants import (
     USER_PATH
 )
 from .utils import unipath, ensure_exists
-from .errors import InvalidSettings
+from .errors import InvalidSettings, ValidationError
 
 
 _log = logging.getLogger(__name__)
@@ -83,7 +84,7 @@ class Settings(dict):
 
             if not v.validate(file_data):
                 raise InvalidSettings(
-                    self.file + ' contains the following errors:\n' +
+                    str(self.file) + ' contains the following errors:\n' +
                     v.errors_yaml
                 )
 
@@ -91,7 +92,7 @@ class Settings(dict):
         else:
             _log.debug(
                 'Settings file not found.'
-                ' Writing default settings to ' + self.file
+                ' Writing default settings to ' + str(self.file)
             )
             restore_default_settings(self.path[-1])
 
@@ -170,15 +171,17 @@ class Section(dict):
 
         valid_data = v.validated(data, **kwargs)
         if not valid_data:
-            raise InvalidSettings(v.errors_yaml)
+            raise ValidationError(
+                '%s Section: Data is invalid.\n%s'
+                % (self.name, v.errors_yaml),
+                errors=v.errors
+            )
 
         return valid_data
 
     def load(self):
         ensure_exists(self.folder)
         self.mtime = self.folder.stat().st_mtime
-
-        v = self._get_validator()
 
         section_files = {}
         section_data = {}
@@ -188,14 +191,7 @@ class Section(dict):
                 continue
 
             raw_data = file.read_bytes().decode('utf-8')
-            data = yaml.load(raw_data)
-            try:
-                data = self.validate(data)
-            except InvalidSettings as e:
-                raise InvalidSettings(
-                    file + ' contains the following errors:\n' +
-                    str(e)
-                )
+            data = self.validate(yaml.load(raw_data))
 
             section_data[file.stem] = data
             section_files[file.stem] = file
@@ -206,11 +202,7 @@ class Section(dict):
         self.files.update(section_files)
 
     def write(self, name, data):
-        try:
-            data = self.validate(data)
-        except InvalidSettings as e:
-            raise InvalidSettings(str(e))
-
+        data = self.validate(data)
         dict.__setitem__(self, name, data)
 
         yaml_data = yaml.dump(data, default_flow_style=False)
@@ -245,10 +237,10 @@ def restore_default_settings(where):
     ensure_exists(where)
     ensure_exists(*[where / f for f in Settings.structure])
 
-    settings_file = where / SETTINGS_FILE
     data = yaml.safe_dump(DEFAULT_SETTINGS, default_flow_style=False)
 
     # Write default settings
+    settings_file = where / SETTINGS_FILE
     settings_file.write_bytes(bytes(data, 'utf-8'))
 
 

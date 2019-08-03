@@ -6,7 +6,7 @@ import shutil
 
 from . import data_dir
 from construct.settings import Settings, restore_default_settings
-from construct.errors import InvalidSettings
+from construct.errors import InvalidSettings, ValidationError
 from construct.constants import DEFAULT_SETTINGS
 
 
@@ -87,7 +87,7 @@ def test_section():
     try:
         settings['items']['funk'] = {'value': 2}
         assert False
-    except InvalidSettings:
+    except ValidationError:
         assert True
 
     # Verify that settings loads sections from disk
