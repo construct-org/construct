@@ -7,9 +7,11 @@ import sys
 import logging
 
 from builtins import open, bytes
+from past.builtins import basestring
 import yaml
 
 from . import schemas
+from .compat import wraps
 from .constants import (
     SETTINGS_FILE,
     USER_SETTINGS_FILE,
@@ -33,7 +35,6 @@ class Settings(dict):
     '''
 
     structure = [
-        'software',
         'extensions',
         'icons',
         'templates'
@@ -44,74 +45,18 @@ class Settings(dict):
         self.file = None
         self.folder = None
         self.is_loaded = False
+        self._sections = {}
 
-    def get_software(self):
-        v = schemas.get_validator('software')
+    def add_section(self, name, schema=None):
+        section = Section(name, self.folder / name, schema)
+        section.load()
+        self._sections[name] = section
 
-        software = {}
-        software_folder = self.folder / 'software'
-        if not software_folder.is_dir():
-            return software
-
-        for software_file in software_folder.iterdir():
-
-            if software_file.suffix not in ('.yml', '.yaml'):
-                continue
-
-            software_name = software_file.stem
-
-            # Read and validate software settings
-            data = software_file.read_bytes().decode('utf-8')
-            software_data = yaml.load(data)
-            software_data = v.validated(software_data)
-            if not software_data:
-                raise InvalidSettings(
-                    software_file + ' contains the following errors:\n' +
-                    v.errors_yaml
-                )
-
-            # Add the file path and name for convenience
-            software_data['file'] = software_file
-            software_data['name'] = software_name
-            software[software_name] = software_data
-
-        return software
-
-    def save_software(self, name, **data):
-        '''Save a new software configuration.
-
-        Arguments:
-            name (str): The name of the software like "maya2019"
-            **data: Software settings must match the settings.yaml schema
-        '''
-
-        v = schemas.get_validator('software')
-        software = v.validated(data)
-        if not software:
-            raise InvalidSettings(
-                'Can not add software got the following errors:\n' +
-                v.errors_yaml
-            )
-
-        self['software'][name] = software
-
-        software_file = self.folder / 'software' / (name + '.yaml')
-        data = yaml.dump(software, default_flow_style=False)
-
-        # Write new software settings
-        software_file.write_bytes(bytes(data, 'utf-8'))
-
-    def delete_software(self, name):
-        '''Delete a software configuration
-
-        Arguments:
-            name (str): The name of the software like "maya2019"
-        '''
-
-        self['software'].pop(name, None)
-        software_file = self.folder / 'software' / (name + '.yaml')
-        if software_file.is_file():
-            software_file.unlink()
+    def __getitem__(self, key):
+        try:
+            return dict.__getitem__(self, key)
+        except KeyError:
+            return self._sections[key]
 
     def load(self):
         v = schemas.get_validator('settings')
@@ -155,7 +100,6 @@ class Settings(dict):
         # Make sure our settings folders exist
         ensure_exists(*[self.folder / f for f in self.structure])
 
-        self.update(software=self.get_software())
         self.is_loaded = True
 
     def unload(self):
@@ -181,6 +125,114 @@ class Settings(dict):
         for key in exclude:
             settings_to_encode.pop(key, None)
         return yaml.safe_dump(settings_to_encode, default_flow_style=False)
+
+
+def load_on_modified(method):
+    '''Section method wrapper. Load when mtime changes.'''
+    @wraps(method)
+    def call_method(self, *args, **kwargs):
+        mtime = self.folder.stat().st_mtime
+        if self.mtime != mtime:
+            self.load()
+        return method(self, *args, **kwargs)
+    return call_method
+
+
+class Section(dict):
+
+    def __init__(self, name, folder, schema=None):
+        self.name = name
+        self.folder = folder
+        self.schema = schema
+        self.mtime = None
+        self.files = {}
+        self.load()
+
+    def _get_file(self, name):
+        return self.folder / (name + '.yaml')
+
+    def _get_validator(self):
+        if not self.schema:
+            return
+
+        if isinstance(self.schema, basestring):
+            return schemas.get_validator(self.schema)
+
+        if isinstance(self.schema, dict):
+            return schemas.new_validator(self.schema)
+
+        raise schemas.SchemaError('Could not load schema: %s' % self.schema)
+
+    def validate(self, data, **kwargs):
+        v = self._get_validator()
+        if not v:
+            return data
+
+        valid_data = v.validated(data, **kwargs)
+        if not valid_data:
+            raise InvalidSettings(v.errors_yaml)
+
+        return valid_data
+
+    def load(self):
+        ensure_exists(self.folder)
+        self.mtime = self.folder.stat().st_mtime
+
+        v = self._get_validator()
+
+        section_files = {}
+        section_data = {}
+        for file in self.folder.iterdir():
+
+            if file.suffix not in ('.yml', '.yaml'):
+                continue
+
+            raw_data = file.read_bytes().decode('utf-8')
+            data = yaml.load(raw_data)
+            try:
+                data = self.validate(data)
+            except InvalidSettings as e:
+                raise InvalidSettings(
+                    file + ' contains the following errors:\n' +
+                    str(e)
+                )
+
+            section_data[file.stem] = data
+            section_files[file.stem] = file
+
+        self.clear()
+        self.update(section_data)
+        self.files.clear()
+        self.files.update(section_files)
+
+    def write(self, name, data):
+        try:
+            data = self.validate(data)
+        except InvalidSettings as e:
+            raise InvalidSettings(str(e))
+
+        dict.__setitem__(self, name, data)
+
+        yaml_data = yaml.dump(data, default_flow_style=False)
+
+        file = self._get_file(name)
+        file.write_bytes(bytes(yaml_data, 'utf-8'))
+        return data
+
+    def delete(self, name):
+        dict.pop(self, name, None)
+        file = self._get_file(name)
+        if file.is_file():
+            file.unlink()
+
+    # Setup standard dict methods
+    __getitem__ = load_on_modified(dict.__getitem__)
+    read = __getitem__
+    __delitem__ = delete
+    pop = delete
+    __setitem__ = write
+    items = load_on_modified(dict.items)
+    keys = load_on_modified(dict.keys)
 
 
 def restore_default_settings(where):

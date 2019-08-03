@@ -6,6 +6,7 @@ import shutil
 
 from . import data_dir
 from construct.settings import Settings, restore_default_settings
+from construct.errors import InvalidSettings
 from construct.constants import DEFAULT_SETTINGS
 
 
@@ -13,19 +14,6 @@ SETTINGS_FOLDER = data_dir('.cons')
 SETTINGS_FOLDERS = [data_dir('.cons', f) for f in Settings.structure]
 SETTINGS_FILE = data_dir('.cons', 'construct.yaml')
 CONSTRUCT_PATH = [SETTINGS_FOLDER]
-SOFTWARE_NAME = 'testsoftware'
-SOFTWARE_SETTINGS = dict(
-    label='Test Software',
-    icon='icons/test_software.png',
-    host='TestSoftware',
-    cmd=dict(
-        linux='/usr/bin/testsoftware',
-        mac='/Applications/testsoftware.app/bin/testsoftware',
-        win='C:/Program Files/testsoftware/bin/testsoftware.exe'
-    ),
-    extensions=['.tsb']
-)
-SOFTWARE_FILE = data_dir('.cons', 'software', SOFTWARE_NAME + '.yaml')
 NEW_LOCATIONS = dict(
     local=dict(
         projects='~/projects',
@@ -36,6 +24,7 @@ NEW_LOCATIONS = dict(
         lib='//remote/lib',
     )
 )
+ITEMS_SECTION = ('items', {'value': {'type': 'string'}})
 
 
 def teardown_module():
@@ -79,27 +68,33 @@ def test_restore_default_settings():
         assert settings[k] == v
 
 
-def test_save_software():
-    '''Save software to settings'''
+def test_section():
+    '''Add and modify settings section'''
 
     settings = Settings(CONSTRUCT_PATH)
     settings.load()
-    settings.save_software(
-        SOFTWARE_NAME,
-        **SOFTWARE_SETTINGS
-    )
-    assert SOFTWARE_NAME in settings['software']
-    assert SOFTWARE_FILE.is_file()
 
+    # Add new section and test dict get and set
+    assert not (settings.folder / 'items').exists()
+    settings.add_section(*ITEMS_SECTION)
+    assert (settings.folder / 'items').exists()
 
-def test_delete_software():
-    '''Delete software from settings'''
+    settings['items']['greeting'] = {'value': 'Hello World!'}
+    assert (settings.folder / 'items' / 'greeting.yaml').exists()
+    assert settings['items']['greeting']['value'] == 'Hello World!'
 
+    # Make sure schema is validating
+    try:
+        settings['items']['funk'] = {'value': 2}
+        assert False
+    except InvalidSettings:
+        assert True
+
+    # Verify that settings loads sections from disk
     settings = Settings(CONSTRUCT_PATH)
     settings.load()
-    assert SOFTWARE_NAME in settings['software']
-    assert SOFTWARE_FILE.is_file()
+    settings.add_section(*ITEMS_SECTION)
 
-    settings.delete_software(SOFTWARE_NAME)
-    assert SOFTWARE_NAME not in settings['software']
-    assert not SOFTWARE_FILE.is_file()
+    items = settings['items']
+    assert items == {'greeting': {'value': 'Hello World!'}}
+    assert items.files['greeting'] == items.folder / 'greeting.yaml'
