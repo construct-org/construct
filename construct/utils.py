@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
+import sys
 from os.path import normpath
 from glob import glob
 from contextlib import contextmanager
 
 from past.builtins import basestring
 
-from .compat import Path
+from .compat import Path, Mapping
 
 
 __all__ = [
@@ -20,6 +21,7 @@ __all__ = [
     'get_lib_path',
     'update_env',
     'update_envvar',
+    'update_dict'
 ]
 this_package = Path(__file__).parent
 
@@ -38,6 +40,19 @@ def ensure_exists(*folders):
             os.makedirs(str(folder))
         except:
             pass
+
+
+def update_dict(a, b):
+    '''Recursively update one dictionary with another.'''
+
+    for key, b_value in b.items():
+        a_value = a.get(key, None)
+        if not isinstance(a_value, Mapping):
+            a[key] = b_value
+        elif isinstance(a_value, Mapping) and isinstance(b_value, Mapping):
+            update_dict(a_value, b_value)
+        else:
+            a[key] = b_value
 
 
 def update_env(d, **values):
