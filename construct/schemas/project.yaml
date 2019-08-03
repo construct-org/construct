@@ -21,9 +21,6 @@ description:
     default_setter: empty_string
 thumbnail:
     type: binary
-software:
-    type: list
-    default_setter: empty_list
 locations:
     type: dict
     valueschema:
