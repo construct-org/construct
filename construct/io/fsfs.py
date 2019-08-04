@@ -143,9 +143,7 @@ class FsfsLayer(object):
         entry.delete()
 
     def get_folders(self, parent):
-        parent_path = self.get_path_to(parent)
-        if parent['_type'] == 'project':
-            parent_path = parent_path / parent['tree']['folders']
+        parent_path = self._get_parent_path(parent)
         entries = fsfs.search(parent_path, levels=1, skip_root=True)
         for entry in entries:
             if set(entry.tags).intersection(set(self._folder_tags)):
@@ -161,9 +159,7 @@ class FsfsLayer(object):
         return prospect
 
     def new_folder(self, name, parent, data):
-        parent_path = self.get_path_to(parent)
-        if parent['_type'] == 'project':
-            parent_path = parent_path / parent['tree']['folders']
+        parent_path = self._get_parent_path(parent)
         folder_path = parent_path / name
 
         entry = fsfs.get_entry(folder_path.as_posix())
@@ -188,13 +184,9 @@ class FsfsLayer(object):
         entry.delete()
 
     def get_assets(self, parent, asset_type=None):
-        parent_path = self.get_path_to(parent)
-        if parent['_type'] == 'project':
-            parent_path = parent_path / parent['tree']['folders']
-            levels = 10
-        else:
-            levels = 1
-        entries = fsfs.search(parent_path, levels=levels, skip_root=True)
+        parent_path = self._get_parent_path(parent)
+        levels = 10 if parent['_type'] == 'project' else 1
+        entries = fsfs.search(parent_path, levels=levels, skip_root=False)
         for entry in entries:
             if set(entry.tags).intersection(set(self._asset_tags)):
                 if not asset_type or entry.read('asset_type') == asset_type:
@@ -210,7 +202,7 @@ class FsfsLayer(object):
         return prospect
 
     def new_asset(self, name, parent, data):
-        parent_path = self.get_path_to(parent)
+        parent_path = self._get_parent_path(parent)
         asset_path = parent_path / name
 
         entry = fsfs.get_entry(asset_path.as_posix())
@@ -335,6 +327,15 @@ class FsfsLayer(object):
             return dict(
                 workfiles=list(self.get_workfiles(entity))
             )
+
+    def _get_parent_path(self, parent):
+        '''Get the path to a parent for creating new entities.'''
+
+        parent_path = self.get_path_to(parent)
+        if parent['_type'] == 'project':
+            parent_path = parent_path / parent['tree']['folders']
+
+        return parent_path
 
     def get_path_to(self, entity):
         '''Get a file system path to the provided entity.'''
