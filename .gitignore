@@ -90,6 +90,7 @@ Thumbs.db
 .venv
 env/
 venv/
+venv27/
 ENV/
 env.bak/
 venv.bak/
@@ -110,3 +111,9 @@ venv.bak/
 # casts
 casts/casts
 casts/gifs
+
+# vscode
+.vscode
+
+# tmp stuff
+tmp/
