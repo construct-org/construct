@@ -145,7 +145,7 @@ def import_file(path, isolated=True):
     root = path.parent
     name = path.stem
 
-    with isolated_imports(root, restore=isolated):
+    with isolated_imports(str(root), restore=isolated):
         unload_modules(name)
         mod = __import__(name, globals(), locals(), [])
 

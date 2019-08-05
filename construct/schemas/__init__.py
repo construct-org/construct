@@ -12,6 +12,7 @@ from cerberus.schema import SchemaRegistry
 from bson.objectid import ObjectId
 from builtins import open, bytes
 
+from ..errors import ValidationError
 
 schemas_root = os.path.abspath(os.path.dirname(__file__))
 
@@ -81,6 +82,19 @@ def get_schema(name):
         schema_text = f.read().decode('utf-8')
 
     return yaml.load(schema_text)
+
+
+def validate(schema_name, data, **kwargs):
+    kwargs.setdefault('allow_unknown', True)
+    v = get_validator(schema_name, **kwargs)
+    data = v.validated(data)
+    if not data:
+        raise ValidationError(
+            'Data does not match "%s" schema.\n%s'
+            % (schema_name, v.errors_yaml),
+            errors=v.errors
+        )
+    return data
 
 
 def ls(subdir=None):

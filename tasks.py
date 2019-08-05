@@ -2,12 +2,17 @@ from invoke import task
 
 
 @task
-def tests(ctx, level='WARNING'):
-    ctx.run(
+def tests(ctx, level='WARNING', module=None):
+    nose_cmd = (
         'nosetests '
         '--verbosity=2 '
         '--nocapture '
-        '--logging-level=' + level)
+        '--logging-level=%s ' % level
+    )
+    if module:
+            nose_cmd += module
+
+    ctx.run(nose_cmd)
 
 
 @task

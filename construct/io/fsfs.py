@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+import logging
+_log = logging.getLogger(__name__)
+
 import fsfs
+
 from ..compat import Path
 
 
@@ -128,6 +132,7 @@ class FsfsLayer(object):
         return entry.read()
 
     def update_project(self, project, data):
+
         path = self.get_path_to(project)
         entry = fsfs.get_entry(path.as_posix())
 
@@ -135,16 +140,19 @@ class FsfsLayer(object):
             raise OSError('Project does not exist.')
 
         entry.write(**data)
+        entry.uuid = data['_id']
         return entry.read()
 
     def delete_project(self, project):
+
         path = self.get_path_to(project)
         entry = fsfs.get_entry(path.as_posix())
         entry.delete()
 
     def get_folders(self, parent):
         parent_path = self._get_parent_path(parent)
-        entries = fsfs.search(parent_path, levels=1, skip_root=True)
+        levels = 10 if parent['_type'] == 'project' else 1
+        entries = fsfs.search(parent_path, levels=levels, skip_root=True)
         for entry in entries:
             if set(entry.tags).intersection(set(self._folder_tags)):
                 yield entry.read()
@@ -169,6 +177,7 @@ class FsfsLayer(object):
         return entry.read()
 
     def update_folder(self, folder, data):
+
         path = self.get_path_to(folder)
         entry = fsfs.get_entry(path.as_posix())
 
@@ -176,9 +185,11 @@ class FsfsLayer(object):
             raise OSError('Folder does not exist.')
 
         entry.write(**data)
+        entry.uuid = data['_id']
         return entry.read()
 
     def delete_folder(self, folder):
+
         path = self.get_path_to(folder)
         entry = fsfs.get_entry(path.as_posix())
         entry.delete()
@@ -186,7 +197,7 @@ class FsfsLayer(object):
     def get_assets(self, parent, asset_type=None):
         parent_path = self._get_parent_path(parent)
         levels = 10 if parent['_type'] == 'project' else 1
-        entries = fsfs.search(parent_path, levels=levels, skip_root=False)
+        entries = fsfs.search(parent_path, levels=levels, skip_root=True)
         for entry in entries:
             if set(entry.tags).intersection(set(self._asset_tags)):
                 if not asset_type or entry.read('asset_type') == asset_type:
@@ -219,6 +230,7 @@ class FsfsLayer(object):
             raise OSError('Asset does not exist.')
 
         entry.write(**data)
+        entry.uuid = data['_id']
         return entry.read()
 
     def delete_asset(self, asset):
@@ -259,6 +271,7 @@ class FsfsLayer(object):
             raise OSError('Task does not exist.')
 
         entry.write(**data)
+        entry.uuid = data['_id']
         return entry.read()
 
     def delete_task(self, task):

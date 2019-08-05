@@ -73,6 +73,7 @@ def setup_api(name, **settings):
     )
     api.settings.update(**settings)
     api.settings.save()
+    return api
 
 
 def teardown_api(name):
@@ -80,3 +81,4 @@ def teardown_api(name):
     api.uninit()
     app_dir = data_dir(name)
     shutil.rmtree(str(app_dir))
+    return api

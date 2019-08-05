@@ -1,0 +1,15 @@
+schema_version: 0.1.0
+label: Autodesk Maya
+host: maya
+icon: icons/maya.png
+cmd:
+    linux: /usr/Autodesk/Maya2019/bin/maya
+    mac: /applications/Autodesk/Maya2019.app/bin/maya.exe
+    win: C:/Program Files/Autodesk/Maya2019/bin/maya.exe
+args: ['-noAutoloadPlugins']
+extensions: ['.ma', '.mb', '.fbx', '.abc', '.obj', '.usd']
+args: []
+env: {}
+files:
+    templates/workspace.mel: workspace.mel
+folders: []

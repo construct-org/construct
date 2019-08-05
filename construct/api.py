@@ -5,7 +5,6 @@ import os
 import yaml
 import logging
 import inspect
-from collections import Mapping
 from copy import deepcopy
 from functools import wraps
 from logging.config import dictConfig
@@ -24,6 +23,7 @@ from . import schemas
 from .context import Context
 from .settings import Settings
 from .path import Path
+from .compat import Mapping
 from .extensions import (
     is_extension,
     is_extension_type,
@@ -296,6 +296,14 @@ class API(object):
         else:
             ensure_exists(path)
             return unipath(path)
+
+    def get_mount_from_path(self, path):
+        '''Get the location and mount from a file path'''
+
+        for location, mounts in self.settings['locations'].items():
+            for mount, mount_path in mounts.items():
+                if str(path).startswith(str(mount_path)):
+                    return location, mount
 
     def show(self, data):
         '''Pretty print a dict or list of dicts.'''

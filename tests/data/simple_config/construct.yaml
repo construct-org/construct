@@ -1,0 +1,20 @@
+locations:
+  local:
+    lib: C:/Users/danie/lib
+    projects: C:/Users/danie/projects
+logging:
+  formatters:
+    simple:
+      format: '%(levelname).1s:%(name)s> %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: simple
+  loggers:
+    construct:
+      handlers:
+      - console
+      level: DEBUG
+  version: 1
+my_location: local
+my_mount: projects

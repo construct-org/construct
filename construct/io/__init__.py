@@ -189,7 +189,7 @@ class IO(object):
         '''Delete a project.
 
         .. warning:: This does not delete your project data on the file system.
-        It simply removes metadata. You are in charge of delete files on your
+        It simply removes metadata. You are in charge of deleting on your
         file system.
         '''
 
@@ -289,7 +289,7 @@ class IO(object):
         updated = v.validated(updated, update=True)
         if not updated:
             raise ValidationError(
-                'Invalid project data: %s' % v.errors,
+                'Invalid folder data: %s' % v.errors,
                 errors=v.errors
             )
 
@@ -302,7 +302,7 @@ class IO(object):
         '''Delete a folder.
 
         .. warning:: This does not delete your folder data on the file system.
-        It simply removes metadata. You are in charge of delete files on your
+        It simply removes metadata. You are in charge of deleting on your
         file system.
         '''
 
@@ -405,7 +405,7 @@ class IO(object):
         updated = v.validated(updated, update=True)
         if not updated:
             raise ValidationError(
-                'Invalid project data: %s' % v.errors,
+                'Invalid asset data: %s' % v.errors,
                 errors=v.errors
             )
 
@@ -418,11 +418,124 @@ class IO(object):
         '''Delete a asset.
 
         .. warning:: This does not delete your asset data on the file system.
-        It simply removes metadata. You are in charge of delete files on your
+        It simply removes metadata. You are in charge of deleting on your
         file system.
         '''
 
         return self.fsfs.delete_asset(asset)
+
+    def get_tasks(self, parent):
+        '''Get all the tasks in the specified asset.
+
+        Arguments:
+            parent (dict): Asset dict
+
+        Returns:
+            Generator or cursor yielding tasks
+        '''
+
+        return self.fsfs.get_tasks(parent)
+
+    def get_task(self, name, parent):
+        '''Get one task that matches the given name.
+
+        Arguments:
+            name (str): Partial name of task.
+            parent (dict): Asset dict
+
+        Returns:
+            Task dict or None
+        '''
+
+        return self.fsfs.get_task(name, parent)
+
+    def new_task(self, name, parent, data=None):
+        '''Create a new task in the specified parent.
+
+        Events:
+            before_new_task: Sent with api and task data
+            after_new_task: Sent with api and result task data
+
+        Arguments:
+            name (str): Full name of new task.
+            parent (dict): Asset dict
+
+        Returns:
+            New task dict.
+        '''
+
+        # TODO: Use a better error here.
+        assert parent['_type'] == 'asset', 'Parent must be an Asset.'
+
+        # Prepare data
+        data = data or {}
+        data.setdefault('name', name)
+        data.setdefault('parent_id', parent['_id'])
+        if parent['_type'] == 'project':
+            data['project_id'] = parent['_id']
+        else:
+            data['project_id'] = parent['project_id']
+
+        self.api.send('before_new_task', self.api, data)
+
+        # Validate data
+        v = self.api.schemas.get_validator('task', allow_unknown=True)
+        data = v.validated(data)
+        if not data:
+            raise ValidationError(
+                'Invalid task data: %s' % v.errors,
+                errors=v.errors
+            )
+
+        # Create our new project
+        result = self.fsfs.new_task(name, parent, data)
+
+        self.api.send('after_new_task', self.api, result)
+        return result
+
+    def update_task(self, task, data):
+        '''Update a task's data.
+
+        Events:
+            before_update_task: Sent with api, task, and update
+            after_update_task: Sent with api, updated task
+
+        Arguments:
+            task (dict): task data containing at least a name
+            data (dict): Data to update
+
+        Returns:
+            Updated task data.
+        '''
+
+        self.api.send('before_update_task', self.api, task, data)
+
+        #Update and validate data
+        updated = deepcopy(task)
+        updated.update(data)
+
+        v = self.api.schemas.get_validator('task', allow_unknown=True)
+        updated = v.validated(updated, update=True)
+        if not updated:
+            raise ValidationError(
+                'Invalid task data: %s' % v.errors,
+                errors=v.errors
+            )
+
+        # Update our project
+        result = self.fsfs.update_task(task, updated)
+        self.api.send('after_update_task', self.api, result)
+        return result
+
+    def delete_task(self, task):
+        '''Delete a task.
+
+        .. warning:: This does not delete your task data on the file system.
+        It simply removes metadata. You are in charge of deleting on your
+        file system.
+        '''
+
+        return self.fsfs.delete_task(task)
 
     def get_parent(self, entity):
         '''Get the parent of an entity.

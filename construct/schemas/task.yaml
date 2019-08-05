@@ -7,6 +7,9 @@ _id:
 _type:
     type: string
     default: task
+name:
+    type: string
+    required: True
 parent_id:
     type: objectid
 project_id:

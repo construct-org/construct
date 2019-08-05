@@ -1,0 +1,8 @@
+label: 'Maya Python'
+icon: 'icons/mayapy.png'
+host: 'maya'
+cmd:
+    linux: /usr/Autodesk/Maya2019/bin/mayapy
+    mac: /applications/Autodesk/Maya2019.app/bin/mayapy.exe
+    win: C:/Program Files/Autodesk/Maya2019/bin/mayapy.exe
+extensions: ['.py']
