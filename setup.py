@@ -65,6 +65,6 @@ setup(
     scripts=[
         'bin/construct.bat',
         'bin/construct.ps1',
-        'bin/construct.sh',
+        'bin/construct',
     ],
 )
