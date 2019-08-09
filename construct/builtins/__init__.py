@@ -84,6 +84,10 @@ class Builtins(Extension):
         self.add_task(files.Save, files.build_filename)
         self.add_task(files.Save, files.save_file)
 
+        self.add_action(files.Increment)
+        self.add_task(files.Increment, files.build_filename)
+        self.add_task(files.Increment, files.save_file)
+
         self.add_action(time.SaveFrameRange)
         self.add_task(time.SaveFrameRange, time.store_frame_range)
 

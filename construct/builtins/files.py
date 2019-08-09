@@ -210,3 +210,70 @@ def open_file(file):
 
     host = get_host()
     host.open_file(file)
+
+
+class Increment(Action):
+    '''Save the current file'''
+
+    label = 'Incremental Save'
+    identifier = 'file.increment'
+    returns = artifact('file')
+
+    @staticmethod
+    def parameters(ctx):
+        params = dict(
+            file={
+                'label': 'File',
+                'required': False,
+                'type': types.Entry,
+                'help': 'Workspace to save to'
+            },
+            name={
+                'label': 'Name',
+                'required': True,
+                'type': types.String,
+                'help': 'Filename',
+            },
+            version={
+                'label': 'Version',
+                'required': True,
+                'type': types.Integer,
+                'help': 'File Version'
+            },
+            ext={
+                'label': 'Extension',
+                'require': True,
+                'type': types.String,
+                'help': 'File Extension'
+            }
+        )
+
+        if not ctx:
+            return params
+
+        params['workspace']['default'] = ctx.workspace
+        name = ctx.task.parent().name
+        path_template = get_path_template('workspace_file')
+        try:
+            data = path_template.parse(str(ctx.file))
+        except ParseError:
+            pass
+        else:
+            name = data['name']
+
+        params['name']['default'] = name
+
+        extensions = ctx.workspace.config['extensions']
+        params['ext']['default'] = extensions[0]
+        params['ext']['options'] = extensions
+        params['ext']['required'] = False
+
+        next_version = ctx.workspace.get_next_version(name, extensions[0])
+        params['version']['default'] = next_version
+        params['version']['required'] = False
+
+        return params
+
+    @staticmethod
+    def available(ctx):
+        return ctx.host != 'cli' and ctx.workspace and ctx.file
