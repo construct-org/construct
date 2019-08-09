@@ -118,3 +118,39 @@ def commit_workspace(workspace_item):
     workspace.tag(*workspace_item['tags'])
 
     return workspace
+
+
+class SetWorkspace(Action):
+    '''Set the current workspace'''
+
+    label = 'Set Workspace'
+    identifier = 'set_workspace'
+    returns = artifact('workspace')
+
+    @staticmethod
+    def parameters(ctx):
+        params = dict(
+            workspace={
+                'label': 'Workspace Entry',
+                'required': True,
+                'type': types.Entry,
+                'help': 'New workspace context',
+            }
+        )
+
+        if not ctx:
+            return params
+
+        if ctx.task:
+            params['task']['default'] = ctx.task
+            params['task']['required'] = False
+
+        templates = api.get_templates('workspace')
+        if templates:
+            params['template']['options'] = list(templates.keys())
+
+        return params
+
+    @staticmethod
+    def available(ctx):
+        return ctx.host != 'cli' and ctx.project

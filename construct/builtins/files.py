@@ -212,18 +212,18 @@ def open_file(file):
     host.open_file(file)
 
 
-class Increment(Action):
+class SaveNextVersion(Action):
     '''Save the current file'''
 
-    label = 'Incremental Save'
-    identifier = 'file.increment'
+    label = 'Save Next Version'
+    identifier = 'file.save_next'
     returns = artifact('file')
 
     @staticmethod
     def parameters(ctx):
         params = dict(
-            file={
-                'label': 'File',
+            workspace={
+                'label': 'Workspace',
                 'required': False,
                 'type': types.Entry,
                 'help': 'Workspace to save to'
