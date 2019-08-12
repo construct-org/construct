@@ -25,6 +25,63 @@ from fstrings import f
 _log = logging.getLogger(__name__)
 
 
+class ActionLogger(object):
+
+    def connect(self):
+        signals.connect('action.before', self.on_action_before)
+        signals.connect('action.after', self.on_action_after)
+        signals.connect(
+            'request.status.changed',
+            self.on_request_status_changed
+        )
+
+    def disconnect(self):
+        signals.disconnect('action.before', self.on_action_before)
+        signals.disconnect('action.after', self.on_action_after)
+        signals.disconnect(
+            'request.status.changed',
+            self.on_request_status_changed
+        )
+
+    def on_action_before(self, ctx):
+
+        _log.debug('Running %s', ctx.action.identifier)
+        _log.debug('kwargs: %s', ctx.kwargs)
+        _log.debug('args: %s', str(ctx.args))
+
+        ctx_keys = ['action'] + ctx.keys
+        ctx_data = {}
+        for k in ctx_keys:
+            v = ctx[k]
+            if not v:
+                continue
+            if k in ctx.entry_keys:
+                ctx_data[k] = v.name
+            else:
+                ctx_data[k] = v
+
+        _log.debug('context: %s' % ctx_data)
+
+    def on_action_after(self, ctx):
+
+        artifacts = ctx.artifacts.items()
+        if not artifacts:
+            return
+
+        data = [(k, v) for k, v in artifacts if v]
+        _log.debug('artifacts: %s', data)
+
+    def on_request_status_changed(self, request, last_status, status):
+
+        if status == RUNNING:
+            _log.debug('Running %s', request.task.identifier)
+            _log.debug('kwargs: %s', request.kwargs)
+            _log.debug('args: %s', str(request.args))
+
+        if request.done:
+            _log.debug('%s - %s', request.task.identifier, request.status)
+
+
 class TaskGroup(object):
 
     def __init__(self, priority, tasks, runner):
@@ -95,7 +152,7 @@ class TaskGroup(object):
 
 class ActionRunner(object):
 
-    def __init__(self, action, ctx):
+    def __init__(self, action, ctx, logger=ActionLogger):
         self.action = action
         self.ctx = ctx
         self._groups = {
@@ -115,6 +172,7 @@ class ActionRunner(object):
             self._success,
             self._skipped
         ]
+        self._logger = logger()
 
     def _remove_from_stacks(self, request):
         for stack in self._stacks:
@@ -332,6 +390,7 @@ class ActionRunner(object):
     def run(self):
         '''Run all TaskGroups of the action sequentially'''
 
+        self._logger.connect()
         signals.send('action.before', self.ctx)
 
         try:
@@ -342,3 +401,4 @@ class ActionRunner(object):
         finally:
 
             signals.send('action.after', self.ctx)
+            self._logger.disconnect()
