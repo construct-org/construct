@@ -11,8 +11,7 @@ from construct.constants import EXTENSIONS_ENTRY_POINT
 from construct.types import ABC
 from construct.utils import iter_modules, ensure_type, missing, unipath
 from construct.action import get_action_identifier, Action
-from construct.compat import pkg_resources
-pkg_resources = pkg_resources()
+import entrypoints
 
 
 _extensions = {}
@@ -355,7 +354,7 @@ class ExtensionCollector(object):
 
         search_paths = list(paths)
 
-        entry_points = pkg_resources.iter_entry_points(EXTENSIONS_ENTRY_POINT)
+        entry_points = entrypoints.get_group_all(EXTENSIONS_ENTRY_POINT)
         for entry_point in entry_points:
             obj = entry_point.load()
             for _, extension in inspect.getmembers(obj, is_extension_type):

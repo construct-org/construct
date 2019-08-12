@@ -55,7 +55,8 @@ setup(
         'scandir',
         'backports.shutil_get_terminal_size',
         'win_unicode_console',
-        'fsfs'
+        'fsfs',
+        'entrypoints'
     ],
     entry_points={
         'console_scripts': [

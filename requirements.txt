@@ -8,3 +8,4 @@ win_unicode_console
 colorama
 win_unicode_console
 fsfs
+entrypoints
