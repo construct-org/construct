@@ -252,8 +252,8 @@ class Request(object):
         try:
 
             # Setup task
-            self.set_status(RUNNING)
             self._before_task()
+            self.set_status(RUNNING)
             self.push()
 
             # Run task
