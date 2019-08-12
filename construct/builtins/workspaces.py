@@ -15,7 +15,7 @@ from construct.tasks import (
     params
 )
 from construct import types, api
-from construct.errors import Abort
+from construct.errors import Abort, Disable
 import fsfs
 
 
@@ -130,11 +130,23 @@ class SetWorkspace(Action):
     @staticmethod
     def parameters(ctx):
         params = dict(
-            workspace={
-                'label': 'Workspace Entry',
+            task={
+                'label': 'Parent Entry',
                 'required': True,
                 'type': types.Entry,
-                'help': 'New workspace context',
+                'help': 'Parent entry of workspace',
+            },
+            name={
+                'label': 'Workspace Name',
+                'required': True,
+                'type': types.String,
+                'help': 'Name of workspace'
+            },
+            template={
+                'label': 'Workspace template Name',
+                'required': True,
+                'type': types.String,
+                'help': 'Name of template to use if the task has no workspace'
             }
         )
 
@@ -145,6 +157,20 @@ class SetWorkspace(Action):
             params['task']['default'] = ctx.task
             params['task']['required'] = False
 
+        # Get default workspace for this host
+        host = api.get_host()
+        params['name']['default'] = host.name
+
+        default_workspace = host.name
+        for name, data in api.config['SOFTWARE'].items():
+            if data['host'] == host.name:
+                default_workspace = data['default_workspace']
+                break
+
+        template = api.get_template(default_workspace, 'workspace')
+        if template:
+            params['template']['default'] = template.name
+
         templates = api.get_templates('workspace')
         if templates:
             params['template']['options'] = list(templates.keys())
@@ -154,3 +180,53 @@ class SetWorkspace(Action):
     @staticmethod
     def available(ctx):
         return ctx.host != 'cli' and ctx.project
+
+
+@task(priority=types.COMMIT)
+@pass_context
+@pass_kwargs
+def set_workspace(ctx, task, name, template):
+    '''Create new workspace'''
+
+    # If ensure_workspace created a workspace, use it
+    if 'workspace' in ctx.artifacts:
+        workspace = ctx.artifacts.workspace
+    else:
+        workspace = task.workspaces.name(name).one()
+
+    host = api.get_host()
+    host.set_workspace(workspace.path)
+    api.set_context_from_path(workspace.path)
+
+
+@task(priority=types.VALIDATE)
+@pass_context
+@pass_kwargs
+@returns(artifact('workspace'))
+def ensure_workspace(ctx, task, name, template):
+    '''Setup a workspace for the current task'''
+
+    workspace = task.workspaces.name(name).one()
+    if workspace:
+        raise Disable('Workspace already exists.')
+
+    if not template:
+        raise Disable('Could not find a workspace for %s' % task)
+
+    path_template = api.get_path_template('workspace')
+    template = api.get_template(template, 'workspace')
+
+    path = path_template.format(dict(
+        task=task.path,
+        workspace=name,
+    ))
+
+    if os.path.exists(path):
+        import fsfs
+        workspace = fsfs.get_entry(path)
+        workspace.tag(*template.tags)
+        workspace.write(**template.read())
+    else:
+        workspace = template.copy(path)
+
+    return workspace

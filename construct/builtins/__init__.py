@@ -69,6 +69,10 @@ class Builtins(Extension):
         self.add_task(workspaces.NewWorkspace, workspaces.validate_workspace)
         self.add_task(workspaces.NewWorkspace, workspaces.commit_workspace)
 
+        self.add_action(workspaces.SetWorkspace)
+        self.add_task(workspaces.SetWorkspace, workspaces.ensure_workspace)
+        self.add_task(workspaces.SetWorkspace, workspaces.set_workspace)
+
         self.add_action(templates.NewTemplate)
         self.add_task(templates.NewTemplate, templates.stage_template)
         self.add_task(templates.NewTemplate, templates.validate_template)
