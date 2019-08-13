@@ -19,7 +19,7 @@ from construct.errors import (
     Disable
 )
 from construct.tasks import AsyncRequest
-from fstrings import f
+from construct.compat import basestring
 
 
 _log = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ class ActionLogger(object):
             v = ctx[k]
             if not v:
                 continue
-            if k in ctx.entry_keys:
+            if k in ctx.entry_keys and not isinstance(v, basestring):
                 ctx_data[k] = v.name
             else:
                 ctx_data[k] = v
