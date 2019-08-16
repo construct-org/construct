@@ -304,7 +304,7 @@ class ExtensionCollector(object):
             instance._load()
         except Exception as e:
             _log.debug(
-                'Failed to load extension: %s: %s' % (extension, e.message)
+                'Failed to load extension: %s: %s' % (extension, str(e))
             )
             return
 
@@ -336,7 +336,7 @@ class ExtensionCollector(object):
         while self.by_name:
             name, ext = self.by_name.popitem()
             ext.unload()
-            _log.debug('Unregistered extension: %s' % ext)
+            _log.debug('Unregistered extension: %s', ext)
             del ext
 
         self.by_attr = {}
