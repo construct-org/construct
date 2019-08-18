@@ -81,7 +81,7 @@ def get_schema(name):
     with open(potential_path, 'rb') as f:
         schema_text = f.read().decode('utf-8')
 
-    return yaml.load(schema_text)
+    return yaml.safe_load(schema_text)
 
 
 def validate(schema_name, data, **kwargs):

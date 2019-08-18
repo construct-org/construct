@@ -78,7 +78,7 @@ class Settings(dict):
             # Read settings from file
             data = potential_settings_file.read_bytes().decode('utf-8')
             if data:
-                file_data = yaml.load(data)
+                file_data = yaml.safe_load(data)
             else:
                 file_data = {}
 
@@ -191,7 +191,7 @@ class Section(dict):
                 continue
 
             raw_data = file.read_bytes().decode('utf-8')
-            data = self.validate(yaml.load(raw_data))
+            data = self.validate(yaml.safe_load(raw_data))
 
             section_data[file.stem] = data
             section_files[file.stem] = file
@@ -205,7 +205,7 @@ class Section(dict):
         data = self.validate(data)
         dict.__setitem__(self, name, data)
 
-        yaml_data = yaml.dump(data, default_flow_style=False)
+        yaml_data = yaml.safe_dump(data, default_flow_style=False)
 
         file = self._get_file(name)
         file.write_bytes(bytes(yaml_data, 'utf-8'))
