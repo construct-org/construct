@@ -110,5 +110,5 @@ class FSCache(object):
             key_file.unlink()
 
     def clear(self):
-        if self.cache_dir:
-            shutil.rmtree(self.cache_dir)
+        if self.cache_dir.is_dir():
+            shutil.rmtree(str(self.cache_dir))
