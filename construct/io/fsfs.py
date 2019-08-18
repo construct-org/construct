@@ -150,7 +150,7 @@ class FsfsLayer(object):
         entry.delete()
 
     def get_folders(self, parent):
-        parent_path = self._get_parent_path(parent)
+        parent_path = self._get_parent_path(parent).as_posix()
         levels = 10 if parent['_type'] == 'project' else 1
         entries = fsfs.search(parent_path, levels=levels, skip_root=True)
         for entry in entries:
@@ -195,7 +195,7 @@ class FsfsLayer(object):
         entry.delete()
 
     def get_assets(self, parent, asset_type=None):
-        parent_path = self._get_parent_path(parent)
+        parent_path = self._get_parent_path(parent).as_posix()
         levels = 10 if parent['_type'] == 'project' else 1
         entries = fsfs.search(parent_path, levels=levels, skip_root=True)
         for entry in entries:
@@ -239,7 +239,7 @@ class FsfsLayer(object):
         entry.delete()
 
     def get_tasks(self, asset):
-        parent_path = self.get_path_to(asset)
+        parent_path = self.get_path_to(asset).as_posix()
         entries = fsfs.search(parent_path, levels=1).tags('task')
         for entry in entries:
             yield entry.read()

@@ -59,7 +59,7 @@ def _setup_project(where):
     entries.extend(new_shot(where, 'users', 'user_01', 'user_01_030'))
 
     for path, tag in entries:
-        fsfs.tag(path, tag)
+        fsfs.tag(str(path), tag)
 
 
 def setup_module():

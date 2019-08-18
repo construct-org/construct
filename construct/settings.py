@@ -6,7 +6,7 @@ import shutil
 import sys
 import logging
 
-from builtins import open, bytes
+from builtins import bytes
 from future.utils import reraise
 from past.builtins import basestring
 import yaml

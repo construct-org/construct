@@ -28,7 +28,7 @@ class InitialMigration(object):
 
     def forward(self):
         query = fsfs.search(
-            root=self.path,
+            root=str(self.path),
             depth=3,
             levels=10,
             skip_root=False
