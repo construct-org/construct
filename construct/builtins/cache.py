@@ -6,6 +6,7 @@ import logging
 import sys
 import shutil
 
+from builtins import bytes
 import yaml
 
 from ..constants import USER_PATH
@@ -71,7 +72,7 @@ class UserCache(Cache):
         api.unextend(self.identifier)
 
 
-class FSCache(Object):
+class FSCache(object):
     '''Base implementation for filesystem Caches.
 
     Operates in a directory on the file system. Each key represents a single
@@ -79,7 +80,6 @@ class FSCache(Object):
     '''
 
     def __init__(self, cache_dir):
-        self.api = api
         self.cache_dir = cache_dir
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
