@@ -3,7 +3,6 @@ from __future__ import absolute_import
 import copy
 import getpass
 import os
-import sys
 import json
 
 from past.builtins import basestring
@@ -53,8 +52,8 @@ class Context(dict):
     | file     | Path to a file                                       |
     +----------+------------------------------------------------------+
 
-    The above keys default to None so when checking context it can be convenient
-    to use attribute access.
+    The above keys default to None so when checking context it can be
+    convenient to use attribute access.
 
     >>> if ctx.project and ctx.task:
     ...     # Do something that depends on a project and task

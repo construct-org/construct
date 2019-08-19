@@ -2,8 +2,6 @@
 from __future__ import absolute_import
 import os
 import sys
-from os.path import normpath
-from glob import glob
 from contextlib import contextmanager
 
 from past.builtins import basestring
@@ -36,10 +34,8 @@ def unipath(*paths):
 
 def ensure_exists(*folders):
     for folder in folders:
-        try:
+        if not os.path.exists(str(folder)):
             os.makedirs(str(folder))
-        except:
-            pass
 
 
 def update_dict(a, b):

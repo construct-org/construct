@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import logging
-_log = logging.getLogger(__name__)
 
 import fsfs
-
 from ..compat import Path
+
+_log = logging.getLogger(__name__)
 
 
 def _quick_search_by_id(path, _id, max_depth=10, return_typ=None):
@@ -59,7 +59,10 @@ def _quick_search_by_name(path, name, max_depth=10, return_typ=None):
     if potential_entries:
         # In almost all cases the best match will be the shortest path
         # with the least parts.
-        best = min(potential_entries, key=lambda x: (len(x.parts), len(str(x))))
+        best = min(
+            potential_entries,
+            key=lambda x: (len(x.parts), len(str(x)))
+        )
         if return_typ:
             best = return_typ(best.as_posix())
         return best

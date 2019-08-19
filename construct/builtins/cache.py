@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-import os
-import subprocess
 import logging
-import sys
 import shutil
 
 from builtins import bytes

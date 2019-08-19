@@ -3,8 +3,7 @@ from __future__ import absolute_import
 import logging
 import inspect
 
-from . import schemas
-from .utils import iter_modules, unipath
+from .utils import iter_modules
 
 __all__ = [
     'Extension',

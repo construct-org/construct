@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import atexit
-import os
 import yaml
 import logging
 import inspect
-from copy import deepcopy
 from functools import wraps
 from logging.config import dictConfig
 
 from past.types import basestring
 
 from .constants import (
-    DEFAULT_HOST,
     DEFAULT_LOGGING,
-    DEFAULT_PATHS,
-    DEFAULT_API_NAME
 )
 from .utils import unipath, ensure_exists
 from .events import EventManager
@@ -24,11 +19,7 @@ from .context import Context
 from .settings import Settings
 from .path import Path
 from .compat import Mapping
-from .extensions import (
-    is_extension,
-    is_extension_type,
-    ExtensionManager,
-)
+from .extensions import ExtensionManager
 from .io import IO
 
 
@@ -72,8 +63,8 @@ class API(object):
 
     Attributes:
         name: Name of this API object.
-        path: :class:`construct.path.Path` object used for finding resources and
-            settings files.
+        path: :class:`construct.path.Path` object used for finding resources
+            and settings files.
         settings: :class:`construct.settings.Settings` object used to access
             and manipulate settings values.
         extensions: :class:`construct.extensions.ExtensionManager` object used
@@ -169,7 +160,7 @@ class API(object):
         self.events.unload()
 
         _cache.pop(self.name, None)
-        _initialized = False
+        self.initialized = False
         _log.debug('Done uninitializing.')
         _log.debug('Goodbye!')
 

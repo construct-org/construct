@@ -3,8 +3,6 @@ from operator import itemgetter
 from collections import defaultdict, OrderedDict
 import logging
 
-from . import utils
-
 _log = logging.getLogger(__name__)
 
 

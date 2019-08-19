@@ -7,10 +7,10 @@ import datetime
 import yaml
 import json
 from cachetools import cached
-from cerberus import Validator, schema_registry
+from cerberus import Validator
 from cerberus.schema import SchemaRegistry
 from bson.objectid import ObjectId
-from builtins import open, bytes
+from builtins import open
 
 from ..errors import ValidationError
 

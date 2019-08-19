@@ -5,15 +5,13 @@ import subprocess
 import logging
 import sys
 
-platform = sys.platform.rstrip('1234567890')
-if platform == 'darwin':
-    platform = 'mac'
-
 from past.types import basestring
-from .. import context, schemas
 from ..extensions import Extension
 from ..utils import get_lib_path, update_env, update_dict
 
+platform = sys.platform.rstrip('1234567890')
+if platform == 'darwin':
+    platform = 'mac'
 
 _log = logging.getLogger(__name__)
 
