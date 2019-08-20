@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
-from .layer import IOLayer
+
+# Third party imports
 import pymongo
+
+# Local imports
+from .layer import IOLayer
 
 
 class MongoLayer(IOLayer):

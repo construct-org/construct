@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import os
 import subprocess
 import logging
 import sys
 
+# Third party imports
 from past.types import basestring
+
+# Local imports
 from ..extensions import Extension
 from ..utils import get_lib_path, update_env, update_dict
+
 
 platform = sys.platform.rstrip('1234567890')
 if platform == 'darwin':

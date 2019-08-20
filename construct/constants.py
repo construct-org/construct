@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import os
 import sys
+
+# Local imports
 from .utils import unipath
+
 
 PLATFORM = sys.platform.rstrip('1234567890')
 if PLATFORM == 'darwin':

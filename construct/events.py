@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from operator import itemgetter
 from collections import defaultdict, OrderedDict
 import logging

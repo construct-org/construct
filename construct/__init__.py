@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
+
+# Package metadata
 __version__ = '0.2.0'
 __title__ = 'construct'
 __description__ = 'Extensible api for projects and asset libraries'
@@ -7,7 +11,7 @@ __author__ = 'Dan Bradham'
 __email__ = 'danielbradham@gmail.com'
 __url__ = 'https://github.com/construct-org/construct'
 
-
+# Local imports
 from .constants import DEFAULT_API_NAME
 from . import api
 

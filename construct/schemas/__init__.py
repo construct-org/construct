@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import os
 import getpass
 import datetime
-
-import yaml
 import json
+
+# Third party imports
+import yaml
 from cachetools import cached
 from cerberus import Validator
 from cerberus.schema import SchemaRegistry
 from bson.objectid import ObjectId
 from builtins import open
 
+# Local imports
 from ..errors import ValidationError
+
 
 schemas_root = os.path.abspath(os.path.dirname(__file__))
 

@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 from inspect import getmembers
 import logging
 from copy import deepcopy
 
+# Third party imports
 import yaml
 from past.builtins import basestring
 
+# Local imports
 from ..compat import Path
+
 
 _log = logging.getLogger(__name__)
 

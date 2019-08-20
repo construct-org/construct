@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import os
 
+# Third party imports
 from builtins import super
+
+# Local imports
 from .utils import unipath
 from .constants import DEFAULT_PATHS
 

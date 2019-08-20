@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import copy
 import getpass
 import os
 import json
 
+# Third party imports
 from past.builtins import basestring
+
+# Local imports
 from .constants import DEFAULT_HOST, PLATFORM
+
 
 __all__ = ['Context']
 

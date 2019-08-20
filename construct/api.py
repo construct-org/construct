@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import atexit
 import yaml
@@ -7,8 +9,10 @@ import inspect
 from functools import wraps
 from logging.config import dictConfig
 
+# Third party imports
 from past.types import basestring
 
+# Local imports
 from .constants import (
     DEFAULT_LOGGING,
 )
