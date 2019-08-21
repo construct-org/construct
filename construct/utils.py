@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import os
 import sys
 from contextlib import contextmanager
+import shutil
 
+# Third party imports
 from past.builtins import basestring
 
+# Local imports
 from .compat import Path, Mapping
 
 
@@ -164,3 +169,13 @@ def iter_modules(*paths):
         for py_pkg in path.glob('*/__init__.py'):
             mod = import_file(py_pkg.parent, isolated=False)
             yield mod
+
+
+def copy_file(src, dest):
+    '''Copy a source file to the specified location.
+
+    Arguments:
+        src (str or Path): Source file to copy
+        dest (str or Path): Destination file or directory
+    '''
+    shutil.copy(str(src), str(dest))
