@@ -41,11 +41,11 @@ def test_save_software():
     '''Save software to settings'''
 
     api = construct.API(__name__)
-    api.save_software(
+    api.software.save(
         SOFTWARE_NAME,
         SOFTWARE_SETTINGS
     )
-    assert SOFTWARE_NAME in api.get_software()
+    assert SOFTWARE_NAME in api.software.get()
     assert SOFTWARE_FILE.is_file()
 
 
@@ -58,7 +58,7 @@ def test_project_software():
         location='local',
         mount='projects'
     )
-    api.save_software(
+    api.software.save(
         'app',
         {
             'label': 'App',
@@ -68,10 +68,10 @@ def test_project_software():
         },
         project=project
     )
-    project_software = api.get_software(project=project)
+    project_software = api.software.get(project=project)
     assert 'app' in project_software
 
-    project_software = api.update_software(
+    project_software = api.software.update(
         'app',
         {'extensions': ['.ext'], 'cmd': {'win': 'changed'}},
         project=project
@@ -87,6 +87,6 @@ def test_delete_software():
     assert SOFTWARE_NAME in api.settings['software']
     assert SOFTWARE_FILE.is_file()
 
-    api.delete_software(SOFTWARE_NAME)
+    api.software.delete(SOFTWARE_NAME)
     assert SOFTWARE_NAME not in api.settings['software']
     assert not SOFTWARE_FILE.is_file()

@@ -32,83 +32,37 @@ class Software(Extension):
 
     def load(self, api):
         api.settings.add_section('software', 'software')
-        api.extend('save_software', self.save)
-        api.extend('delete_software', self.delete)
-        api.extend('get_software', self.get)
-        api.extend('get_software_by_name', self.get_by_name)
-        api.extend('update_software', self.update)
+        api.extend('software', self)
         api.extend('launch', self.launch)
         api.extend('open_with', self.open_with)
+        api.define(
+            'before_launch',
+            '(api, software, env, ctx): Called before application launch.'
+        )
+        api.define(
+            'after_launch',
+            '(api, ctx): Called after an application is launched.'
+        )
 
     def unload(self, api):
-        api.unextend('save_software')
-        api.unextend('delete_software')
-        api.unextend('get_software')
-        api.unextend('get_software_by_name')
-        api.unextend('update_software')
+        api.unextend('software')
         api.unextend('launch')
         api.unextend('open_with')
 
     @property
-    def software(self):
+    def folder(self):
+        return self.api.settings['software'].folder
+
+    @property
+    def software_settings(self):
         return self.api.settings['software']
 
-    def _get_project_software(self, api, project):
-        project = api.io.get_project_by_id(project['_id'])
+    def __contains__(self, key):
+        return key in self.software_settings
+
+    def _get_project_software(self, project):
+        project = self.api.io.get_project_by_id(project['_id'])
         return project.get('software', {})
-
-    def update(self, api, name, data, project=None):
-        '''Update software stored in settings or a project.'''
-
-        if project:
-            # Get updated project software
-            software = self._get_project_software(api, project)
-            software_data = software.get(name, {})
-
-            # Update software data
-            update_dict(software_data, data)
-
-            # Validate software data
-            software_data = self.software.validate(software_data)
-            software[name] = software_data
-
-            # Update project with software
-            api.io.update_project(project, {'software': software})
-            return software[name]
-
-        software_data = self.software.get(name, {})
-        update_dict(software_data, data)
-        self.software.write(name, software_data)
-        return software_data
-
-    def save(self, api, name, data, project=None):
-        '''Save software to settings or a project.'''
-
-        if project:
-            software = self._get_project_software(api, project)
-            software[name] = self.software.validate(data)
-            api.io.update_project(project, {'software': software})
-            return software[name]
-
-        return self.software.write(name, data)
-
-    def delete(self, api, name, project=None):
-        '''Delete software by name from settings or a project.'''
-
-        if project:
-            software = self._get_project_software(api, project)
-            if name not in software:
-                return
-            software.pop(name)
-            api.io.update_project(project, {'software': software})
-
-        self.software.delete(name)
-
-    def get_by_name(self, api, name, project=None, file=None):
-        try:
-            return self.get(api, project, file)[name]
-        except KeyError:
-            raise NameError('Could not find software named ' + name)
 
     def _available_software(self, software, ext=None):
         available = {}
@@ -118,7 +72,13 @@ class Software(Extension):
             available[software_name] = software
         return available
 
-    def get(self, api, project=None, file=None):
+    def get_by_name(self, name, project=None, file=None):
+        try:
+            return self.get(project, file)[name]
+        except KeyError:
+            raise NameError('Could not find software named ' + name)
+
+    def get(self, project=None, file=None):
         '''Get the available software.
 
         If a project is provided get only software available in that project.
@@ -131,18 +91,65 @@ class Software(Extension):
         '''
 
         ext = None
-        project = project or api.context.project
+        project = project or self.api.context.project
 
         if file:
             ext = os.path.splitext(file)[-1]
 
         if project:
-            software = self._get_project_software(api, project)
+            software = self._get_project_software(project)
             return self._available_software(software, ext)
 
-        return self._available_software(self.software, ext)
+        return self._available_software(self.software_settings, ext)
 
-    def launch(self, api, name, *args, **kwargs):
+    def save(self, name, data, project=None):
+        '''Save software to settings or a project.'''
+
+        if project:
+            software = self._get_project_software(project)
+            software[name] = self.software_settings.validate(data)
+            self.api.io.update_project(project, {'software': software})
+            return software[name]
+
+        return self.software_settings.write(name, data)
+
+    def update(self, name, data, project=None):
+        '''Update software stored in settings or a project.'''
+
+        if project:
+            # Get updated project software
+            software = self._get_project_software(project)
+            software_data = software.get(name, {})
+
+            # Update software data
+            update_dict(software_data, data)
+
+            # Validate software data
+            software_data = self.software_settings.validate(software_data)
+            software[name] = software_data
+
+            # Update project with software
+            self.api.io.update_project(project, {'software': software})
+            return software[name]
+
+        software_data = self.software_settings.get(name, {})
+        update_dict(software_data, data)
+        self.software_settings.write(name, software_data)
+        return software_data
+
+    def delete(self, name, project=None):
+        '''Delete software by name from settings or a project.'''
+
+        if project:
+            software = self._get_project_software(project)
+            if name not in software:
+                return
+            software.pop(name)
+            self.api.io.update_project(project, {'software': software})
+
+        self.software_settings.delete(name)
+
+    def launch(self, name, *args, **kwargs):
         '''Launch the specified software.
 
         Arguments:
@@ -151,26 +158,23 @@ class Software(Extension):
             context: Context to launch software in
         '''
 
-        software = self.get_by_name(api, name)
+        software = self.get_by_name(name)
+        cmd = _get_command(software)
 
-        found, cmd = _get_command(software)
-        if not found:
-            raise OSError(
-                "Could not find executable for %s."
-                % name
-            )
-
-        ctx = kwargs.pop('context', api.context).copy()
+        ctx = kwargs.pop('context', self.api.context).copy()
         args = list(args or software['args'])
         cmd = [cmd] + args
-        env = _get_software_env(software, ctx, api.path)
+        env = _get_software_env(software, ctx, self.api.path)
 
-        # TODO: run before_launch hooks
-        # TODO: create workspace if it does not exist
+        # Let Host Extension add to the environment
+        host = self.api.extensions.get(software['host'], None)
+        if host:
+            host.before_launch(self.api, software, env, ctx)
+
         _log.debug('Launching %s' % name.title())
         _run(cmd, env=env)
 
-    def open_with(self, api, name, file, *args, **kwargs):
+    def open_with(self, name, file, *args, **kwargs):
         '''Open a file with the specified software.
 
         Arguments:
@@ -179,29 +183,24 @@ class Software(Extension):
             *args: Arguments to pass to software executable
         '''
 
-        software = api.settings['software'].get(name, None)
-        if not software:
-            raise NameError('Could not find software named ' + name)
+        software = self.get_by_name(name)
+        cmd = _get_command(software)
 
         ext = os.path.splitext(file)[-1]
         if ext not in software['extensions']:
             raise OSError('Can not open %s with %s' % (name, file))
 
-        found, cmd = _get_command(software)
-        if not found:
-            raise OSError(
-                "Could not find executable for %s. Are you sure it's installed?"
-                % name
-            )
-
-        ctx = kwargs.pop('context', api.context).copy()
+        ctx = kwargs.pop('context', self.api.context).copy()
         ctx.file = file
         args = list(args or software['args'])
         cmd = [cmd] + args + [file]
-        env = _get_software_env(software, ctx, api.path)
+        env = _get_software_env(software, ctx, self.api.path)
 
-        # TODO: run before_launch hooks
-        # TODO: create workspace if it does not exist
+        # Let Host Extension add to the environment
+        host = self.api.extensions.get(software['host'], None)
+        if host:
+            host.before_launch(self.api, software, env, ctx)
+
         _log.debug('Launching %s' % name.title())
         _run(cmd, env=env)
 
@@ -212,11 +211,14 @@ def _get_command(software):
     cmd = software['cmd'].get(platform, None)
     if isinstance(cmd, basestring):
         if os.path.isfile(cmd):
-            return True, cmd
+            return cmd
     for item in cmd:
         if os.path.isfile(item):
-            return True, item
-    return False, cmd
+            return item
+    raise OSError(
+        "Could not find executable for %s. Are you sure it's installed?"
+        % software['name']
+    )
 
 
 def _get_software_env(software, ctx, path):
