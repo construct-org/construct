@@ -4,14 +4,19 @@
 from __future__ import absolute_import
 import os
 from os.path import basename
+from collections import namedtuple
 
 # Local imports
 from .. import API
 from .. import resources
+from ..compat import Path
 from ..extensions import Host
+from ..utils import copy_file, update_env
 
 
 __all__ = ['Nuke']
+this_package = Path(__file__).parent
+Version = namedtuple('Version', 'major minor patch')
 
 
 class Nuke(Host):
@@ -21,14 +26,23 @@ class Nuke(Host):
     label = 'The Foundry Nuke'
     icon = 'icons/nuke.png'
 
-    def available(self, ctx):
-        return True
+    def load(self, api):
+        api.path.append(this_package)
+        for software_config in this_package.glob('software/*.yaml'):
+            if software_config.stem not in api.software:
+                copy_file(software_config, api.software.folder)
 
-    def load(self):
+
+    def unload(self, api):
         pass
 
-    def unload(self):
-        pass
+    @property
+    def version(self):
+        import nuke
+        major = nuke.NUKE_VERSION_MAJOR
+        minor = nuke.NUKE_VERSION_MINOR
+        patch = nuke.NUKE_VERSION_RELEASE
+        return Version(major, minor, patch)
 
     def modified(self):
         import nuke
@@ -122,3 +136,14 @@ class Nuke(Host):
         for widget in app.topLevelWidgets():
             if isinstance(widget, QtWidgets.QMainWindow):
                 return widget
+
+    def before_launch(self, api, software, env, ctx):
+        startup_path = (this_package / 'startup').as_posix()
+        update_env(
+            env,
+            NUKE_PATH=[startup_path],
+        )
+
+    def after_launch(self, ctx):
+        from . import callbacks
+        callbacks.register()

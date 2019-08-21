@@ -3,12 +3,17 @@
 # Standard Library Imports
 from __future__ import absolute_import
 from os.path import basename
+from collections import namedtuple
 
 # Local imports
+from ..compat import Path
 from ..extensions import Host
+from ..utils import copy_file, update_env
 
 
 __all__ = ['Maya']
+this_package = Path(__file__).parent
+Version = namedtuple('Version', 'major minor patch')
 
 
 class Maya(Host):
@@ -16,16 +21,25 @@ class Maya(Host):
 
     identifier = 'maya'
     label = 'Autodesk Maya'
-    icon = 'icons/maya.py'
+    icon = 'icons/maya.png'
 
-    def available(self, ctx):
-        return True
+    def load(self, api):
+        api.path.append(this_package)
+        for software_config in this_package.glob('software/*.yaml'):
+            if software_config.stem not in api.software:
+                copy_file(software_config, api.software.folder)
 
-    def load(self):
+    def unload(self, api):
         pass
 
-    def unload(self):
-        pass
+    @property
+    def version(self):
+        from maya import cmds
+        major = str(cmds.about(version=True))
+        apiver = str(cmds.about(apiVersion=True)).replace(major, '')
+        minor = apiver[:2]
+        patch = apiver[2:]
+        return Version(int(major), int(minor), int(patch))
 
     def modified(self):
         from maya import cmds
@@ -143,3 +157,15 @@ class Maya(Host):
         for widget in app.topLevelWidgets():
             if widget.objectName() == 'MayaWindow':
                 return widget
+
+    def before_launch(self, api, software, env, ctx):
+
+        startup_path = (this_package / 'startup').as_posix()
+        update_env(
+            env,
+            MAYA_SCRIPT_PATH=[startup_path],
+        )
+
+    def after_launch(self, ctx):
+        from . import callbacks
+        callbacks.register()
