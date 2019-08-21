@@ -74,6 +74,11 @@ class Host(Extension):
     The active Host Extension is bound to API.host.
     '''
 
+    @property
+    def version(self):
+        '''Application version'''
+        return NotImplemented
+
     def modified(self):
         '''Check if current file is modified'''
         return NotImplemented
@@ -138,6 +143,26 @@ class Host(Extension):
             start_frame (int): Start frame of animation
             end_frame (int): End frame of animation
             max_frame (int): Max frame of timeline
+        '''
+        return NotImplemented
+
+    def before_launch(self, api, software, env, ctx):
+        '''Called before the Host is launched.
+
+        Used to provision environment variables and setup a workspace.
+        '''
+        return NotImplemented
+
+    def after_launch(self, api, ctx):
+        '''Called after application is launched within the Host application.
+
+        Implementations should do some of the following:
+
+          - Register callbacks
+          - Setup UI Menus
+          - Setup Shelves
+          - Setup UI Elements
+          - Launch a dialog
         '''
         return NotImplemented
 
