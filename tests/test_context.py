@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import os
 
-from past.builtins import basestring
+# Third library imports
 from bson.objectid import ObjectId
 
+# Local imports
 from construct.context import Context
+from construct.compat import basestring
 
 
 def test_default_context():

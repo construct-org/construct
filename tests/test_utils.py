@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
+# Standard library imports
+from __future__ import absolute_import, print_function
+import os
 import sys
 
+# Local imports
 from construct.compat import Path
-from construct.utils import unipath, update_dict
+from construct.utils import unipath, update_dict, update_env
+from construct.constants import PLATFORM
 
 
 def test_unipath_nonexist():
