@@ -22,3 +22,8 @@ if six.PY2:
         return functools.wraps(wrapped, assigned, updated)
 else:
     from functools import wraps
+
+
+# Instead of python-future
+basestring = six.string_types
+reraise = six.reraise

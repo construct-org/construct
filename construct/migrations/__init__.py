@@ -6,11 +6,8 @@ from inspect import getmembers
 import logging
 from copy import deepcopy
 
-# Third party imports
-from past.builtins import basestring
-
 # Local imports
-from ..compat import Path
+from ..compat import Path, basestring
 
 
 _log = logging.getLogger(__name__)

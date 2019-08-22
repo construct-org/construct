@@ -8,13 +8,9 @@ import shutil
 import sys
 import logging
 
-# Third party imports
-from future.utils import reraise
-from past.builtins import basestring
-
 # Local imports
 from . import schemas
-from .compat import wraps
+from .compat import wraps, basestring
 from .constants import (
     SETTINGS_FILE,
     USER_SETTINGS_FILE,

@@ -2,7 +2,6 @@ bson
 cachetools
 cerberus
 fsfs
-future
 qtsass
 invoke
 nose

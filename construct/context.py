@@ -7,21 +7,23 @@ import getpass
 import os
 import json
 
-# Third party imports
-from past.builtins import basestring
-
 # Local imports
 from .constants import DEFAULT_HOST, PLATFORM
+from .compat import basestring
 
 
 __all__ = ['Context']
 
 
 def encode(obj):
+    '''Encode objects to stuff in environment variables'''
+
     return json.dumps(obj)
 
 
 def decode(obj):
+    '''Decode objects stored in environment variables'''
+
     return json.loads(obj)
 
 

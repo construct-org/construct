@@ -8,11 +8,8 @@ from contextlib import contextmanager
 import shutil
 import yaml
 
-# Third party imports
-from past.builtins import basestring
-
 # Local imports
-from .compat import Path, Mapping
+from .compat import Path, Mapping, basestring
 
 
 __all__ = [
