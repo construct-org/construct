@@ -82,9 +82,7 @@ def ls(search=None):
 def read(resource):
     '''Read a resource'''
 
-    resource_path = path(resource)
-    with open(resource_path, 'r') as f:
-        return f.read()
+    return path(resource).read_text(encoding='utf-8')
 
 
 def style(name_or_resource):

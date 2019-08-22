@@ -6,7 +6,6 @@ import logging
 import shutil
 
 # Third party imports
-from builtins import bytes
 import yaml
 
 # Local imports
@@ -97,13 +96,13 @@ class FSCache(object):
                 return default
             else:
                 raise KeyError('Can not find %s in cache.' % key)
-        data = key_file.read_bytes().decode('utf-8')
+        data = key_file.read_text(encoding='utf-8')
         return yaml.safe_load(data)
 
     def set(self, key, value):
         key_file = self._file_for(key)
-        data = bytes(yaml.safe_dump(value, default_flow_style=False), 'utf-8')
-        key_file.write_bytes(data)
+        data = yaml.safe_dump(value, default_flow_style=False)
+        key_file.write_text(data, encoding='utf-8')
 
     def delete(self, key):
         key_file = self._file_for(key)
