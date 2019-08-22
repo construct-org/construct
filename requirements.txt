@@ -6,3 +6,5 @@ future
 qtsass
 pymongo
 pyyaml
+pathlib2; python_version<"3.6"
+Qt.py

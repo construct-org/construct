@@ -47,13 +47,14 @@ setup(
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
     install_requires=[
-        'pathlib2;python_version<"3.5"',
+        'pathlib2; python_version<"3.6"',
         'fsfs',
         'pyyaml',
         'future',
         'bson',
         'cachetools',
-        'cerberus'
+        'cerberus',
+        'Qt.py',
     ],
     entry_points={
         'console_scripts': [
