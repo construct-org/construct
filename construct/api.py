@@ -300,7 +300,7 @@ class API(object):
         '''Pretty print a dict or list of dicts.'''
 
         if isinstance(data, Mapping):
-            print(yaml_dump(data))
+            print(yaml_dump(dict(data)))
             return
         elif isinstance(data, basestring):
             print(data)

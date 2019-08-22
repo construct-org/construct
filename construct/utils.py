@@ -102,7 +102,7 @@ def update_envvar(d, k, v):
         d[k] = v
     elif isinstance(v, list):
         v = os.pathsep.join(v)
-        if k not in v:
+        if k not in d:
             d[k] = v
         else:
             d[k] = os.pathsep.join([v, d[k]])
