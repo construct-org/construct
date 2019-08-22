@@ -7,12 +7,10 @@ import subprocess
 import logging
 import sys
 
-# Third party imports
-from past.types import basestring
-
 # Local imports
 from ..extensions import Extension
 from ..utils import get_lib_path, update_env, update_dict
+from ..compat import basestring
 
 
 platform = sys.platform.rstrip('1234567890')

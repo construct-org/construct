@@ -8,11 +8,8 @@ from contextlib import contextmanager
 import shutil
 import yaml
 
-# Third party imports
-from past.builtins import basestring
-
 # Local imports
-from .compat import Path, Mapping
+from .compat import Path, Mapping, basestring
 
 
 __all__ = [
@@ -105,7 +102,7 @@ def update_envvar(d, k, v):
         d[k] = v
     elif isinstance(v, list):
         v = os.pathsep.join(v)
-        if k not in v:
+        if k not in d:
             d[k] = v
         else:
             d[k] = os.pathsep.join([v, d[k]])

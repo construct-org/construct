@@ -144,6 +144,6 @@ class Nuke(Host):
             NUKE_PATH=[startup_path],
         )
 
-    def after_launch(self, ctx):
+    def after_launch(self, api, ctx):
         from . import callbacks
         callbacks.register()

@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import sys
 import os
 import shutil
 
-from . import data_dir
+# Local imports
 from construct.settings import Settings, restore_default_settings
 from construct.errors import InvalidSettings, ValidationError
 from construct.constants import DEFAULT_SETTINGS
+from . import data_dir
 
 
 SETTINGS_FOLDER = data_dir('.cons')

@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import shutil
 import sys
 
-from . import data_dir, testAPI
+# Local imports
 from construct.settings import restore_default_settings
 import construct
+from . import data_dir, testAPI
 
 
 CUSTOM_USER_PATH = data_dir('.cons')

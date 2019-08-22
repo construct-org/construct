@@ -15,8 +15,8 @@ _log = logging.getLogger('construct.hou.pythonrc')
 
 
 def load_construct():
-    _log.debug('Loading Construct in SideFX Houdini.')
     api = construct.API()
+    _log.debug('Construct loaded in SideFX Houdini.')
     api.host.after_launch(api, api.context.copy())
 
 

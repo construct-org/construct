@@ -8,9 +8,6 @@ import inspect
 from functools import wraps
 from logging.config import dictConfig
 
-# Third party imports
-from past.types import basestring
-
 # Local imports
 from .constants import (
     DEFAULT_LOGGING,
@@ -21,7 +18,7 @@ from . import schemas
 from .context import Context
 from .settings import Settings
 from .path import Path
-from .compat import Mapping
+from .compat import Mapping, basestring
 from .extensions import ExtensionManager
 from .io import IO
 
@@ -303,7 +300,7 @@ class API(object):
         '''Pretty print a dict or list of dicts.'''
 
         if isinstance(data, Mapping):
-            print(yaml_dump(data))
+            print(yaml_dump(dict(data)))
             return
         elif isinstance(data, basestring):
             print(data)

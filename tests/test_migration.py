@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 
+# Third party imports
 import fsfs
+
+# Local imports
+import construct
 from construct.utils import unipath
 from construct.settings import restore_default_settings
 from construct import migrations
-import construct
-
 from . import data_dir, setup_api, teardown_api
+
 
 
 MIGRATIONS_DIR = data_dir('migrations')

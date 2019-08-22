@@ -15,8 +15,8 @@ _log = logging.getLogger('construct.nuke.menu')
 
 
 def load_construct():
-    _log.debug('Loading Construct in The Foundry Nuke.')
     api = construct.API()
+    _log.debug('Construct loaded in The Foundry Nuke.')
     api.host.after_launch(api, api.context.copy())
 
 

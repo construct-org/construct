@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import sys
 import os
 import shutil
 
-from . import data_dir, setup_api, teardown_api
+# Local imports
 import construct
 from construct.errors import InvalidSettings
+from . import data_dir, setup_api, teardown_api
 
 
 SOFTWARE_NAME = 'testsoftware'

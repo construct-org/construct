@@ -50,7 +50,6 @@ setup(
         'pathlib2; python_version<"3.6"',
         'fsfs',
         'pyyaml',
-        'future',
         'bson',
         'cachetools',
         'cerberus',

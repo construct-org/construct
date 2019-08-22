@@ -164,8 +164,9 @@ class Maya(Host):
         update_env(
             env,
             MAYA_SCRIPT_PATH=[startup_path],
+            PYTHONPATH=[startup_path],
         )
 
-    def after_launch(self, ctx):
+    def after_launch(self, api, ctx):
         from . import callbacks
         callbacks.register()

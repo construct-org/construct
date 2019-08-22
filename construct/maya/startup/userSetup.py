@@ -15,7 +15,7 @@ _log = logging.getLogger('construct.maya.userSetup')
 
 
 def load_construct():
-    _log.debug('Loading Construct in Autodesk Maya.')
+    _log.debug('Construct loaded in Autodesk Maya.')
     api = construct.API()
     api.host.after_launch(api, api.context.copy())
 
