@@ -53,6 +53,7 @@ DEFAULT_LOGGING = dict(
         'construct': {
             'level': os.environ.get('CONSTRUCT_LOGGING_LEVEL', 'DEBUG'),
             'handlers': ['console'],
+            'propagate': False,
         }
     })
 DEFAULT_SETTINGS = {
