@@ -1,0 +1,12 @@
+schema_version: '0.1.0'
+label: 'Maya 2019'
+icon: 'icons/maya.png'
+host: 'maya'
+cmd:
+    linux: '/usr/autodesk/maya2019/bin/maya'
+    mac: '/Applications/Autodesk/maya2019/bin/maya'
+    win: 'C:/Program Files/Autodesk/Maya2019/bin/maya.exe'
+args: [-noAutoloadPlugins]
+env: {}
+template: 'templates/maya_default'
+extensions: ['.mb', '.ma', '.obj', '.abc', '.fbx', '.usd']
