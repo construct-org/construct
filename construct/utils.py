@@ -69,9 +69,15 @@ def update_dict(a, b):
 
 
 def update_env(d, **values):
-    '''Updates an environment dict with the specified values. List values
-    are combined with the existing values in d. String values override
-    values in d.
+    '''Updates an environment dict with the specified values. An environment
+    dict is like os.environ; it includes os.pathsep separators.
+
+    Behavior:
+        - List values are combined with the existing values in d.
+        - String values override values in d.
+        - Dicts containing platform keys ('win', 'linux', 'mac') are selected
+          based on the current platform. If the current platform is missing
+          the key will not be updated.
 
     Example:
         >>> import os
@@ -86,9 +92,14 @@ def update_env(d, **values):
     for k, v in values.items():
         update_envvar(d, k, v)
 
+    # TODO: We can expand path values containing string template tokens like
+    # ${variable} here if we want. This would have to be expanded twice to
+    # handle values referencing other variables.
+
 
 def update_envvar(d, k, v):
     '''Used by update_env to update a single key with the specified value.'''
+    from .constants import PLATFORM
 
     if isinstance(v, basestring):
         d[k] = v
@@ -98,6 +109,17 @@ def update_envvar(d, k, v):
             d[k] = v
         else:
             d[k] = os.pathsep.join([v, d[k]])
+    elif isinstance(v, dict):
+        # This is not a platform dict let's throw an error
+        if not set(['win', 'linux', 'mac']) & set(v.keys()):
+            # TODO: is this the correct thing to do?
+            raise ValueError(
+                'Got dict expected one of: str, list, int, float'
+            )
+        # Handle a platform dict
+        v = v.get(PLATFORM, None)
+        if v is not None:
+            update_envvar(d, k, v)
     else:
         d[k] = str(v)
 
