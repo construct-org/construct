@@ -8,7 +8,6 @@ import datetime
 import json
 
 # Third party imports
-import yaml
 from cachetools import cached
 from cerberus import Validator
 from cerberus.schema import SchemaRegistry
@@ -17,6 +16,7 @@ from builtins import open
 
 # Local imports
 from ..errors import ValidationError
+from ..utils import yaml_dump, yaml_load
 
 
 schemas_root = os.path.abspath(os.path.dirname(__file__))
@@ -51,7 +51,7 @@ class ConstructValidator(Validator):
 
     @property
     def errors_yaml(self):
-        return yaml.safe_dump(self.errors, default_flow_style=False)
+        return yaml_dump(self.errors)
 
     @property
     def errors_json(self):
@@ -86,7 +86,7 @@ def get_schema(name):
     with open(potential_path, 'rb') as f:
         schema_text = f.read().decode('utf-8')
 
-    return yaml.safe_load(schema_text)
+    return yaml_load(schema_text)
 
 
 def validate(schema_name, data, **kwargs):

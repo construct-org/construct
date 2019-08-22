@@ -6,6 +6,7 @@ import os
 import sys
 from contextlib import contextmanager
 import shutil
+import yaml
 
 # Third party imports
 from past.builtins import basestring
@@ -31,6 +32,17 @@ this_package = Path(__file__).parent
 
 def get_lib_path():
     return this_package.parent
+
+
+def yaml_dump(data, **kwargs):
+    kwargs.setdefault('allow_unicode', True)
+    kwargs.setdefault('encoding', 'utf-8')
+    kwargs.setdefault('default_flow_style', False)
+    return yaml.safe_dump(data, **kwargs)
+
+
+def yaml_load(data):
+    return yaml.safe_load(data)
 
 
 def unipath(*paths):

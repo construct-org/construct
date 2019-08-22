@@ -7,7 +7,6 @@ import logging
 from copy import deepcopy
 
 # Third party imports
-import yaml
 from past.builtins import basestring
 
 # Local imports
