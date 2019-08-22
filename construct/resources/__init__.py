@@ -168,8 +168,10 @@ def preview_icons():
         layout.addWidget(widget, row, col)
 
     dialog.setLayout(layout)
-    dialog.setStyleSheet(style('dark'))
+    dialog.setStyleSheet(style('light'))
 
     if standalone:
+        sys.exit(dialog.exec_())
+    else:
         dialog.exec_()
 
