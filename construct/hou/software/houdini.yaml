@@ -1,0 +1,21 @@
+schema_version: '0.1.0'
+label: 'Houdini 17.5'
+icon: 'icons/houdini.png'
+host: 'houdini'
+cmd:
+    linux:
+        - '/opt/hfs17.5.327/bin/houdini'
+        - '/opt/hfs17.5.293/bin/houdini'
+        - '/opt/hfs17.5.173/bin/houdini'
+    mac:
+        - '/Applications/Houdini 17.5.327/Houdini.app'
+        - '/Applications/Houdini 17.5.293/Houdini.app'
+        - '/Applications/Houdini 17.5.173/Houdini.app'
+    win:
+        - 'C:/Program Files/Side Effects Software/Houdini 17.5.327/bin/houdinifx.exe'
+        - 'C:/Program Files/Side Effects Software/Houdini 17.5.293/bin/houdinifx.exe'
+        - 'C:/Program Files/Side Effects Software/Houdini 17.5.173/bin/houdinifx.exe'
+args: []
+env: {}
+template: 'templates/houdini_default'
+extensions: ['.hip', '.hipnc']

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+# Standard library imports
 from __future__ import absolute_import
 import copy
 import os
@@ -6,11 +8,11 @@ import shutil
 import sys
 import logging
 
-from builtins import bytes
+# Third party imports
 from future.utils import reraise
 from past.builtins import basestring
-import yaml
 
+# Local imports
 from . import schemas
 from .compat import wraps
 from .constants import (
@@ -19,7 +21,7 @@ from .constants import (
     DEFAULT_SETTINGS,
     USER_PATH
 )
-from .utils import unipath, ensure_exists
+from .utils import unipath, ensure_exists, yaml_dump, yaml_load
 from .errors import InvalidSettings, ValidationError
 
 
@@ -76,9 +78,9 @@ class Settings(dict):
             _log.debug('Loading settings from %s' % self.file)
 
             # Read settings from file
-            data = potential_settings_file.read_bytes().decode('utf-8')
+            data = potential_settings_file.read_text(encoding='utf-8')
             if data:
-                file_data = yaml.safe_load(data)
+                file_data = yaml_load(data)
             else:
                 file_data = {}
 
@@ -113,7 +115,7 @@ class Settings(dict):
         '''Save these settings.'''
 
         if self.is_loaded:
-            data = bytes(self.yaml(exclude=['software']), 'utf-8')
+            data = self.yaml(exclude=['software'])
 
             # Write modified settings
             self.file.write_bytes(data)
@@ -125,7 +127,7 @@ class Settings(dict):
         exclude = (exclude or [])
         for key in exclude:
             settings_to_encode.pop(key, None)
-        return yaml.safe_dump(settings_to_encode, default_flow_style=False)
+        return yaml_dump(settings_to_encode)
 
 
 def load_on_modified(method):
@@ -190,8 +192,8 @@ class Section(dict):
             if file.suffix not in ('.yml', '.yaml'):
                 continue
 
-            raw_data = file.read_bytes().decode('utf-8')
-            data = self.validate(yaml.safe_load(raw_data))
+            raw_data = file.read_text(encoding='utf-8')
+            data = self.validate(yaml_load(raw_data))
 
             section_data[file.stem] = data
             section_files[file.stem] = file
@@ -205,10 +207,8 @@ class Section(dict):
         data = self.validate(data)
         dict.__setitem__(self, name, data)
 
-        yaml_data = yaml.safe_dump(data, default_flow_style=False)
-
         file = self._get_file(name)
-        file.write_bytes(bytes(yaml_data, 'utf-8'))
+        file.write_bytes(yaml_dump(data))
         return data
 
     def delete(self, name):
@@ -237,11 +237,9 @@ def restore_default_settings(where):
     ensure_exists(where)
     ensure_exists(*[where / f for f in Settings.structure])
 
-    data = yaml.safe_dump(DEFAULT_SETTINGS, default_flow_style=False)
-
     # Write default settings
     settings_file = where / SETTINGS_FILE
-    settings_file.write_bytes(bytes(data, 'utf-8'))
+    settings_file.write_bytes(yaml_dump(DEFAULT_SETTINGS))
 
 
 def find_in_paths(paths, resource):

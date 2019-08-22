@@ -3,7 +3,6 @@
 # Standard library imports
 from __future__ import absolute_import
 import atexit
-import yaml
 import logging
 import inspect
 from functools import wraps
@@ -16,7 +15,7 @@ from past.types import basestring
 from .constants import (
     DEFAULT_LOGGING,
 )
-from .utils import unipath, ensure_exists
+from .utils import unipath, ensure_exists, yaml_dump, yaml_load
 from .events import EventManager
 from . import schemas
 from .context import Context
@@ -304,7 +303,7 @@ class API(object):
         '''Pretty print a dict or list of dicts.'''
 
         if isinstance(data, Mapping):
-            print(yaml.safe_dump(data, default_flow_style=False))
+            print(yaml_dump(data))
             return
         elif isinstance(data, basestring):
             print(data)
@@ -313,7 +312,7 @@ class API(object):
         try:
             for obj in data:
                 print('')
-                print(yaml.safe_dump(obj, default_flow_style=False))
+                print(yaml_dump(obj))
         except:
             print('Can not format: %s' % data)
 

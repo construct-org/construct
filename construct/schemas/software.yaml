@@ -26,16 +26,11 @@ args:
 env:
     type: dict
     valueschema:
-        anyof_type: [string, list]
+        anyof_type: [string, list, dict]
     default_setter: empty_dict
-files:
-    type: dict
-    valueschema:
-        type: string
-    default_setter: empty_dict
-folders:
-    type: list
-    default_setter: empty_list
+template:
+    type: string
+    default_setter: empty_string
 extensions:
     type: list
     default_setter: empty_list

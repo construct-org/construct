@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mainMenu>
+  <menuBar>
+    <subMenu id="construct_menu">
+      <label>Construct</label>
+      <scriptMenuStripDynamic>
+        <contentsScriptCode><![CDATA[
+import construct
+api = construct.API()
+return [("identifier", "label"), ("identifier", "label")]
+        ]]></contentsScriptCode>
+        <scriptCode><![CDATA[
+import construct
+api = construct.API()
+identifier = kwargs["selectedtoken"]
+label = kwargs["selectedlabel"]
+print('Clicked %s %s' % (identifier, label))
+        ]]></scriptCode>
+      </scriptMenuStripDynamic>
+    </subMenu>
+  </menuBar>
+</mainMenu>
+

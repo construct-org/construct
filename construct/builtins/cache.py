@@ -5,13 +5,10 @@ from __future__ import absolute_import
 import logging
 import shutil
 
-# Third party imports
-from builtins import bytes
-import yaml
-
 # Local imports
 from ..constants import USER_PATH
 from ..extensions import Extension
+from ..utils import yaml_load, yaml_dump
 
 
 _log = logging.getLogger(__name__)
@@ -97,12 +94,12 @@ class FSCache(object):
                 return default
             else:
                 raise KeyError('Can not find %s in cache.' % key)
-        data = key_file.read_bytes().decode('utf-8')
-        return yaml.safe_load(data)
+        data = key_file.read_text(encoding='utf-8')
+        return yaml_load(data)
 
     def set(self, key, value):
         key_file = self._file_for(key)
-        data = bytes(yaml.safe_dump(value, default_flow_style=False), 'utf-8')
+        data = yaml_dump(value)
         key_file.write_bytes(data)
 
     def delete(self, key):

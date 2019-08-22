@@ -1,0 +1,24 @@
+schema_version: '0.1.0'
+label: 'NukeX 11.3'
+icon: 'icons/nuke.png'
+host: 'nuke'
+cmd:
+    linux:
+        - /usr/local/Nuke11.3v4/Nuke11.3
+        - /usr/local/Nuke11.3v3/Nuke11.3
+        - /usr/local/Nuke11.3v2/Nuke11.3
+        - /usr/local/Nuke11.3v1/Nuke11.3
+    mac:
+        - /Applications/Nuke11.3v4/Nuke11.3v4.app/Nuke11.3
+        - /Applications/Nuke11.3v3/Nuke11.3v3.app/Nuke11.3
+        - /Applications/Nuke11.3v2/Nuke11.3v2.app/Nuke11.3
+        - /Applications/Nuke11.3v1/Nuke11.3v1.app/Nuke11.3
+    win:
+        - C:/Program Files/Nuke11.3v4/Nuke11.3.exe
+        - C:/Program Files/Nuke11.3v3/Nuke11.3.exe
+        - C:/Program Files/Nuke11.3v2/Nuke11.3.exe
+        - C:/Program Files/Nuke11.3v1/Nuke11.3.exe
+args: ['-nukex']
+env: {}
+template: 'templates/nuke_default'
+extensions: ['.nk']
