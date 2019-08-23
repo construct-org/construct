@@ -99,8 +99,7 @@ class FSCache(object):
 
     def set(self, key, value):
         key_file = self._file_for(key)
-        data = yaml_dump(value)
-        key_file.write_bytes(data)
+        key_file.write_bytes(yaml_dump(value))
 
     def delete(self, key):
         key_file = self._file_for(key)

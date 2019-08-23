@@ -4,9 +4,6 @@
 from __future__ import absolute_import
 import os
 
-# Third party imports
-from builtins import super
-
 # Local imports
 from .utils import unipath
 from .constants import DEFAULT_PATHS
@@ -18,7 +15,7 @@ class Path(list):
     '''
 
     def __init__(self, path=None):
-        super().__init__()
+        super(Path, self).__init__()
         self._custom = bool(path)
         self._custom_path = path
 

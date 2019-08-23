@@ -12,14 +12,14 @@ from cachetools import cached
 from cerberus import Validator
 from cerberus.schema import SchemaRegistry
 from bson.objectid import ObjectId
-from builtins import open
 
 # Local imports
 from ..errors import ValidationError
+from ..compat import Path
 from ..utils import yaml_dump, yaml_load
 
 
-schemas_root = os.path.abspath(os.path.dirname(__file__))
+this_package = Path(__file__).parent
 
 
 class SchemaNotFound(Exception): pass
@@ -78,15 +78,13 @@ def new_validator(schema, **kwargs):
 
 @cached(cache={})
 def get_schema(name):
+    '''Get a Cerberus schema dict by name.'''
 
-    potential_path = os.path.join(schemas_root, name + '.yaml')
-    if not os.path.isfile(potential_path):
+    schema_file = this_package / (name + '.yaml')
+    if not schema_file.is_file():
         raise SchemaNotFound('Could not find a schema named %s' % name)
 
-    with open(potential_path, 'rb') as f:
-        schema_text = f.read().decode('utf-8')
-
-    return yaml_load(schema_text)
+    return yaml_load(schema_file.read_text(encoding='utf-8'))
 
 
 def validate(schema_name, data, **kwargs):
@@ -110,16 +108,15 @@ def ls(subdir=None):
     '''
 
     if subdir:
-        root = os.path.join(schemas_root, subdir)
+        root = this_package / subdir
     else:
-        root = schemas_root
+        root = this_package
 
-    for f in os.listdir(root):
-        if f.endswith('.yaml'):
-            schema_name = f[:-5]
-            if subdir:
-                schema_name = subdir + '/' + schema_name
-            yield schema_name, get_schema(schema_name)
+    for schema_file in root.glob('*.yaml'):
+        schema_name = schema_file.stem
+        if subdir:
+            schema_name = subdir + '/' + schema_name
+        yield schema_name, get_schema(schema_name)
 
 
 _schema_registry = SchemaRegistry()
