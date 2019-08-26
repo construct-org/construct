@@ -21,6 +21,7 @@ from .path import Path
 from .compat import Mapping, basestring
 from .extensions import ExtensionManager
 from .io import IO
+from .resources import Resources
 
 
 __all__ = ['API']
@@ -84,6 +85,7 @@ class API(object):
         self.context = Context()
         self.schemas = schemas
         self.io = IO(self)
+        self.resources = Resources(self)
         self._logging_dict = kwargs.pop('logging', None)
         self._registered_members = {}
         self.init()

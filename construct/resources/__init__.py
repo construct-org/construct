@@ -16,18 +16,19 @@ from ..compat import wraps, Path
 
 _log = logging.getLogger('construct.ui.resources')
 
-RESOURCE_EXTENSIONS = ['', '.png', '.ttf', '.css']
+RESOURCE_EXTENSIONS = ['.png', '.ttf', '.css', '.svg', '.gif', '.jpeg']
 this_package = Path(__file__).parent
 
 
-def ensure_resources_loaded(fn):
-    '''A decorator that executes callables that have been marked lazy using
-    the lazy function.
+def loads_resources(fn):
+    '''A decorator that ensures BuiltinResources is loaded before executing
+    the wrapped function.
     '''
-    @wraps(method)
+
+    @wraps(fn)
     def call_fn(*args, **kwargs):
-        load_qt_resources()
-        return call_fn(*args, **kwargs):
+        BuiltinResources()._load()
+        return fn(*args, **kwargs)
     return call_fn
 
 
@@ -36,186 +37,224 @@ class ResourceNotFoundError(Exception):
 
 
 class Resources(object):
-    '''Resources object. Looks up builtin qt resources as well as user
-    resources stored in a users CONSTRUCT_PATH.'''
+    '''Work with resources for an API object.
 
-    _qresources_loaded = False
-    _font_ids = []
+    Resource Resolution:
+        1. Lookup resources starting with ":/" in BuiltinResources
+        2. Lookup resources relative to self.api.path
+        3. Lookup resources in BuiltinResources
+    '''
 
-    def load(self):
-        pass
-
-    def unload(self):
-        pass
+    def __init__(self, api):
+        self.api = api
+        self.builtin_resources = BuiltinResources()
 
     def find(self, resource):
-        try:
-            return find(resource)
-        except ResourceNotFoundError:
-            return self.api.path.find(resources.lstrip(':/'))
+        '''Find a resource by relative path.'''
 
-    def ls(self, search=None):
+        if resource.startswith(':/'):
+            if resource in self.builtin_resources:
+                return self.builtin_resources.find(resource)
+            else:
+                resource = resource.lstrip(':/')
 
-        builtin_resources = ls(search)
-        user_resources = []
+        resource_file = self.api.path.find(resource)
+        if resource_file:
+            return resource_file
 
+        resource = ':/' + resource
+        if resource in self.builtin_resources:
+            return self.builtin_resources.find(resource)
+
+        raise ResourceNotFoundError('Could not find resource %s' % resource)
+
+    def ls(self, search=None, extensions=None):
+        '''List all resources.
+
+        Arguments:
+            search (str): String to match in resource names
+            extensions (List[str]): List of extensions to match
+
+        Returns:
+            List of tuples - (resource, resource_file)
+        '''
+
+        # Get resources on api.path
+        extensions = extensions or RESOURCE_EXTENSIONS
+        resources = {}
         for path in self.api.path:
-            user_resources.extend(ls(search, path=path))
+            for ext in extensions:
+                for file in path.glob('*/*' + ext):
+                    resource = file.relative_to(path).as_posix().lstrip('./')
+                    if search and search not in resource:
+                        continue
+                    resources.setdefault(resource, file)
 
-        return builtin_resources + user_resources
+        # Combine with BuiltinResources and sort
+        bresources = self.builtin_resources.ls(search, extensions)
+        return sorted(list(resources.items()) + bresources)
 
-    def read(self, resource):
-        '''Read a resource'''
+    def style(self, resource):
+        '''Get a stylesheet by resource.'''
 
-        return self.find(resource).read_text(encoding='utf-8')
+        style = self.find(resource).read_text(encoding='utf-8')
+        return process_stylesheet(style)
 
-    @ensure_resources_loaded
-    def style(self, name_or_resource):
-        '''Get a stylesheet from a name or resource.'''
+    def qicon(self, resource, size=None, color=None):
+        '''Get a resource as a QIcon.'''
 
-        if name_or_resource.startswith(':/'):
-            resource = name_or_resource
-        else:
-            resource = ':/css/' + name_or_resource + '.css'
-        style = self.read(resource)
+        return self.builtin_resources.qicon(self.find(resource), size, color)
 
-        pixel_values = re.findall(r'\d+px', style)
-        for pixel_value in pixel_values:
-            scaled_value = pix(int(pixel_value[:-2]))
-            style.replace(pixel_value, str(scaled_value) + 'px', 1)
+    def qpixmap(self, resource, size=None, color=None):
+        '''Get a resource as a QPixmap.'''
 
-        return style
-
-    @ensure_resources_loaded
-    def icon(resource, size=None, color=None):
-        '''Get a resource as a QIcon'''
-        pass
-
-    @ensure_resources_loaded
-    def pixmap(resource, size=None, color=None):
-        '''Get a resource as a QPixmap'''
-        pass
+        return self.builtin_resources.qpixmap(self.find(resource), size, color)
 
 
-def load():
-    if Resources._qresources_loaded:
-        return
-
-    _log.debug('Loading Qt resources.')
-    from . import _resources
-
-    _log.debug('Loading fonts.')
-    from Qt import QtGui
-    for resource, resource_file in ls('fonts'):
-        font_id = QtGui.QFontDatabase.addApplicationFont(resource)
-        Resources._font_ids.append(font_id)
-
-    Resources._qresources_loaded = True
-
-
-def find(resource):
-    '''Get a resources filepath'''
-
-    resource_file = this_package / resource.lstrip(':/')
-
-    if not resource_file.is_file():
-        raise ResourceNotFoundError('Could not find resource: ' + resource)
-
-    return resource_file
-
-
-def ls(search=None, path=None, extensions=RESOURCE_EXTENSIONS):
-    '''List all resources.
-
-    Arguments:
-        search (str): String to search for
-        path (Path): Directory to search for resources
-
-    Returns:
-        List of tuples - (resource, resource_file)
+class BuiltinResources(object):
+    '''Work with builtin resources including icons, branding, stylesheets
+    and fonts.
     '''
-    path = path or this_package
-    resources = {}
 
-    for file in path.glob('*/*.*'):
+    _loaded = False
+    _font_ids = []
+    _resources = {}
 
-        if file.suffix not in extensions:
-            continue
+    def __init__(self):
+        self._update_resources()
 
-        if search and search not in file.as_posix():
-            continue
+    def __contains__(self, resource):
+        return resource in self._resources
 
-        resource = ':/' + file.relative_to(path).as_posix().lstrip('./')
-        resources[resource] = file.as_posix()
+    def _update_resources(self):
+        '''Update BuiltinResources._resources dict.'''
 
-    return resources
+        if self._resources:
+            return
+
+        for file in this_package.glob('*/*.*'):
+
+            if file.suffix not in RESOURCE_EXTENSIONS:
+                continue
+
+            rel_file = file.relative_to(this_package).as_posix().lstrip('./')
+            resource = ':/' + rel_file
+            self._resources[resource] = file
+
+    def _load(self):
+        '''Loads builtin ui resources'''
+        if BuiltinResources._loaded:
+            return
+
+        _log.debug('Loading BuiltinResources.')
+        from . import _resources
+
+        from Qt import QtGui
+        for resource in self._resources.keys():
+            if resource.endswith('.ttf'):
+                font_id = QtGui.QFontDatabase.addApplicationFont(resource)
+                self._font_ids.append(font_id)
+
+        BuiltinResources._loaded = True
+
+    def find(self, resource):
+        '''Get a resource's filepath'''
+
+        if resource not in self._resources:
+            raise ResourceNotFoundError('Could not find resource: ' + resource)
+
+        return self._resources[resource]
+
+    def ls(self, search=None, extensions=None):
+        '''List all resources.
+
+        Arguments:
+            search (str): String to match in resource names
+            extensions (List[str]): List of extensions to match
+
+        Returns:
+            List of tuples - (resource, resource_file)
+        '''
+
+        resources = []
+        for resource, resource_file in self._resources.items():
+            if search and search not in resource:
+                continue
+            if extensions and resource_file.suffix not in extensions:
+                continue
+            resources.append((resource, resource_file))
+        return sorted(resources)
+
+    @loads_resources
+    def style(self, resource):
+        '''Get a stylesheet by name or resource.'''
+
+        style = self.find(resource).read_text(encoding='utf-8')
+        return process_stylesheet(style)
+
+    @loads_resources
+    def qicon(self, resource, size=None, color=None):
+        '''Get a resource as a QIcon.'''
+
+        from Qt import QtGui
+
+        pixmap = self.qpixmap(resource, size, color)
+        icon = QtGui.QIcon(pixmap)
+        return icon
+
+    @loads_resources
+    def qpixmap(self, resource, size=None, color=None):
+        '''Get a resource as a QPixmap.'''
+
+        from Qt import QtGui, QtCore
+
+        pixmap = QtGui.QPixmap(str(resource))
+        if size:
+            pixmap = pixmap.scaled(
+                pix(size[0]),
+                pix(size[1]),
+                mode=QtCore.Qt.SmoothTransformation,
+            )
+        if color:
+            # TODO: Colorize pixmap
+            pass
+        return pixmap
 
 
-def read(resource):
-    '''Read a resource'''
+def process_stylesheet(stylesheet):
+    '''Scales all the pixel values in the stylesheet to work with the current
+    monitors DPI.
+    '''
 
-    return path(resource).read_text(encoding='utf-8')
-
-
-def style(name_or_resource):
-    '''Get a stylesheet from a name or resource.'''
-
-    if name_or_resource.startswith(':/'):
-        resource = name_or_resource
-    else:
-        resource = ':/css/' + name_or_resource + '.css'
-    style = read(resource)
-
-    pixel_values = re.findall(r'\d+px', style)
+    pixel_values = re.findall(r'\d+px', stylesheet)
     for pixel_value in pixel_values:
         scaled_value = pix(int(pixel_value[:-2]))
-        style.replace(pixel_value, str(scaled_value) + 'px', 1)
+        stylesheet.replace(pixel_value, str(scaled_value) + 'px', 1)
 
-    return style
-
-
-def icon(resource, size=None, color=None):
-    '''Get a resource as a QIcon'''
-
-    pixmap = qpixmap(resource, size, color)
-    icon = QtGui.QIcon(pixmap)
-    return icon
+    return stylesheet
 
 
-def pixmap(resource, size=None, color=None):
-    '''Get a resource as a QPixmap'''
-
-    from Qt import QtGui, QtCore
-
-    pixmap = QtGui.QPixmap(resource)
-    if size:
-        pixmap = pixmap.scaled(
-            pix(size[0]),
-            pix(size[1]),
-            mode=QtCore.Qt.SmoothTransformation,
-        )
-    if color:
-        # TODO: Colorize pixmap
-        pass
-    return pixmap
-
-
-def preview_icons():
+def preview_icons(api=None):
     '''Show an icon preview dialog'''
+
+    if api:
+        resources = api.resources
+    else:
+        resources = BuiltinResources()
 
     from Qt import QtWidgets, QtCore
 
     app = QtWidgets.QApplication.instance()
     standalone = False
+
     if not app:
         standalone = True
         app = QtWidgets.QApplication([])
-        load()
 
     def icon_widget(resource):
         icon_label = QtWidgets.QLabel()
         icon_label.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
-        icon_label.setPixmap(pixmap(resource, (24, 24)))
+        icon_label.setPixmap(resources.qpixmap(resource, (24, 24)))
         label = QtWidgets.QLabel(resource)
         label.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
         label.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
@@ -232,15 +271,16 @@ def preview_icons():
     layout.setContentsMargins(0, 0, 0, 0)
     layout.setSpacing(0)
     columns = 3
-    for i, (resource, resource_file) in enumerate(ls('icons')):
+    for i, (resource, resource_file) in enumerate(resources.ls('icons')):
         widget = icon_widget(resource)
         col, row = (i % columns), int(i * (1.0 / columns))
         layout.addWidget(widget, row, col)
 
     dialog.setLayout(layout)
-    dialog.setStyleSheet(style('light'))
+    dialog.setStyleSheet(resources.style(':/styles/light.css'))
 
     if standalone:
+        import sys
         sys.exit(dialog.exec_())
     else:
         dialog.exec_()

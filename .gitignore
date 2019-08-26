@@ -121,3 +121,6 @@ venv.bak/
 
 # tmp stuff
 tmp/
+
+# Invoke config
+invoke.yaml
