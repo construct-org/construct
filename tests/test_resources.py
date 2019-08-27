@@ -80,12 +80,12 @@ def test_api_resources():
     tests = [
         ('icons/unique01.png', files[0]), # Unique to tmp_dir
         ('icons/multiple.png', files[1]), # First available
-        ('styles/dark.css', files[2]), # Builtin overriden by api resource
+        ('styles/dark.css', files[2]), # Builtin overriden by tmp_dir resource
         ('styles/unique01.css', files[3]), # Unique to tmp_dir
         ('icons/unique02.png', files[4]), # Unique to settings_dir
         ('styles/unique02.css', files[7]), # Unique to settings dir
-        (':/styles/dark.css', resource_dir / 'styles/dark.css'), # : force b-in
-        ('styles/light.css', resource_dir / 'styles/light.css'), # only in b-in
+        (':/styles/dark.css', resource_dir / 'styles/dark.css'), # : builtin
+        ('styles/light.css', resource_dir / 'styles/light.css'), # only builtin
     ]
     for resource, expected_path in tests:
         resource_path = api.resources.find(resource)
