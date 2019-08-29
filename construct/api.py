@@ -9,9 +9,7 @@ from functools import wraps
 from logging.config import dictConfig
 
 # Local imports
-from .constants import (
-    DEFAULT_LOGGING,
-)
+from .constants import DEFAULT_LOGGING
 from .utils import unipath, ensure_exists, yaml_dump, yaml_load
 from .events import EventManager
 from . import schemas
@@ -21,6 +19,7 @@ from .path import Path
 from .compat import Mapping, basestring
 from .extensions import ExtensionManager
 from .io import IO
+from .resources import Resources
 
 
 __all__ = ['API']
@@ -32,6 +31,7 @@ _cache = {}
 def _on_exit():
     for api in list(_cache.values()):
         api.uninit()
+    _cache.clear()
 
 
 atexit.register(_on_exit)
@@ -84,6 +84,7 @@ class API(object):
         self.context = Context()
         self.schemas = schemas
         self.io = IO(self)
+        self.resources = Resources(self)
         self._logging_dict = kwargs.pop('logging', None)
         self._registered_members = {}
         self.init()

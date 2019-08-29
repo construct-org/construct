@@ -79,7 +79,7 @@ def build_resources(ctx):
     # Build css
     qtsass.compile_dirname(
         joinpath('construct', 'resources', 'scss'),
-        joinpath('construct', 'resources', 'css'),
+        joinpath('construct', 'resources', 'styles'),
     )
 
     qrc_src = joinpath('resources.qrc')
@@ -91,7 +91,7 @@ def build_resources(ctx):
         icons=(joinpath('construct', 'resources', 'icons'), ['.png']),
         brand=(joinpath('construct', 'resources', 'brand'), ['.png']),
         fonts=(joinpath('construct', 'resources', 'fonts'), ['.ttf']),
-        css=(joinpath('construct', 'resources', 'css'), ['.css']),
+        styles=(joinpath('construct', 'resources', 'styles'), ['.css']),
     )
     with open(qrc_src, 'w') as f:
         f.write(text)

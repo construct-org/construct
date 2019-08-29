@@ -32,7 +32,6 @@ class Nuke(Host):
             if software_config.stem not in api.software:
                 copy_file(software_config, api.software.folder)
 
-
     def unload(self, api):
         pass
 
