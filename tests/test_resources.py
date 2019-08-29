@@ -15,9 +15,8 @@ sys.modules['Qt.QtGui'] = mock.MagicMock()
 sys.modules['Qt.QtWidgets'] = mock.MagicMock()
 
 # Local imports
-from construct import resources
-# Local imports
 import construct
+from construct import resources
 from . import setup_api, teardown_api, data_dir
 
 
@@ -30,17 +29,17 @@ def teardown_module():
 
 
 def test_builtin_resources():
-    '''Load and find builtin resources.'''
+    '''Load and get builtin resources.'''
 
     r = resources.BuiltinResources()
-    r.load()
+    r._load()
 
     assert r._loaded
-    assert r.find(':/styles/dark.css')
-    assert r.find(':/styles/light.css')
+    assert r.get(':/styles/dark.css')
+    assert r.get(':/styles/light.css')
 
     try:
-        r.find(':/doesnot/exist.png')
+        r.get(':/doesnot/exist.png')
         assert False, 'Expected ResourceNotFoundError.'
     except resources.ResourceNotFoundError:
         assert True
@@ -51,7 +50,7 @@ def test_builtin_resources():
 
 
 def test_api_resources():
-    '''Find API resources.'''
+    '''Get API resources.'''
 
     api = construct.API(__name__)
 
@@ -88,6 +87,6 @@ def test_api_resources():
         ('styles/light.css', resource_dir / 'styles/light.css'), # only builtin
     ]
     for resource, expected_path in tests:
-        resource_path = api.resources.find(resource)
+        resource_path = api.resources.get(resource)
         err = '%s: %s != %s' % (resource, resource_path, expected_path)
         assert resource_path.samefile(expected_path), err

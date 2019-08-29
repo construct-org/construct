@@ -49,12 +49,12 @@ class Resources(object):
         self.api = api
         self.builtin_resources = BuiltinResources()
 
-    def find(self, resource):
-        '''Find a resource by relative path.'''
+    def get(self, resource):
+        '''get a resource by relative path.'''
 
         if resource.startswith(':/'):
             if resource in self.builtin_resources:
-                return self.builtin_resources.find(resource)
+                return self.builtin_resources.get(resource)
             else:
                 resource = resource.lstrip(':/')
 
@@ -64,7 +64,7 @@ class Resources(object):
 
         resource = ':/' + resource
         if resource in self.builtin_resources:
-            return self.builtin_resources.find(resource)
+            return self.builtin_resources.get(resource)
 
         raise ResourceNotFoundError('Could not find resource %s' % resource)
 
@@ -97,18 +97,18 @@ class Resources(object):
     def style(self, resource):
         '''Get a stylesheet by resource.'''
 
-        style = self.find(resource).read_text(encoding='utf-8')
+        style = self.get(resource).read_text(encoding='utf-8')
         return process_stylesheet(style)
 
     def qicon(self, resource, size=None, color=None):
         '''Get a resource as a QIcon.'''
 
-        return self.builtin_resources.qicon(self.find(resource), size, color)
+        return self.builtin_resources.qicon(self.get(resource), size, color)
 
     def qpixmap(self, resource, size=None, color=None):
         '''Get a resource as a QPixmap.'''
 
-        return self.builtin_resources.qpixmap(self.find(resource), size, color)
+        return self.builtin_resources.qpixmap(self.get(resource), size, color)
 
 
 class BuiltinResources(object):
@@ -157,7 +157,7 @@ class BuiltinResources(object):
 
         BuiltinResources._loaded = True
 
-    def find(self, resource):
+    def get(self, resource):
         '''Get a resource's filepath'''
 
         if resource not in self._resources:
@@ -189,7 +189,7 @@ class BuiltinResources(object):
     def style(self, resource):
         '''Get a stylesheet by name or resource.'''
 
-        style = self.find(resource).read_text(encoding='utf-8')
+        style = self.get(resource).read_text(encoding='utf-8')
         return process_stylesheet(style)
 
     @loads_resources
