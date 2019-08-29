@@ -30,7 +30,7 @@ class BarLayout(QBoxLayout):
         self.start = QBoxLayout()
         self.start.setSpacing(0)
         self.left = self.start
-        self.top = self.left
+        self.top = self.start
 
         self.middle = QBoxLayout()
         self.middle.setSpacing(0)
@@ -39,11 +39,11 @@ class BarLayout(QBoxLayout):
         self.end = QBoxLayout()
         self.end.setSpacing(0)
         self.right = self.end
-        self.bottom = self.right
+        self.bottom = self.end
 
-        self.addLayout(self.left)
-        self.addLayout(self.center)
-        self.addLayout(self.right)
+        self.addLayout(self.start)
+        self.addLayout(self.middle)
+        self.addLayout(self.end)
 
         self.setStretch(1, 1)
         self.setSpacing(0)
