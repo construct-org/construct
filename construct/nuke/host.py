@@ -8,14 +8,13 @@ from collections import namedtuple
 
 # Local imports
 from .. import API
-from .. import resources
 from ..compat import Path
 from ..extensions import Host
 from ..utils import copy_file, update_env
 
 
 __all__ = ['Nuke']
-this_package = Path(__file__).parent
+package_path = Path(__file__).parent
 Version = namedtuple('Version', 'major minor patch')
 
 
@@ -27,8 +26,8 @@ class Nuke(Host):
     icon = 'icons/nuke.png'
 
     def load(self, api):
-        api.path.append(this_package)
-        for software_config in this_package.glob('software/*.yaml'):
+        api.path.append(package_path)
+        for software_config in package_path.glob('software/*.yaml'):
             if software_config.stem not in api.software:
                 copy_file(software_config, api.software.folder)
 
@@ -75,18 +74,19 @@ class Nuke(Host):
     def set_workspace(self, directory):
         import nuke
 
-        fav_icon = resources.path(':/brand/construct_icon-white-on-black.png')
+        fav_icon = self.api.ui.resources.get(
+            'brand/construct_icon-white-on-black.png'
+        )
         nuke.removeFavoriteDir('project')
         nuke.removeFavoriteDir('asset')
         nuke.removeFavoriteDir('workspace')
-        # Add favorites
-        # nuke.addFavoriteDir(
-        #     fav_name,
-        #     directory=directory,
-        #     type=(nuke.IMAGE | nuke.SCRIPT | nuke.GEO),
-        #     icon=fav_icon,
-        #     tooltip=directory
-        # )
+        nuke.addFavoriteDir(
+            fav_name,
+            directory=directory,
+            type=(nuke.IMAGE | nuke.SCRIPT | nuke.GEO),
+            icon=fav_icon,
+            tooltip=directory
+        )
 
         os.chdir(directory)
         nuke.root()['project_directory'].setValue(directory)
@@ -137,7 +137,7 @@ class Nuke(Host):
                 return widget
 
     def before_launch(self, api, software, env, ctx):
-        startup_path = (this_package / 'startup').as_posix()
+        startup_path = (package_path / 'startup').as_posix()
         update_env(
             env,
             NUKE_PATH=[startup_path],

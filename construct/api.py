@@ -19,7 +19,7 @@ from .path import Path
 from .compat import Mapping, basestring
 from .extensions import ExtensionManager
 from .io import IO
-from .resources import Resources
+from .ui.manager import UIManager
 
 
 __all__ = ['API']
@@ -84,7 +84,7 @@ class API(object):
         self.context = Context()
         self.schemas = schemas
         self.io = IO(self)
-        self.resources = Resources(self)
+        self.ui = UIManager(self)
         self._logging_dict = kwargs.pop('logging', None)
         self._registered_members = {}
         self.init()
@@ -118,6 +118,9 @@ class API(object):
         _log.debug('Loading IO...')
         self.io.load()
 
+        _log.debug('Loading UI...')
+        self.ui.load()
+
         _log.debug('Configuring logging...')
         self._setup_logging()
 
@@ -142,6 +145,9 @@ class API(object):
 
         _log.debug('Unloading path...')
         self.path.unload()
+
+        _log.debug('Unloading UI...')
+        self.ui.unload()
 
         _log.debug('Unloading IO...')
         self.io.unload()

@@ -1,0 +1,23 @@
+
+
+@function vary($color, $percent) {
+    $brightness: ((red($color) + green($color) + blue($color)) / 3) / 255;
+
+    @if $brightness < 0.5 {
+        @return lighten($color, $percent);
+    } @else {
+        @return darken($color, $percent);
+    }
+}
+
+
+@function vary_on($on_color, $color, $percent) {
+
+    $brightness: ((red($color) + green($color) + blue($color)) / 3) / 255;
+
+    @if $brightness < 0.5 {
+        @return lighten($on_color, $percent);
+    } @else {
+        @return darken($on_color, $percent);
+    }
+}

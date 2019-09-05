@@ -11,6 +11,16 @@ from Qt.QtWidgets import (
 )
 
 
+__all__ = [
+    'H1',
+    'H2',
+    'H3',
+    'H4',
+    'H5',
+    'P',
+]
+
+
 class BaseLabel(QLabel):
 
     css_id = ''
@@ -42,11 +52,3 @@ class H5(BaseLabel)
 
 class P(BaseLabel)
     css_id = 'p'
-
-
-class Icon(QLabel):
-    css_id = 'icon'
-
-
-class IconButton(QWidget):
-    css_id = 'icon-button'

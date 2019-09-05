@@ -1,0 +1,214 @@
+// Fonts
+$font_stack: Roboto, Helvetica, Arial, sans-serif !default;
+$font_size: 12pt !default;
+$font_weight: 400 !default;
+
+// Colors
+$primary: #F63659 !default;
+$primary_variant: #D72F57 !default;
+$on_primary: #FFFFFF !default;
+$alert: #FACE49 !default;
+$error: #F15555 !default;
+$success: #7EDC9E !default;
+$info: #87CDEB !default;
+$on_secondary: #000000 !default;
+$background: #F2F2F2 !default;
+$on_background: #000000 !default;
+$surface: #FFFFFF !default;
+$on_surface: #000000 !default;
+$transparent: rgba(255, 255, 255, 0);
+
+
+@import 'icons';
+@import 'funcs';
+
+
+// Mixins //
+
+
+@mixin roboto {
+    font-family: $font_stack;
+    font-weight: $font_weight;
+    font-size: $font_size;
+}
+
+@mixin roboto-light {
+    font-family: $font_stack;
+    font-weight: $font_weight - 100;
+    font-size: $font_size;
+}
+
+@mixin roboto-medium {
+    font-family: $font_stack;
+    font-weight: $font_weight + 100;
+    font-size: $font_size;
+}
+
+@mixin icon {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: "construct" !important;
+  font-size: $font_size;
+}
+
+
+// Base Widgets //
+
+
+QWidget {
+    @include roboto;
+}
+
+*[status="alert"] {
+    color: $alert;
+    border-color: $alert;
+}
+
+*[status="error"] {
+    color: $error;
+    border-color: $error;
+}
+
+*[status="success"] {
+    color: $success;
+    border-color: $success;
+}
+
+*[status="info"] {
+    color: $info;
+    border-color: $info;
+}
+
+QLabel#icon {
+    @include icon;
+    background-color: $transparent;
+}
+
+QLabel#h1 {
+    @include roboto;
+    font-size: 24pt;
+}
+
+QLabel#h2 {
+    @include roboto-medium;
+    font-size: 20pt;
+}
+
+QLabel#h3 {
+    @include roboto;
+    font-size: 18pt;
+}
+
+QLabel#h4 {
+    @include roboto;
+    font-size: 14pt;
+}
+
+QLabel#h5 {
+    @include roboto-medium;
+    font-size: 14pt;
+}
+
+QLabel#p {
+    @include roboto;
+    font-size: 12pt;
+}
+
+
+// Primary colored sub-theme //
+
+
+QWidget#primary {
+    background-color: $primary;
+    color: $on_primary;
+
+    QLabel#icon::hover {
+        background-color: vary($primary, 10%);
+        border-radius: 3;
+    }
+}
+
+
+// Surface colored sub-theme //
+
+
+QWidget#surface {
+    background-color: $surface;
+    color: $on_surface;
+
+    QLabel#icon::hover {
+        background-color: vary($surface, 10%);
+        border-radius: 3;
+    }
+}
+
+
+// Alert colored sub-theme //
+
+
+QWidget#alert {
+    background-color: $alert;
+    color: $on_secondary;
+
+    QLabel#icon::hover {
+        background-color: vary($alert, 10%);
+        border-radius: 3;
+    }
+}
+
+
+// Error colored sub-theme //
+
+
+QWidget#error {
+    background-color: $error;
+    color: $on_secondary;
+
+    QLabel#icon::hover {
+        background-color: vary($error, 10%);
+        border-radius: 3;
+    }
+}
+
+
+// Success colored sub-theme //
+
+
+QWidget#success {
+    background-color: $success;
+    color: $on_secondary;
+
+    QLabel#icon::hover {
+        background-color: vary($success, 10%);
+        border-radius: 3;
+    }
+}
+
+
+// Info colored sub-theme //
+
+
+QWidget#info {
+    background-color: $info;
+    color: $on_secondary;
+
+    QLabel#icon::hover {
+        background-color: vary($info, 10%);
+        border-radius: 3;
+    }
+}
+
+
+// Background colored sub-theme //
+
+
+QWidget#background {
+    background-color: $background;
+    color: $on_background;
+
+    QLabel#icon::hover {
+        background-color: vary($background, 10%);
+        border-radius: 3;
+    }
+}

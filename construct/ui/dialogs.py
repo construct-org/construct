@@ -16,12 +16,10 @@ from .layouts import HBarLayout
 from .widgets import (
     H3,
     P,
-    Icon,
-    IconButton,
 )
 
 
-class BaseDialog(QDialog):
+class FramelessDialog(QDialog):
     '''Frameless Dialog
 
     Arguments:
@@ -29,8 +27,12 @@ class BaseDialog(QDialog):
         f (QtCore.Qt.WindowFlags)
     '''
 
+    css_id = 'surface'
+
     def __init__(self, parent=None):
-        super(BaseDialog, self).__init__(parent)
+        super(FramelessDialog, self).__init__(parent)
+
+        self.setObjectName(self.css_id)
 
         self.setWindowFlags(
             self.windowFlags() |
@@ -61,6 +63,9 @@ class BaseDialog(QDialog):
         self.layout.addWidget(self.footer)
 
 
+class ShortNotification(QDialog)
+
+
 class Notification(BaseDialog):
 
     def __init__(
@@ -69,7 +74,7 @@ class Notification(BaseDialog):
         message,
         title=None,
         icon=None,
-        close_icon='icons/close.png',
+        close_icon=None,
         parent=None,
     ):
         super(Notification, self).__init__(parent)
@@ -77,7 +82,7 @@ class Notification(BaseDialog):
         self.type = type.lower()
         self.message = message
         self.icon = icon
-        self.close_icon = close_icon
+        self.close_icon = close_icon or 'close'
         self.is_brief = title is None or len(message) < 128
         self.title = title or type.title()
 
