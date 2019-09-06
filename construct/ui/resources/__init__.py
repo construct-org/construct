@@ -41,25 +41,11 @@ package_path = Path(__file__).parent
 missing = object()
 
 
-def loads_resources(method):
-    '''A decorator that ensures an objects resources are loaded before
-    executing.
-    '''
-
-    @wraps(method)
-    def call_method(self, *args, **kwargs):
-        resources = getattr(self, resources, None)
-        if resources:
-            resources.load()
-        return method(*args, **kwargs)
-    return call_method
-
-
 class ResourceNotFoundError(Exception):
     '''Raised when a resource can not be found.'''
 
 
-class UIResources(object):
+class Resources(object):
     '''Work with resources for an API object.
 
     Arguments:
@@ -75,10 +61,11 @@ class UIResources(object):
     image_extensions = IMAGE_EXTENSIONS
     resource_extensions = RESOURCE_EXTENSIONS
 
-    def __init__(self, lookup_paths):
-        self.lookup_paths = lookup_paths
-        self.builtin_resources = BuiltinUIResources()
+    def __init__(self, lookup_paths=None):
+        self.lookup_paths = lookup_paths or []
+        self.builtin_resources = BuiltinResources()
         self.loaded = False
+        self.path = package_path
 
     def load(self):
         if self.loaded:
@@ -110,19 +97,20 @@ class UIResources(object):
     def get(self, resource, default=missing):
         '''get a resource by relative path.'''
 
-        resource_file = self.lookup_paths.find(resource)
-        if resource_file:
-            return resource_file
+        for path in self.lookup_paths:
+            potential_path = path / resource
+            if potential_path.exists():
+                return potential_path
 
         return self.builtin_resources.get(resource, default)
 
     def get_char(self, char, family=None):
         family = family or 'construct'
         try:
-            return self.font_charmaps[family][glyph]
+            return self.font_charmaps[family][char]
         except KeyError:
             raise ResourceNotFoundError(
-                'Could not find char: %s in font family %s' % (glyph, family)
+                'Could not find char: %s in font family %s' % (char, family)
             )
 
     def find(self, search=None, extensions=None):
@@ -152,7 +140,7 @@ class UIResources(object):
         return sorted(list(resources.items()) + bresources)
 
 
-class BuiltinUIResources(object):
+class BuiltinResources(object):
     '''Work with builtin resources including icons, branding, stylesheets
     and fonts.
     '''
@@ -161,7 +149,6 @@ class BuiltinUIResources(object):
 
     def __init__(self):
         self._update_resources()
-        self.path = package_path
 
     def __contains__(self, resource):
         return resource in self._resources
