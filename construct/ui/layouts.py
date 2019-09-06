@@ -25,18 +25,19 @@ class BarLayout(QBoxLayout):
     '''
 
     def __init__(self, direction=None, parent=None):
-        super(BarLayout, self).__init__(parent=parent)
+        direction = direction or self.LeftToRight
+        super(BarLayout, self).__init__(direction, parent)
 
-        self.start = QBoxLayout()
+        self.start = QBoxLayout(direction)
         self.start.setSpacing(0)
         self.left = self.start
         self.top = self.start
 
-        self.middle = QBoxLayout()
+        self.middle = QBoxLayout(direction)
         self.middle.setSpacing(0)
         self.center = self.middle
 
-        self.end = QBoxLayout()
+        self.end = QBoxLayout(direction)
         self.end.setSpacing(0)
         self.right = self.end
         self.bottom = self.end
@@ -49,13 +50,12 @@ class BarLayout(QBoxLayout):
         self.setSpacing(0)
         self.setContentsMargins(0, 0, 0, 0)
 
-        direction = direction or self.LeftToRight
         self.setDirection(direction)
 
     def setDirection(self, direction):
         '''Realign sub-layouts based on direction'''
 
-        if direction in (self.LeftToRight, self.RighToLeft):
+        if direction in (self.LeftToRight, self.RightToLeft):
             self.start.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
             self.middle.setAlignment(QtCore.Qt.AlignCenter)
             self.end.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
