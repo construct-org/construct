@@ -1,13 +1,30 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+from functools import wraps
 
 # Third party imports
 import qtsass
 
 # Local imports
 from ..compat import Path, basestring
-from .resources import loads_resources
+from ..types import WeakSet
+from . import resources
+
+
+def ensure_loaded(method):
+    '''A decorator that ensures an objects resources are loaded before
+    executing.
+    '''
+
+    @wraps(method)
+    def call_method(self, *args, **kwargs):
+        self.load()
+        resources = getattr(self, 'resources', None)
+        if resources:
+            resources.load()
+        return method(self, *args, **kwargs)
+    return call_method
 
 
 def clamp(value, lower, upper):
@@ -53,7 +70,7 @@ def hex_to_rgb(code):
     return tuple([ord(i) for i in code[1:].decode('hex')])
 
 
-class UITheme(object):
+class Theme(object):
     """Represents the UI Font and Color theme.
 
     Colors are based on the Material design color system. All attributes can
@@ -84,7 +101,7 @@ class UITheme(object):
 
     defaults = dict(
         name='default',
-        font_stack='Roboto, Helvetica, Arial, sans-serif',
+        font_stack='Roboto',
         font_size='12pt',
         font_weight='400',
         primary='#F63659',
@@ -120,9 +137,45 @@ class UITheme(object):
         self.__dict__.update(**self.defaults)
         self.__dict__.update(**options)
         self.resources = resources
-        self.stylesheet = self.compile()
+        self.stylesheet = self.compile_stylesheet()
+        self._widgets = WeakSet()
+        self._signals = None
+        self._loaded = False
 
-    def compile(self):
+    def load(self):
+        if self._loaded:
+            return
+
+        from Qt.QtCore import QObject, Signal
+
+        class ThemeSignals(QObject):
+            changed = Signal(str)
+
+        self._signals = ThemeSignals()
+        self._signals.changed.connect(self.on_theme_changed)
+
+        self._loaded = True
+
+    @ensure_loaded
+    def apply(self, widget):
+        widget.setStyleSheet(self.stylesheet)
+        self._widgets.add(widget)
+
+    def set_resources(self, resources):
+        self.resources = resources
+
+    def refresh_stylesheet(self):
+        self.stylesheet = self.compile_stylesheet()
+        if self._signals:
+            self._signals.changed.emit(self.stylesheet)
+        else:
+            self.on_theme_changed()
+
+    def on_theme_changed(self):
+        for widget in self._widgets:
+            widget.setStyleSheet(self.stylesheet)
+
+    def compile_stylesheet(self):
         """Compile a stylesheet for this theme."""
 
         sass = ''
@@ -154,11 +207,11 @@ class UITheme(object):
         return qtsass.compile(
             sass,
             include_paths=[
-                str(self.resources.builtin_resources.path / 'styles'),
+                str(self.resources.path / 'styles'),
             ],
         )
 
-    @loads_resources
+    @ensure_loaded
     def pixmap(self, resource, size=None, family=None):
         '''Get a pixmap for a resource.
 
@@ -168,7 +221,7 @@ class UITheme(object):
             family (str): Font family for font icon character (optional)
         '''
 
-        from QtGui import QPixmap, QIcon
+        from Qt.QtGui import QPixmap, QIcon
 
         path = self.resources.get(resource, None)
         if path:
@@ -182,7 +235,7 @@ class UITheme(object):
         char = self.resources.get_char(resource, family)
         return FontIcon(char, family).pixmap(size)
 
-    @loads_resources
+    @ensure_loaded
     def icon(self, resource, family=None, parent=None):
         '''Get a QIcon for a resource.
 
@@ -192,7 +245,7 @@ class UITheme(object):
             parent (QWidget): Parent QWidget of QIcon - used for coloring
         '''
 
-        from QtGui import QIcon
+        from Qt.QtGui import QIcon
         from .icons import SvgIcon, FontIcon
 
         path = self.resources.get(resource, None)
@@ -206,3 +259,7 @@ class UITheme(object):
 
         char = self.resources.get_char(resource, family)
         return FontIcon(char, family, parent)
+
+
+# Theme singleton
+theme = Theme(resources.Resources([]))

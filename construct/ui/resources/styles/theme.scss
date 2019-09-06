@@ -1,5 +1,5 @@
 // Fonts
-$font_stack: Roboto, Helvetica, Arial, sans-serif !default;
+$font_stack: Roboto !default;
 $font_size: 12pt !default;
 $font_weight: 400 !default;
 
@@ -80,37 +80,37 @@ QWidget {
     border-color: $info;
 }
 
-QLabel#icon {
+*#icon {
     @include icon;
     background-color: $transparent;
 }
 
-QLabel#h1 {
+*#h1 {
     @include roboto;
     font-size: 24pt;
 }
 
-QLabel#h2 {
+*#h2 {
     @include roboto-medium;
     font-size: 20pt;
 }
 
-QLabel#h3 {
+*#h3 {
     @include roboto;
     font-size: 18pt;
 }
 
-QLabel#h4 {
+*#h4 {
     @include roboto;
     font-size: 14pt;
 }
 
-QLabel#h5 {
+*#h5 {
     @include roboto-medium;
     font-size: 14pt;
 }
 
-QLabel#p {
+*#p {
     @include roboto;
     font-size: 12pt;
 }
@@ -123,7 +123,7 @@ QWidget#primary {
     background-color: $primary;
     color: $on_primary;
 
-    QLabel#icon::hover {
+    *#icon::hover {
         background-color: vary($primary, 10%);
         border-radius: 3;
     }
@@ -137,7 +137,7 @@ QWidget#surface {
     background-color: $surface;
     color: $on_surface;
 
-    QLabel#icon::hover {
+    *#icon::hover {
         background-color: vary($surface, 10%);
         border-radius: 3;
     }
@@ -151,7 +151,7 @@ QWidget#alert {
     background-color: $alert;
     color: $on_secondary;
 
-    QLabel#icon::hover {
+    *#icon::hover {
         background-color: vary($alert, 10%);
         border-radius: 3;
     }
@@ -165,7 +165,7 @@ QWidget#error {
     background-color: $error;
     color: $on_secondary;
 
-    QLabel#icon::hover {
+    *#icon::hover {
         background-color: vary($error, 10%);
         border-radius: 3;
     }
@@ -179,7 +179,7 @@ QWidget#success {
     background-color: $success;
     color: $on_secondary;
 
-    QLabel#icon::hover {
+    *#icon::hover {
         background-color: vary($success, 10%);
         border-radius: 3;
     }
@@ -193,7 +193,7 @@ QWidget#info {
     background-color: $info;
     color: $on_secondary;
 
-    QLabel#icon::hover {
+    *#icon::hover {
         background-color: vary($info, 10%);
         border-radius: 3;
     }
@@ -207,7 +207,7 @@ QWidget#background {
     background-color: $background;
     color: $on_background;
 
-    QLabel#icon::hover {
+    *#icon::hover {
         background-color: vary($background, 10%);
         border-radius: 3;
     }
