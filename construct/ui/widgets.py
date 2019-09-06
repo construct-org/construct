@@ -38,7 +38,7 @@ class H2(BaseLabel):
     css_id = 'H2'
 
 
-class H3(BaseLabel)
+class H3(BaseLabel):
     css_id = 'H3'
 
 
@@ -46,9 +46,9 @@ class H4(BaseLabel):
     css_id = 'H2'
 
 
-class H5(BaseLabel)
+class H5(BaseLabel):
     css_id = 'H3'
 
 
-class P(BaseLabel)
+class P(BaseLabel):
     css_id = 'p'
