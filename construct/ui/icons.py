@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from Qt.QtWidgets import (
-    QIcon,
-)
 from Qt.QtGui import (
     QIconEngine,
     QIcon,
@@ -21,14 +18,14 @@ class SvgIconEngine(QIconEngine):
     '''Handles painting of SVG icons.'''
 
     def __init__(self, svg_file, parent=None):
-        super(QSvgIconEngine, self).__init__()
+        super(SvgIconEngine, self).__init__()
         self.svg_file = svg_file
         self.svg = QSvgRenderer(self.svg_file)
         self.parent = parent
 
     def pixmap(self, size, mode, state):
         img = QImage(size, QImage.Format_ARGB32)
-        img.fill(QColor.transparent)
+        img.fill(QColor(0, 0, 0, 0))
         pix = QPixmap.fromImage(img)
         painter = QPainter(pix)
         self.paint(painter, pix.rect(), QtCore.Qt.AlignCenter, mode, state)
@@ -51,6 +48,7 @@ class SvgIcon(QIcon):
 
     def __init__(self, svg_file, parent=None):
         super(SvgIcon, self).__init__(SvgIconEngine(svg_file, parent))
+        self.svg_file = svg_file
 
 
 class FontIconEngine(QIconEngine):
@@ -64,7 +62,7 @@ class FontIconEngine(QIconEngine):
 
     def pixmap(self, size, mode, state):
         img = QImage(size, QImage.Format_ARGB32)
-        img.fill(QColor.transparent)
+        img.fill(QColor(0, 0, 0, 0))
         pix = QPixmap.fromImage(img)
         painter = QPainter(pix)
         self.paint(painter, pix.rect(), QtCore.Qt.AlignCenter, mode, state)
@@ -93,3 +91,6 @@ class FontIcon(QIcon):
     def __init__(self, char, family=None, parent=None):
         family = family or 'construct'
         super(FontIcon, self).__init__(FontIconEngine(char, family, parent))
+        self.family = family
+        self.char = char
+
