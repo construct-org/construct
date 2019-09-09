@@ -4,7 +4,7 @@
 # Local imports
 from .resources import Resources
 from .theme import theme
-from .eventloop import starts_event_loop
+from .eventloop import requires_event_loop
 
 
 class UIManager(object):
@@ -29,7 +29,7 @@ class UIManager(object):
         self.api.unextend('success')
         self.api.unextend('info')
 
-    @starts_event_loop
+    @requires_event_loop
     def alert(self, message, title=None):
         '''Create an alert dialog.
 
@@ -46,7 +46,7 @@ class UIManager(object):
             close_icon='icons/close.svg',
         ).exec_()
 
-    @starts_event_loop
+    @requires_event_loop
     def error(self, message, title=None):
         '''Create an error dialog.
 
@@ -63,7 +63,7 @@ class UIManager(object):
             close_icon='icons/close.svg',
         ).exec_()
 
-    @starts_event_loop
+    @requires_event_loop
     def success(self, message, title=None):
         '''Create a success dialog.
 
@@ -79,7 +79,7 @@ class UIManager(object):
             close_icon='icons/close.svg',
         ).exec_()
 
-    @starts_event_loop
+    @requires_event_loop
     def info(self, message, title=None):
         '''Create an info dialog.
 

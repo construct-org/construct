@@ -4,11 +4,7 @@
 from __future__ import absolute_import
 
 # Third party imports
-from Qt.QtWidgets import (
-    QLabel,
-    QWidget,
-    QHBoxLayout,
-)
+from Qt import QtWidgets
 
 
 __all__ = [
@@ -21,7 +17,7 @@ __all__ = [
 ]
 
 
-class BaseLabel(QLabel):
+class BaseLabel(QtWidgets.QLabel):
 
     css_id = ''
 
@@ -31,24 +27,28 @@ class BaseLabel(QLabel):
 
 
 class H1(BaseLabel):
-    css_id = 'H1'
+    css_id = 'h1'
 
 
 class H2(BaseLabel):
-    css_id = 'H2'
+    css_id = 'h2'
 
 
 class H3(BaseLabel):
-    css_id = 'H3'
+    css_id = 'h3'
 
 
 class H4(BaseLabel):
-    css_id = 'H2'
+    css_id = 'h2'
 
 
 class H5(BaseLabel):
-    css_id = 'H3'
+    css_id = 'h3'
 
 
 class P(BaseLabel):
     css_id = 'p'
+
+    def __init__(self, *args, **kwargs):
+        super(P, self).__init__(*args, **kwargs)
+        self.setWordWrap(True)

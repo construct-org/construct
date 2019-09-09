@@ -4,13 +4,7 @@
 from __future__ import absolute_import
 
 # Third party imports
-from Qt import QtCore
-from Qt.QtWidgets import (
-    QDialog,
-    QWidget,
-    QVBoxLayout,
-    QPushButton,
-)
+from Qt import QtCore, QtGui, QtWidgets
 
 # Local imports
 from .layouts import HBarLayout
@@ -22,7 +16,7 @@ from .theme import theme
 from .scale import pix
 
 
-class FramelessDialog(QDialog):
+class FramelessDialog(QtWidgets.QDialog):
     '''Frameless Dialog
 
     Arguments:
@@ -55,40 +49,41 @@ class FramelessDialog(QDialog):
     css_id = 'surface'
 
     def __init__(self, parent=None):
-        super(FramelessDialog, self).__init__(parent)
+        super(FramelessDialog, self).__init__(parent=parent)
 
         self._mouse_pressed = False
         self._mouse_position = None
         self._resize_area = None
-        self.resize_area_size = 16
+        self.resize_area_size = pix(12)
+        self.setMouseTracking(True)
 
         self.setObjectName(self.css_id)
         theme.apply(self)
 
         self.setWindowFlags(
-            self.windowFlags() |
+            QtCore.Qt.Dialog |
             QtCore.Qt.WindowStaysOnTopHint |
             QtCore.Qt.FramelessWindowHint
         )
 
         margins = (pix(16), pix(8), pix(16), pix(8))
 
-        self.header = QWidget()
+        self.header = QtWidgets.QWidget()
         self.header_layout = HBarLayout()
         self.header_layout.setContentsMargins(*margins)
         self.header.setLayout(self.header_layout)
 
-        self.body = QWidget()
-        self.body_layout = QVBoxLayout()
+        self.body = QtWidgets.QWidget()
+        self.body_layout = QtWidgets.QVBoxLayout()
         self.body_layout.setContentsMargins(*margins)
         self.body.setLayout(self.body_layout)
 
-        self.footer = QWidget()
+        self.footer = QtWidgets.QWidget()
         self.footer_layout = HBarLayout()
         self.footer_layout.setContentsMargins(*margins)
         self.footer.setLayout(self.footer_layout)
 
-        self.layout = QVBoxLayout()
+        self.layout = QtWidgets.QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
         self.layout.addWidget(self.header)
@@ -127,7 +122,7 @@ class FramelessDialog(QDialog):
             self.setCursor(cursor)
 
         if self._mouse_pressed:
-            vector = event.pos() - self._mouse_position
+            vector = self.mapToParent(event.pos()) - self.mapToParent(self._mouse_position)
             if self.resizing:
                 rect = self.geometry()
                 offset = self.mapToParent(self._mouse_position + vector)
@@ -166,37 +161,83 @@ class Notification(FramelessDialog):
     ):
         super(Notification, self).__init__(parent)
 
-        self.type = type.lower()
-        self.message = message
+        self.setObjectName(type.lower())
+        self.setMinimumWidth(272)
 
-        if icon:
-            self.icon = theme.icon(icon, parent=self)
-        else:
-            self.icon = None
+        self.header_message = P(message, parent=self)
+        self.header_message.setAlignment(
+            QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+        )
+        self.body_message = P(message, parent=self)
+        self.body_message.setAlignment(QtCore.Qt.AlignLeft)
+        self.title = H3(title or type.title(), parent=self)
+        self.title.setAlignment(
+            QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+        )
 
-        self.close_icon = theme.icon(close_icon or 'close', parent=self)
-        self.close_button = QPushButton(parent=self)
+        # TODO: Creat icon widget
+        self.icon_widget = QtWidgets.QPushButton(parent=self)
+        self.icon_widget.hide()
+        self.icon_widget.setObjectName('icon')
+        self.icon_widget.setFlat(True)
+        self.icon_widget.setDisabled(True)
+        self.set_icon(icon)
+
+        self.close_button = QtWidgets.QPushButton(parent=self)
         self.close_button.setObjectName('icon')
-        self.close_button.setIcon(self.close_icon)
-        self.close_button.setIconSize(QtCore.QSize(pix(24), pix(24)))
         self.close_button.setFlat(True)
         self.close_button.clicked.connect(self.accept)
+        self.set_close_icon(close_icon)
 
-        self.is_brief = title is None or len(message) < 128
-        self.title = title or type.title()
+        self.header_layout.left.addWidget(self.icon_widget)
+        self.header_layout.center.addWidget(self.title, stretch=1)
+        self.header_layout.center.addWidget(self.header_message, stretch=1)
+        self.header_layout.right.addWidget(self.close_button)
+        self.body_layout.addWidget(self.body_message, stretch=1)
 
-        self.setObjectName(self.type)
+        self.set_brief(False)
 
-        # if self.icon:
-        #     self.header_layout.left.addWidget(self.icon)
-        if self.close_icon:
-            self.header_layout.right.addWidget(self.close_button)
-
+    def set_brief(self, value):
+        self.is_brief = value
         if self.is_brief:
-            self.header_layout.center.addWidget(P(self.message))
+            self.header_message.show()
+            self.title.hide()
             self.body.hide()
             self.footer.hide()
+            self.adjustSize()
         else:
-            self.header_layout.center.addWidget(H3(self.title))
-            self.body_layout.addWidget(P(self.message))
-            self.footer.hide()
+            self.title.show()
+            self.footer.show()
+            self.body.show()
+            self.header_message.hide()
+            self.adjustSize()
+
+    def set_type(self, type):
+        self.setObjectName(type.lower())
+        theme.apply(self)
+
+    def set_icon(self, icon):
+        if icon:
+            self.icon = theme.icon(icon, parent=self)
+            self.icon_widget.setIcon(self.icon)
+            self.icon_widget.setIconSize(QtCore.QSize(pix(24), pix(24)))
+            self.icon_widget.show()
+            self.header_message.setAlignment(QtCore.Qt.AlignCenter)
+            self.title.setAlignment(QtCore.Qt.AlignCenter)
+        else:
+            self.icon = None
+            self.icon_widget.hide()
+            self.header_message.setAlignment(
+                QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+            )
+            self.title.setAlignment(
+                QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+            )
+
+    def set_close_icon(self, icon):
+        self.close_icon = theme.icon(
+            icon or 'close',
+            parent=self.close_button
+        )
+        self.close_button.setIcon(self.close_icon)
+        self.close_button.setIconSize(QtCore.QSize(pix(24), pix(24)))

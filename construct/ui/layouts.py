@@ -10,6 +10,7 @@ from Qt.QtWidgets import (
 )
 
 # Local imports
+from .scale import pix
 
 
 class BarLayout(QBoxLayout):
@@ -47,7 +48,7 @@ class BarLayout(QBoxLayout):
         self.addLayout(self.end)
 
         self.setStretch(1, 1)
-        self.setSpacing(0)
+        self.setSpacing(pix(16))
         self.setContentsMargins(0, 0, 0, 0)
 
         self.setDirection(direction)
@@ -78,9 +79,9 @@ class HBarLayout(BarLayout):
     '''Horizontal BarLayout.
 
     Attributes:
-        left - VBoxLayout alignment set to left
-        center - VBoxLayout alignment set to center
-        right - VBoxLayout alignment set to right
+        left - QBoxLayout alignment set to left
+        center - QBoxLayout alignment set to center
+        right - QBoxLayout alignment set to right
     '''
 
     def __init__(self, parent=None):
@@ -91,9 +92,9 @@ class VBarLayout(BarLayout):
     '''Vertical BarLayout.
 
     Attributes:
-        top - VBoxLayout alignment set to top
-        center - VBoxLayout alignment set to center
-        bottom - VBoxLayout alignment set to bottom
+        top - QBoxLayout alignment set to top
+        center - QBoxLayout alignment set to center
+        bottom - QBoxLayout alignment set to bottom
     '''
 
     def __init__(self, parent=None):

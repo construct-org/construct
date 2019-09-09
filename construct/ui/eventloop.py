@@ -49,7 +49,7 @@ def get_event_loop():
     return EventLoop._instance
 
 
-def starts_event_loop(fn):
+def requires_event_loop(fn):
     '''Make sure the event loop is started before executing the function.'''
 
     from Qt.QtCore import QTimer
