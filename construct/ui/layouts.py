@@ -30,16 +30,16 @@ class BarLayout(QBoxLayout):
         super(BarLayout, self).__init__(direction, parent)
 
         self.start = QBoxLayout(direction)
-        self.start.setSpacing(0)
+        self.start.setSpacing(pix(8))
         self.left = self.start
         self.top = self.start
 
         self.middle = QBoxLayout(direction)
-        self.middle.setSpacing(0)
+        self.middle.setSpacing(pix(8))
         self.center = self.middle
 
         self.end = QBoxLayout(direction)
-        self.end.setSpacing(0)
+        self.end.setSpacing(pix(8))
         self.right = self.end
         self.bottom = self.end
 
