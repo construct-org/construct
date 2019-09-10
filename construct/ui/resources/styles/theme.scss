@@ -19,8 +19,8 @@ $on_surface: #000000 !default;
 $transparent: rgba(255, 255, 255, 0);
 
 
-@import 'icons';
 @import 'funcs';
+@import 'basetheme';
 
 
 // Mixins //
@@ -80,37 +80,37 @@ QWidget {
     border-color: $info;
 }
 
-*#icon {
+#icon {
     @include icon;
     background-color: $transparent;
 }
 
-*#h1 {
+#h1 {
     @include roboto;
     font-size: 24pt;
 }
 
-*#h2 {
+#h2 {
     @include roboto-medium;
     font-size: 20pt;
 }
 
-*#h3 {
+#h3 {
     @include roboto;
     font-size: 18pt;
 }
 
-*#h4 {
+#h4 {
     @include roboto;
     font-size: 14pt;
 }
 
-*#h5 {
+#h5 {
     @include roboto-medium;
     font-size: 14pt;
 }
 
-*#p {
+#p {
     @include roboto;
     font-size: 12pt;
 }
@@ -123,7 +123,7 @@ QWidget#primary {
     background-color: $primary;
     color: $on_primary;
 
-    *#icon::hover {
+    #icon:hover {
         background-color: vary($primary, 10%);
         border-radius: 3;
     }
@@ -134,13 +134,11 @@ QWidget#primary {
 
 
 QWidget#surface {
-    background-color: $surface;
-    color: $on_surface;
-
-    *#icon::hover {
-        background-color: vary($surface, 10%);
-        border-radius: 3;
-    }
+     @include basetheme(
+        $primary,
+        $surface,
+        $on_surface,
+    );
 }
 
 
@@ -148,13 +146,11 @@ QWidget#surface {
 
 
 QWidget#alert {
-    background-color: $alert;
-    color: $on_secondary;
-
-    *#icon::hover {
-        background-color: vary($alert, 10%);
-        border-radius: 3;
-    }
+    @include basetheme(
+        $primary,
+        $alert,
+        $on_secondary,
+    );
 }
 
 
@@ -162,13 +158,11 @@ QWidget#alert {
 
 
 QWidget#error {
-    background-color: $error;
-    color: $on_secondary;
-
-    *#icon::hover {
-        background-color: vary($error, 10%);
-        border-radius: 3;
-    }
+    @include basetheme(
+        $primary,
+        $error,
+        $on_secondary,
+    );
 }
 
 
@@ -176,13 +170,11 @@ QWidget#error {
 
 
 QWidget#success {
-    background-color: $success;
-    color: $on_secondary;
-
-    *#icon::hover {
-        background-color: vary($success, 10%);
-        border-radius: 3;
-    }
+    @include basetheme(
+        $primary,
+        $success,
+        $on_secondary,
+    );
 }
 
 
@@ -190,13 +182,11 @@ QWidget#success {
 
 
 QWidget#info {
-    background-color: $info;
-    color: $on_secondary;
-
-    *#icon::hover {
-        background-color: vary($info, 10%);
-        border-radius: 3;
-    }
+    @include basetheme(
+        $primary,
+        $info,
+        $on_secondary,
+    );
 }
 
 
@@ -204,11 +194,9 @@ QWidget#info {
 
 
 QWidget#background {
-    background-color: $background;
-    color: $on_background;
-
-    *#icon::hover {
-        background-color: vary($background, 10%);
-        border-radius: 3;
-    }
+    @include basetheme(
+        $primary,
+        $background,
+        $on_background,
+    );
 }
