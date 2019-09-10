@@ -56,15 +56,13 @@ class FramelessDialog(QtWidgets.QDialog):
         self._resize_area = None
         self.resize_area_size = pix(12)
         self.setMouseTracking(True)
-
-        self.setObjectName(self.css_id)
-        theme.apply(self)
-
         self.setWindowFlags(
             QtCore.Qt.Dialog |
             QtCore.Qt.WindowStaysOnTopHint |
             QtCore.Qt.FramelessWindowHint
         )
+        self.setObjectName(self.css_id)
+        theme.apply(self)
 
         margins = (pix(16), pix(8), pix(16), pix(8))
 
@@ -157,12 +155,13 @@ class Notification(FramelessDialog):
         title=None,
         icon=None,
         close_icon=None,
+        short=None,
         parent=None,
     ):
-        super(Notification, self).__init__(parent)
+        super(Notification, self).__init__(parent=parent)
 
         self.setObjectName(type.lower())
-        self.setMinimumWidth(272)
+        self.setMinimumWidth(pix(272))
 
         self.header_message = P(message, parent=self)
         self.header_message.setAlignment(
@@ -195,11 +194,15 @@ class Notification(FramelessDialog):
         self.header_layout.right.addWidget(self.close_button)
         self.body_layout.addWidget(self.body_message, stretch=1)
 
-        self.set_brief(False)
+        if short is not None:
+            self.set_short(short)
+        else:
+            self.set_short(len(message) < 72)
+        self.resize(pix(372), self.rect().height())
 
-    def set_brief(self, value):
-        self.is_brief = value
-        if self.is_brief:
+    def set_short(self, value):
+        self.is_short = value
+        if self.is_short:
             self.header_message.show()
             self.title.hide()
             self.body.hide()
@@ -218,7 +221,7 @@ class Notification(FramelessDialog):
 
     def set_icon(self, icon):
         if icon:
-            self.icon = theme.icon(icon, parent=self)
+            self.icon = theme.icon(icon, parent=self.icon_widget)
             self.icon_widget.setIcon(self.icon)
             self.icon_widget.setIconSize(QtCore.QSize(pix(24), pix(24)))
             self.icon_widget.show()
