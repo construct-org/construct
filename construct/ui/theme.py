@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
+from __future__ import absolute_import
 from functools import wraps
 
 # Third party imports
@@ -173,10 +174,17 @@ class Theme(object):
 
     def on_theme_changed(self):
         for widget in self._widgets:
+
+            # Reapply to registered widget
             widget.setStyleSheet(self.stylesheet)
 
+            # Reapply Stylesheet to children
+            for child in widget.children():
+                if hasattr(child, 'setStyleSheet'):
+                    child.setStyleSheet(self.stylesheet)
+
     def compile_stylesheet(self):
-        """Compile a stylesheet for this theme."""
+        '''Compile a stylesheet for this theme.'''
 
         sass = ''
         var_tmpl = '${}: {};\n'
