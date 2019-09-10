@@ -71,12 +71,12 @@ class FontIconEngine(QIconEngine):
     def paint(self, painter, rect, alignment, mode, state):
         font = painter.font()
         font.setPixelSize(max(rect.width(), rect.height()))
-        font.setFontFamily(self.family)
+        font.setFamily(self.family)
         painter.setFont(font)
         if self.parent:
             # Set color from parent
             painter.setPen(self.parent.palette().text().color())
-        painter.drawText(rect, alignment, mode, state)
+        painter.drawText(rect, alignment, self.char)
 
 
 class FontIcon(QIcon):
