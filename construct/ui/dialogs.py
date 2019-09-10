@@ -241,3 +241,62 @@ class Notification(FramelessDialog):
         )
         self.close_button.setIcon(self.close_icon)
         self.close_button.setIconSize(QtCore.QSize(pix(24), pix(24)))
+
+
+class Ask(FramelessDialog):
+
+    def __init__(
+        self,
+        title,
+        message,
+        yes_label='Yes',
+        no_label='No',
+        icon=None,
+        parent=None,
+    ):
+        super(Ask, self).__init__(parent=parent)
+        self.setObjectName('surface')
+        self.setMinimumWidth(pix(272))
+
+        self.title = H3(title, parent=self)
+        self.title.setAlignment(
+            QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
+        )
+        self.body_message = P(message, parent=self)
+        self.body_message.setAlignment(QtCore.Qt.AlignLeft)
+
+        # TODO: Creat icon widget
+        self.icon_widget = QtWidgets.QPushButton(parent=self)
+        self.icon_widget.hide()
+        self.icon_widget.setObjectName('icon')
+        self.icon_widget.setFlat(True)
+        self.icon_widget.setDisabled(True)
+        self.set_icon(icon)
+
+        self.yes_button = QtWidgets.QPushButton(yes_label, parent=self)
+        self.yes_button.setObjectName('text-button')
+        self.yes_button.setFlat(True)
+        self.yes_button.clicked.connect(self.accept)
+
+        self.no_button = QtWidgets.QPushButton(no_label, parent=self)
+        self.no_button.setObjectName('text-button')
+        self.no_button.setFlat(True)
+        self.no_button.clicked.connect(self.reject)
+
+        self.header_layout.left.addWidget(self.icon_widget)
+        self.header_layout.center.addWidget(self.title, stretch=1)
+        self.body_layout.addWidget(self.body_message, stretch=1)
+        self.footer_layout.right.addWidget(self.yes_button)
+        self.footer_layout.right.addWidget(self.no_button)
+
+        self.adjustSize()
+
+    def set_icon(self, icon):
+        if icon:
+            self.icon = theme.icon(icon, parent=self.icon_widget)
+            self.icon_widget.setIcon(self.icon)
+            self.icon_widget.setIconSize(QtCore.QSize(pix(24), pix(24)))
+            self.icon_widget.show()
+        else:
+            self.icon = None
+            self.icon_widget.hide()
