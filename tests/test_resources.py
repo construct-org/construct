@@ -31,9 +31,9 @@ def teardown_module():
 def test_builtin_resources():
     '''Load and get builtin resources.'''
 
-    r = resources.BuiltinUIResources()
+    r = resources.BuiltinResources()
 
-    assert r.get('styles/base.scss')
+    assert r.get('styles/theme.scss')
 
     try:
         r.get('doesnot/exist.png')
@@ -53,7 +53,7 @@ def test_api_resources():
     files = [
         (tmp_dir / 'icons/unique01.png'),
         (tmp_dir / 'icons/multiple.png'),
-        (tmp_dir / 'styles/base.scss'),
+        (tmp_dir / 'styles/theme.scss'),
         (tmp_dir / 'styles/unique01.scss'),
         (settings_dir / 'icons/unique02.png'),
         (settings_dir / 'icons/multiple.png'),
@@ -72,11 +72,11 @@ def test_api_resources():
     tests = [
         ('icons/unique01.png', files[0]), # Unique to tmp_dir
         ('icons/multiple.png', files[1]), # First available
-        ('styles/base.scss', files[2]), # Builtin overriden by tmp_dir resource
+        ('styles/theme.scss', files[2]), # Builtin overriden by tmp_dir
         ('styles/unique01.scss', files[3]), # Unique to tmp_dir
         ('icons/unique02.png', files[4]), # Unique to settings_dir
         ('styles/unique02.scss', files[7]), # Unique to settings dir
-        ('styles/icons.scss', resource_dir / 'styles/icons.scss'), # : builtin
+        ('styles/_icons.scss', resource_dir / 'styles/_icons.scss'), # builtin
     ]
     for resource, expected_path in tests:
         resource_path = api.ui.resources.get(resource)

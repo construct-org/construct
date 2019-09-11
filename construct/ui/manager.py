@@ -12,10 +12,11 @@ class UIManager(object):
 
     def __init__(self, api):
         self.api = api
-        self.resources = Resources(self.api.path)
+        self.resources = Resources([])
         self.theme = theme
 
     def load(self):
+        self.resources = Resources(self.api.path)
         self.theme.set_resources(self.resources)
         self.api.extend('alert', self.alert)
         self.api.extend('error', self.error)
@@ -24,7 +25,8 @@ class UIManager(object):
         self.api.extend('ask', self.ask)
 
     def unload(self):
-        self.theme.set_resources(Resources([]))
+        self.resources = Resources([])
+        self.theme.set_resources(self.resources)
         self.api.unextend('alert')
         self.api.unextend('error')
         self.api.unextend('success')
