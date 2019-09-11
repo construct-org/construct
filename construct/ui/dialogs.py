@@ -62,6 +62,8 @@ class FramelessDialog(QtWidgets.QDialog):
             QtCore.Qt.FramelessWindowHint
         )
         self.setObjectName(self.css_id)
+        self.setWindowTitle('construct')
+        self.setWindowIcon(theme.icon('brand/construct_icon-white.png'))
         theme.apply(self)
 
         margins = (pix(16), pix(8), pix(16), pix(8))
@@ -120,24 +122,37 @@ class FramelessDialog(QtWidgets.QDialog):
             self.setCursor(cursor)
 
         if self._mouse_pressed:
-            vector = self.mapToParent(event.pos()) - self.mapToParent(self._mouse_position)
+            vector = event.pos() - self._mouse_position
+            offset = event.globalPos()
+
             if self.resizing:
+                min_width = self.minimumWidth() + 5
+                min_height = self.minimumHeight() + 5
                 rect = self.geometry()
-                offset = self.mapToParent(self._mouse_position + vector)
                 resize_area = self._resize_area.lower()
+
                 if 'left' in resize_area:
-                    new_width = rect.width() + rect.left() - offset.x()
-                    if new_width > self.minimumWidth():
+                    new_width = rect.width() - vector.x()
+                    if new_width > min_width:
                         rect.setLeft(offset.x())
-                if 'top' in resize_area:
-                    new_height = rect.height() + rect.top() - offset.y()
-                    if new_height > self.minimumHeight():
-                        rect.setTop(offset.y())
+
                 if 'right' in resize_area:
-                    rect.setRight(offset.x())
+                    new_width = rect.width() + vector.x()
+                    if new_width > min_width:
+                        rect.setRight(offset.x())
+
+                if 'top' in resize_area:
+                    new_height = rect.height() - vector.y()
+                    if new_height > min_height:
+                        rect.setTop(offset.y())
+
                 if 'bottom' in resize_area:
-                    rect.setBottom(offset.y())
+                    new_height = rect.height() + vector.y()
+                    if new_height > min_height:
+                        rect.setBottom(offset.y())
+
                 self.setGeometry(rect)
+
             else:
                 self.move(self.mapToParent(vector))
 
