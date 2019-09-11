@@ -16,7 +16,7 @@
 
 
 @function vary($color, $percent) {
-    @if luma($color) < 0.5 {
+    @if luma($color) < 0.25 {
         @return lighten($color, $percent);
     } @else {
         @return darken($color, $percent);

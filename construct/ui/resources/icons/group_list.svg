@@ -1,7 +1,5 @@
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="group_list">
-<rect id="Rectangle" x="6" y="6" width="14" height="2" rx="1" fill="black"/>
-<rect id="Rectangle_2" x="10" y="11" width="10" height="2" rx="1" fill="black"/>
-<rect id="Rectangle_3" x="10" y="16" width="10" height="2" rx="1" fill="black"/>
-</g>
+<rect x="6" y="6" width="14" height="2" rx="1" fill="black"/>
+<rect x="10" y="11" width="10" height="2" rx="1" fill="black"/>
+<rect x="10" y="16" width="10" height="2" rx="1" fill="black"/>
 </svg>
