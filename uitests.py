@@ -28,12 +28,12 @@ def notification(type):
     )
 
 
-def ask():
+def ask(title=None, message=None, icon=None):
     api = construct.API()
     api.ask(
-        title='Question',
-        message='This is question. Do you choose yes or no?',
-        icon='question',
+        title=title or 'Question',
+        message=message or 'This is question. Do you choose yes or no?',
+        icon=icon,
     )
 
 
@@ -56,6 +56,7 @@ def main():
     notification('success')
     notification('info')
     ask()
+
 
 if __name__ == '__main__':
     main()
