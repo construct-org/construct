@@ -12,7 +12,7 @@ from ..compat import Path
 
 
 __all__ = ['Houdini']
-package_path = Path(__file__).parent
+package_path = Path(__file__).parent.resolve()
 Version = namedtuple('Version', 'major minor patch')
 
 

@@ -37,7 +37,7 @@ RESOURCE_EXTENSIONS = IMAGE_EXTENSIONS + [
     '.scss',
     '.css',
 ]
-package_path = Path(__file__).parent
+package_path = Path(__file__).parent.resolve()
 missing = object()
 
 

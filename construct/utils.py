@@ -24,7 +24,7 @@ __all__ = [
     'update_envvar',
     'update_dict'
 ]
-package_path = Path(__file__).parent
+package_path = Path(__file__).parent.resolve()
 
 
 def get_lib_path():

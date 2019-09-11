@@ -12,7 +12,7 @@ from ..utils import copy_file, update_env
 
 
 __all__ = ['Maya']
-package_path = Path(__file__).parent
+package_path = Path(__file__).parent.resolve()
 Version = namedtuple('Version', 'major minor patch')
 
 

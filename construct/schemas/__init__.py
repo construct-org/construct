@@ -19,7 +19,7 @@ from ..compat import Path
 from ..utils import yaml_dump, yaml_load
 
 
-package_path = Path(__file__).parent
+package_path = Path(__file__).parent.resolve()
 
 
 class SchemaNotFound(Exception): pass
