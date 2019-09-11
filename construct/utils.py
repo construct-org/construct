@@ -24,11 +24,11 @@ __all__ = [
     'update_envvar',
     'update_dict'
 ]
-this_package = Path(__file__).parent
+package_path = Path(__file__).parent.resolve()
 
 
 def get_lib_path():
-    return this_package.parent
+    return package_path.parent
 
 
 def yaml_dump(data, **kwargs):

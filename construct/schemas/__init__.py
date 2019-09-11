@@ -19,7 +19,7 @@ from ..compat import Path
 from ..utils import yaml_dump, yaml_load
 
 
-this_package = Path(__file__).parent
+package_path = Path(__file__).parent.resolve()
 
 
 class SchemaNotFound(Exception): pass
@@ -80,7 +80,7 @@ def new_validator(schema, **kwargs):
 def get_schema(name):
     '''Get a Cerberus schema dict by name.'''
 
-    schema_file = this_package / (name + '.yaml')
+    schema_file = package_path / (name + '.yaml')
     if not schema_file.is_file():
         raise SchemaNotFound('Could not find a schema named %s' % name)
 
@@ -108,9 +108,9 @@ def ls(subdir=None):
     '''
 
     if subdir:
-        root = this_package / subdir
+        root = package_path / subdir
     else:
-        root = this_package
+        root = package_path
 
     for schema_file in root.glob('*.yaml'):
         schema_name = schema_file.stem

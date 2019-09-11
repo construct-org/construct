@@ -19,7 +19,7 @@ def factor(factor=[]):
     '''Get UI scale factor'''
 
     if not factor:
-        factor.append(dpi() / 96.0)
+        factor.append(dpi() / 72.0)
     return factor[0]
 
 

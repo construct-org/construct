@@ -1,0 +1,37 @@
+@function luma($color) {
+    $r: red($color) / 255;
+    $g: green($color) / 255;
+    $b: blue($color) / 255;
+    @return $r * 0.3 + $g * 0.59 + $b * 0.11;
+}
+
+@function contrast_ratio($c1, $c2) {
+    @return (luma($c1) + 0.05) / (luma($c2) + 0.05);
+}
+
+
+@function brightness($color) {
+    @return ((red($color) + green($color) + blue($color)) / 3) / 255;
+}
+
+
+@function vary($color, $percent) {
+    @if luma($color) < 0.25 {
+        @return lighten($color, $percent);
+    } @else {
+        @return darken($color, $percent);
+    }
+}
+
+
+@function vary_on($on_color, $color, $percent) {
+
+    $l1: luma($on_color);
+    $l2: luma($color);
+
+    @if $l1 < $l2 {
+        @return darken($on_color, $percent);
+    } @else {
+        @return lighten($on_color, $percent);
+    }
+}
