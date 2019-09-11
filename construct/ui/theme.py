@@ -39,36 +39,53 @@ def clamp(value, lower, upper):
     return max(lower, min(value, upper))
 
 
-def rgb_to_hex(r, g, b):
+def rgb_to_hex(r, g, b, a=None):
     '''Convert r, g, b ints to a hex string.
 
     Arguments:
         r (int): Red value between 0 and 255
         g (int): Green value between 0 and 255
         b (int): Blue value between 0 and 255
+        a (int): OPTIONAL - Alpha value between 0 and 255
     Returns:
-        Hex string in "#RRGGBB" format
+        Hex string in "#RRGGBB" or "#RRGGBBAA" format
     '''
 
-    return '#{:02x}{:02x}{:02x}'.format(
+    code = '#{:02x}{:02x}{:02x}'.format(
         clamp(r, 0, 255),
         clamp(g, 0, 255),
         clamp(b, 0, 255),
     )
+    if a:
+        code += '{:02x}'.format(clamp(a, 0, 255))
+    return code
+
+
+def is_rgb(value):
+    '''Return True if value is an rgb or rgba sequence.'''
+
+    return isinstance(value, (tuple, list)) and len(value) in (3, 4)
 
 
 def hex_to_rgb(code):
     '''Convert a hex code to rgb tuple.
 
     Arguments:
-        r (int): Red value between 0 and 255
-        g (int): Green value between 0 and 255
-        b (int): Blue value between 0 and 255
+        code (str): Hex code string like #FFFFFF
     Returns:
-        Tuple of ints - (r, g, b)
+        Tuple of ints - (r, g, b) or (r, g, b, a)
     '''
 
     return tuple([ord(i) for i in code[1:].decode('hex')])
+
+
+def is_hex_code(value):
+    '''Return True if value is a hex code'''
+
+    if not isinstance(value, basestring):
+        return False
+    if value.startswith('#'):
+        return True
 
 
 class Theme(object):
@@ -80,9 +97,15 @@ class Theme(object):
 
     Attributes:
         name (str): name of the theme
+        resources (Resource): resource object
+        stylesheet (str): The compiled stylesheet
+
+    Font Attributes:
         font_stack (str): Comma separated list of font-families
         font_size (str): Font point size
         font_weight (str): Font weight
+
+    Color Attributes:
         primary (color): Used for accents and emphasis
         primary_variant (color): Variant of primary color
         on_primary (color): Color of type and icons on primary
@@ -98,6 +121,7 @@ class Theme(object):
 
     Arguments:
         resources (Resource): Used to lookup icons, pixmaps, and images
+        **options: Pass any of the font or color attributes listed above
     """
 
     defaults = dict(
@@ -105,7 +129,7 @@ class Theme(object):
         font_stack='Roboto',
         font_size='12pt',
         font_weight='400',
-        primary='#F63659',
+        primary='#FF5862',
         primary_variant='#D72F57',
         on_primary='#FFFFFF',
         alert='#FACE49',
@@ -113,12 +137,12 @@ class Theme(object):
         success='#7EDC9E',
         info='#87CDEB',
         on_secondary='#000000',
-        background='#F2F2F2',
-        on_background='#000000',
-        surface='#FFFFFF',
-        on_surface='#000000',
+        background='#33333D',
+        on_background='#F1F1F3',
+        surface='#4F4F59',
+        on_surface='#F1F1F3',
     )
-    color_options = [
+    color_variables = [
         'primary',
         'primary_variant',
         'on_primary',
@@ -143,7 +167,44 @@ class Theme(object):
         self._signals = None
         self._loaded = False
 
+    def set_color(self, name, value):
+        '''Set a color value for this theme.
+
+        Colors are converted to hex codes here.
+
+        Arguments:
+            name (str): Name of color attribute to set
+            value (tuple or str): rgb tuple or hex code
+        '''
+        if name not in self.color_variables:
+            raise NameError('"%s" is not a valid color.' % name)
+
+        if is_rgb(value):
+            setattr(self, name, rgb_to_hex(*value))
+        elif is_hex_code(value):
+            setattr(self, name, value)
+        else:
+            raise ValueError('Expected rgb tuple or hex code got %s' % value)
+
+    def hex(self, name):
+        '''Return the named color as a hex code string.'''
+
+        if name not in self.color_variables:
+            raise NameError('"%s" is not a valid color.' % name)
+
+        return getattr(self, name)
+
+    def rgb(self, name):
+        '''Return the named color as an rgb tuple.'''
+
+        if name not in self.color_variables:
+            raise NameError('"%s" is not a valid color.' % name)
+
+        return hex_to_rgb(getattr(self, name))
+
     def load(self):
+        '''Creates a QObject used to dispatch on_theme_changed callbacks.'''
+
         if self._loaded:
             return
 
@@ -159,13 +220,21 @@ class Theme(object):
 
     @ensure_loaded
     def apply(self, widget):
+        '''Applies this theme to a widget and adds the widget to an internal
+        set. If the theme changes, the theme will be reapplied.
+        '''
+
         widget.setStyleSheet(self.stylesheet)
         self._widgets.add(widget)
 
     def set_resources(self, resources):
+        '''Sets the resources this theme uses'''
+
         self.resources = resources
 
     def refresh_stylesheet(self):
+        '''Recompile stylesheet and reapply to all themed widgets.'''
+
         self.stylesheet = self.compile_stylesheet()
         if self._signals:
             self._signals.changed.emit(self.stylesheet)
@@ -173,6 +242,8 @@ class Theme(object):
             self.on_theme_changed()
 
     def on_theme_changed(self):
+        '''Reapplies stylesheet to all themed widgets.'''
+
         for widget in self._widgets:
 
             # Reapply to registered widget
