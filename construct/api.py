@@ -307,7 +307,7 @@ class API(object):
         '''Pretty print a dict or list of dicts.'''
 
         if isinstance(data, Mapping):
-            print(yaml_dump(dict(data)))
+            print(yaml_dump(dict(data)).decode('utf-8'))
             return
         elif isinstance(data, basestring):
             print(data)
@@ -316,7 +316,7 @@ class API(object):
         try:
             for obj in data:
                 print('')
-                print(yaml_dump(obj))
+                print(yaml_dump(obj).decode('utf-8'))
         except:
             print('Can not format: %s' % data)
 
