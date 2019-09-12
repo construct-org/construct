@@ -32,7 +32,7 @@ def ask(title=None, message=None, icon=None):
     api = construct.API()
     api.ask(
         title=title or 'Question',
-        message=message or 'This is question. Do you choose yes or no?',
+        message=message or 'This is a question. Do you choose yes or no?',
         icon=icon,
     )
 

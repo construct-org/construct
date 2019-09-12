@@ -26,10 +26,10 @@ class SvgIconEngine(QIconEngine):
     def pixmap(self, size, mode, state):
         img = QImage(size, QImage.Format_ARGB32)
         img.fill(QColor(0, 0, 0, 0))
-        pix = QPixmap.fromImage(img)
-        painter = QPainter(pix)
-        self.paint(painter, pix.rect(), QtCore.Qt.AlignCenter, mode, state)
-        return pix
+        pm = QPixmap.fromImage(img)
+        painter = QPainter(pm)
+        self.paint(painter, pm.rect(), QtCore.Qt.AlignCenter, mode, state)
+        return pm
 
     def paint(self, painter, rect, alignment, mode, state):
         if self.parent:
@@ -63,10 +63,10 @@ class FontIconEngine(QIconEngine):
     def pixmap(self, size, mode, state):
         img = QImage(size, QImage.Format_ARGB32)
         img.fill(QColor(0, 0, 0, 0))
-        pix = QPixmap.fromImage(img)
-        painter = QPainter(pix)
-        self.paint(painter, pix.rect(), QtCore.Qt.AlignCenter, mode, state)
-        return pix
+        pm = QPixmap.fromImage(img)
+        painter = QPainter(pm)
+        self.paint(painter, pm.rect(), QtCore.Qt.AlignCenter, mode, state)
+        return pm
 
     def paint(self, painter, rect, alignment, mode, state):
         font = painter.font()

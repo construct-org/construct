@@ -19,11 +19,17 @@ def factor(factor=[]):
     '''Get UI scale factor'''
 
     if not factor:
-        factor.append(dpi() / 72.0)
+        factor.append((dpi() / 96.0))
     return factor[0]
 
 
 def pix(value):
-    '''Scale a pixel factor by the screen scale factor'''
+    '''Scale a pixel value based on screen dpi.'''
 
     return factor() * value
+
+
+def pt(value):
+    '''Scale a point value based on screen dpi.'''
+
+    return factor() * value * 1.33

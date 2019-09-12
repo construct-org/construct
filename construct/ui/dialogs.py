@@ -13,7 +13,7 @@ from .widgets import (
     P,
 )
 from .theme import theme
-from .scale import pix
+from .scale import pt
 
 
 class FramelessDialog(QtWidgets.QDialog):
@@ -54,7 +54,7 @@ class FramelessDialog(QtWidgets.QDialog):
         self._mouse_pressed = False
         self._mouse_position = None
         self._resize_area = None
-        self.resize_area_size = pix(12)
+        self.resize_area_size = pt(5)
         self.setMouseTracking(True)
         self.setWindowFlags(
             QtCore.Qt.Dialog |
@@ -66,26 +66,25 @@ class FramelessDialog(QtWidgets.QDialog):
         self.setWindowIcon(theme.icon('brand/construct_icon-white.png'))
         theme.apply(self)
 
-        margins = (pix(16), pix(8), pix(16), pix(8))
+        margins = (pt(10), pt(10), pt(10), pt(10))
 
         self.header = QtWidgets.QWidget()
         self.header_layout = HBarLayout()
-        self.header_layout.setContentsMargins(*margins)
         self.header.setLayout(self.header_layout)
 
         self.body = QtWidgets.QWidget()
         self.body_layout = QtWidgets.QVBoxLayout()
-        self.body_layout.setContentsMargins(*margins)
+        self.body_layout.setContentsMargins(0, 0, 0, 0)
+        self.body_layout.setSpacing(pt(10))
         self.body.setLayout(self.body_layout)
 
         self.footer = QtWidgets.QWidget()
         self.footer_layout = HBarLayout()
-        self.footer_layout.setContentsMargins(*margins)
         self.footer.setLayout(self.footer_layout)
 
         self.layout = QtWidgets.QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(*margins)
+        self.layout.setSpacing(pt(8))
         self.layout.addWidget(self.header)
         self.layout.addWidget(self.body)
         self.layout.addWidget(self.footer)
@@ -126,8 +125,8 @@ class FramelessDialog(QtWidgets.QDialog):
             offset = event.globalPos()
 
             if self.resizing:
-                min_width = self.minimumWidth() + 5
-                min_height = self.minimumHeight() + 5
+                min_width = self.minimumWidth()
+                min_height = self.minimumHeight()
                 rect = self.geometry()
                 resize_area = self._resize_area.lower()
 
@@ -176,7 +175,7 @@ class Notification(FramelessDialog):
         super(Notification, self).__init__(parent=parent)
 
         self.setObjectName(type.lower())
-        self.setMinimumWidth(pix(272))
+        self.setMinimumWidth(pt(272))
 
         self.header_message = P(message, parent=self)
         self.header_message.setAlignment(
@@ -213,7 +212,6 @@ class Notification(FramelessDialog):
             self.set_short(short)
         else:
             self.set_short(len(message) < 72)
-        self.resize(pix(372), self.rect().height())
 
     def set_short(self, value):
         self.is_short = value
@@ -225,7 +223,7 @@ class Notification(FramelessDialog):
             self.adjustSize()
         else:
             self.title.show()
-            self.footer.show()
+            self.footer.setVisible(self.footer_layout.count())
             self.body.show()
             self.header_message.hide()
             self.adjustSize()
@@ -238,7 +236,7 @@ class Notification(FramelessDialog):
         if icon:
             self.icon = theme.icon(icon, parent=self.icon_widget)
             self.icon_widget.setIcon(self.icon)
-            self.icon_widget.setIconSize(QtCore.QSize(pix(24), pix(24)))
+            self.icon_widget.setIconSize(QtCore.QSize(pt(24), pt(24)))
             self.icon_widget.show()
             self.header_message.setAlignment(QtCore.Qt.AlignCenter)
             self.title.setAlignment(QtCore.Qt.AlignCenter)
@@ -258,7 +256,7 @@ class Notification(FramelessDialog):
             parent=self.close_button
         )
         self.close_button.setIcon(self.close_icon)
-        self.close_button.setIconSize(QtCore.QSize(pix(24), pix(24)))
+        self.close_button.setIconSize(QtCore.QSize(pt(24), pt(24)))
 
 
 class Ask(FramelessDialog):
@@ -274,7 +272,7 @@ class Ask(FramelessDialog):
     ):
         super(Ask, self).__init__(parent=parent)
         self.setObjectName('surface')
-        self.setMinimumWidth(pix(272))
+        self.setMinimumWidth(pt(272))
 
         self.title = H3(title, parent=self)
         self.title.setAlignment(
@@ -313,7 +311,7 @@ class Ask(FramelessDialog):
         if icon:
             self.icon = theme.icon(icon, parent=self.icon_widget)
             self.icon_widget.setIcon(self.icon)
-            self.icon_widget.setIconSize(QtCore.QSize(pix(24), pix(24)))
+            self.icon_widget.setIconSize(QtCore.QSize(pt(24), pt(24)))
             self.icon_widget.show()
         else:
             self.icon = None

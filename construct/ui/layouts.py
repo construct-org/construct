@@ -10,7 +10,7 @@ from Qt.QtWidgets import (
 )
 
 # Local imports
-from .scale import pix
+from .scale import pt
 
 
 class BarLayout(QBoxLayout):
@@ -30,16 +30,16 @@ class BarLayout(QBoxLayout):
         super(BarLayout, self).__init__(direction, parent)
 
         self.start = QBoxLayout(direction)
-        self.start.setSpacing(pix(8))
+        self.start.setSpacing(pt(8))
         self.left = self.start
         self.top = self.start
 
         self.middle = QBoxLayout(direction)
-        self.middle.setSpacing(pix(8))
+        self.middle.setSpacing(pt(8))
         self.center = self.middle
 
         self.end = QBoxLayout(direction)
-        self.end.setSpacing(pix(8))
+        self.end.setSpacing(pt(8))
         self.right = self.end
         self.bottom = self.end
 
@@ -48,10 +48,14 @@ class BarLayout(QBoxLayout):
         self.addLayout(self.end)
 
         self.setStretch(1, 1)
-        self.setSpacing(pix(16))
+        self.setSpacing(pt(8))
         self.setContentsMargins(0, 0, 0, 0)
 
         self.setDirection(direction)
+
+    def count(self):
+        '''Sum of the count of all sub layouts'''
+        return self.start.count() + self.middle.count() + self.end.count()
 
     def setDirection(self, direction):
         '''Realign sub-layouts based on direction'''
