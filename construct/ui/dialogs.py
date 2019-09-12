@@ -203,8 +203,8 @@ class Notification(FramelessDialog):
         self.set_close_icon(close_icon)
 
         self.header_layout.left.addWidget(self.icon_widget)
-        self.header_layout.center.addWidget(self.title, stretch=1)
         self.header_layout.center.addWidget(self.header_message, stretch=1)
+        self.header_layout.center.addWidget(self.title, stretch=1)
         self.header_layout.right.addWidget(self.close_button)
         self.body_layout.addWidget(self.body_message, stretch=1)
 
@@ -238,7 +238,6 @@ class Notification(FramelessDialog):
             self.icon_widget.setIcon(self.icon)
             self.icon_widget.setIconSize(QtCore.QSize(pt(24), pt(24)))
             self.icon_widget.show()
-            self.header_message.setAlignment(QtCore.Qt.AlignCenter)
             self.title.setAlignment(QtCore.Qt.AlignCenter)
         else:
             self.icon = None
