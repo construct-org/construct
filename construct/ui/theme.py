@@ -10,7 +10,7 @@ import qtsass
 # Local imports
 from ..compat import Path, basestring
 from ..types import WeakSet
-from . import resources
+from . import resources, scale
 
 
 def ensure_loaded(method):
@@ -162,10 +162,16 @@ class Theme(object):
         self.__dict__.update(**self.defaults)
         self.__dict__.update(**options)
         self.resources = resources
-        self.stylesheet = self.compile_stylesheet()
+        self._stylesheet = None
         self._widgets = WeakSet()
         self._signals = None
         self._loaded = False
+
+    @property
+    def stylesheet(self):
+        if not self._stylesheet:
+            self._stylesheet = self.compile_stylesheet()
+        return self._stylesheet
 
     def set_color(self, name, value):
         '''Set a color value for this theme.
@@ -283,12 +289,19 @@ class Theme(object):
 
         sass += "@import 'theme'"
 
-        return qtsass.compile(
+        css = qtsass.compile(
             sass,
             include_paths=[
                 str(self.resources.path / 'styles'),
             ],
+            custom_functions={
+                'res_url': sass_res_url(self),
+                'scale_pt': sass_scale_pt(self),
+                'scale_px': sass_scale_px(self),
+            },
         )
+        print(css)
+        return css
 
     @ensure_loaded
     def pixmap(self, resource, size=None, family=None):
@@ -301,6 +314,7 @@ class Theme(object):
         '''
 
         from Qt.QtGui import QPixmap, QIcon
+        from .icons import FontIcon
 
         path = self.resources.get(resource, None)
         if path:
@@ -338,6 +352,68 @@ class Theme(object):
 
         char = self.resources.get_char(resource, family)
         return FontIcon(char, family, parent)
+
+
+# Sass functions
+
+def sass_res_url(theme):
+    '''Get an url for a construct resource.
+
+    Usage:
+        QPushButton {qproperty-icon: res_url(icons/plus.svg);}
+    '''
+    def res_url(resource):
+        return 'url("%s")' % theme.resources.get(resource).as_posix()
+    return res_url
+
+
+def sass_scale_pt(theme):
+    '''Convert pt value to dpi aware pixel value.
+
+    Usage:
+        QPushButton {padding: scale_pt(8 24 8 24)}
+        QLabel {margin-left: scale_pt(8); margin-right: scale_pt(8);}
+    '''
+    def scale_pt(value):
+        if isinstance(value, float):
+            return str(scale.pt(value))
+
+        # Handle sass types
+        import sass
+        if isinstance(value, sass.SassNumber):
+            return str(scale.pt(value.value))
+
+        if isinstance(value, sass.SassList):
+            result = []
+            for item in value.items:
+                result.append(str(scale.pt(item.value)))
+            return ' '.join(result)
+    return scale_pt
+
+
+def sass_scale_px(theme):
+    '''Convert pixel value to dpi aware pixel value.
+
+    Usage:
+        QPushButton {padding: scale_px(8 24 8 24)}
+        QLabel {margin-left: scale_px(8); margin-right: scale_px(8);}
+    '''
+
+    def scale_px(value):
+        if isinstance(value, float):
+            return str(scale.px(value))
+
+        # Handle sass types
+        import sass
+        if isinstance(value, sass.SassNumber):
+            return str(scale.px(value.value))
+
+        if isinstance(value, sass.SassList):
+            result = []
+            for item in value.items:
+                result.append(str(scale.px(item.value)))
+            return ' '.join(result)
+    return scale_px
 
 
 # Theme singleton

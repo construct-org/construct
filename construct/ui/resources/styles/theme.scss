@@ -20,7 +20,6 @@ $transparent: rgba(0, 0, 0, 0);
 
 
 @import 'funcs';
-@import 'basetheme';
 
 
 // Mixins //
@@ -116,11 +115,67 @@ QWidget {
 }
 
 
+// Base theme
+@mixin base(
+    $primary: #CC4455,
+    $on_primary: #000000,
+    $bg: #FFFFFF,
+    $on_bg: #000000
+) {
+
+    background: $bg;
+
+    * {
+        color: $on_bg;
+    }
+
+    #icon {
+        outline: none;
+        border: 1 solid vary($bg, 5%);
+        border-radius: 3;
+    }
+    #icon:focus {
+        border: 1 solid vary($bg, 15%);
+    }
+    #icon:disabled {
+        border: 0;
+    }
+    #icon:hover {
+        background-color: vary($bg, 5%);
+    }
+    #icon:pressed {
+        background-color: vary($bg, 15%);
+    }
+
+    QPushButton#text-button {
+        padding: scale_pt(8 24 8 24);
+        border: 1 solid vary($bg, 10%);
+        border-radius: 3;
+    }
+    QPushButton#text-button:disabled {
+        color: vary($bg, 15%);
+    }
+    QPushButton#text-button:hover {
+        color: $on_primary;
+        background-color: fade-out($primary, 0.55);
+        border: 1 solid fade-out($primary, 0.55);
+    }
+    QPushButton#text-button:focus {
+        outline: none;
+        border: 1 solid fade-out($primary, 0.25);
+    }
+    QPushButton#text-button:pressed {
+        color: $on_primary;
+        background-color: $primary;
+    }
+}
+
+
 // Primary colored sub-theme //
 
 
 QWidget#primary {
-     @include basetheme(
+     @include base(
         $primary_variant,
         $on_primary,
         $primary,
@@ -137,7 +192,7 @@ QDialog#primary {
 
 
 QWidget#surface {
-     @include basetheme(
+     @include base(
         $primary,
         $on_primary,
         $surface,
@@ -157,7 +212,7 @@ QDialog#surface:active {
 
 
 QWidget#background {
-    @include basetheme(
+    @include base(
         $primary,
         $on_primary,
         $background,
@@ -177,7 +232,7 @@ QDialog#background:active {
 
 
 QWidget#alert {
-    @include basetheme(
+    @include base(
         $on_secondary,
         $alert,
         $alert,
@@ -197,7 +252,7 @@ QDialog#alert:active {
 
 
 QWidget#error {
-    @include basetheme(
+    @include base(
         $on_secondary,
         $error,
         $error,
@@ -217,7 +272,7 @@ QDialog#error:active {
 
 
 QWidget#success {
-    @include basetheme(
+    @include base(
         $on_secondary,
         $success,
         $success,
@@ -238,7 +293,7 @@ QDialog#success:active {
 
 
 QWidget#info {
-    @include basetheme(
+    @include base(
         $on_secondary,
         $info,
         $info,
