@@ -131,11 +131,11 @@ QWidget {
 
     #icon {
         outline: none;
-        border: 1 solid vary($bg, 5%);
+        border: 2 solid vary($bg, 5%);
         border-radius: 3;
     }
     #icon:focus {
-        border: 1 solid vary($bg, 15%);
+        border: 2 solid vary($bg, 15%);
     }
     #icon:disabled {
         border: 0;
@@ -149,7 +149,7 @@ QWidget {
 
     QPushButton#text-button {
         padding: scale_pt(8 24 8 24);
-        border: 1 solid vary($bg, 10%);
+        border: 2 solid vary($bg, 10%);
         border-radius: 3;
     }
     QPushButton#text-button:disabled {
@@ -158,13 +158,34 @@ QWidget {
     QPushButton#text-button:hover {
         color: $on_primary;
         background-color: fade-out($primary, 0.55);
-        border: 1 solid fade-out($primary, 0.55);
+        border: 2 solid fade-out($primary, 0.55);
     }
     QPushButton#text-button:focus {
         outline: none;
-        border: 1 solid fade-out($primary, 0.25);
+        border: 2 solid fade-out($primary, 0.25);
     }
     QPushButton#text-button:pressed {
+        color: $on_primary;
+        background-color: $primary;
+    }
+    QPushButton#tool-button {
+        padding: scale_pt(8 24 8 24);
+        border-radius: 3;
+        font-size: 8pt;
+    }
+    QPushButton#tool-button:disabled {
+        color: vary($bg, 15%);
+    }
+    QPushButton#tool-button:hover {
+        color: $on_primary;
+        background-color: fade-out($primary, 0.55);
+        border: 2 solid fade-out($primary, 0.55);
+    }
+    QPushButton#tool-button:focus {
+        outline: none;
+        border: 2 solid fade-out($primary, 0.25);
+    }
+    QPushButton#tool-button:pressed {
         color: $on_primary;
         background-color: $primary;
     }
@@ -184,7 +205,7 @@ QWidget#primary {
 }
 
 QDialog#primary {
-    border: 1 solid vary($primary, 20%);
+    border: 2 solid vary($primary, 20%);
 }
 
 
@@ -201,11 +222,11 @@ QWidget#surface {
 }
 
 QDialog#surface {
-    border: 1 solid vary($surface, 10%);
+    border: 2 solid vary($surface, 10%);
 }
 
 QDialog#surface:active {
-    border: 1 solid vary($surface, 20%);
+    border: 2 solid vary($surface, 20%);
 }
 
 // Background colored sub-theme //
@@ -221,11 +242,11 @@ QWidget#background {
 }
 
 QDialog#background {
-    border: 1 solid vary($background, 10%);
+    border: 2 solid vary($background, 10%);
 }
 
 QDialog#background:active {
-    border: 1 solid vary($background, 20%);
+    border: 2 solid vary($background, 20%);
 }
 
 // Alert colored sub-theme //
@@ -233,19 +254,19 @@ QDialog#background:active {
 
 QWidget#alert {
     @include base(
-        $on_secondary,
         $alert,
+        $on_secondary,
         $alert,
         $on_secondary,
     );
 }
 
 QDialog#alert {
-    border: 1 solid vary($alert, 10%);
+    border: 2 solid vary($alert, 10%);
 }
 
 QDialog#alert:active {
-    border: 1 solid vary($alert, 20%);
+    border: 2 solid vary($alert, 20%);
 }
 
 // Error colored sub-theme //
@@ -261,11 +282,11 @@ QWidget#error {
 }
 
 QDialog#error {
-    border: 1 solid vary($error, 10%);
+    border: 2 solid vary($error, 10%);
 }
 
 QDialog#error:active {
-    border: 1 solid vary($error, 20%);
+    border: 2 solid vary($error, 20%);
 }
 
 // Success colored sub-theme //
@@ -281,11 +302,11 @@ QWidget#success {
 }
 
 QDialog#success {
-    border: 1 solid vary($success, 10%);
+    border: 2 solid vary($success, 10%);
 }
 
 QDialog#success:active {
-    border: 1 solid vary($success, 20%);
+    border: 2 solid vary($success, 20%);
 }
 
 
@@ -302,9 +323,9 @@ QWidget#info {
 }
 
 QDialog#info {
-    border: 1 solid vary($info, 10%);
+    border: 2 solid vary($info, 10%);
 }
 
 QDialog#info:active {
-    border: 1 solid vary($info, 20%);
+    border: 2 solid vary($info, 20%);
 }

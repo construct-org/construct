@@ -4,10 +4,13 @@
 # Standard library imports
 from __future__ import absolute_import
 import os
+import sys
 
 # Third party imports
-import qtsass
-from invoke import task
+from invoke import task, Collection
+
+# Local imports
+import ui_tasks
 
 
 def joinpath(*parts):

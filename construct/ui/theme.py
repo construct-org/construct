@@ -3,14 +3,18 @@
 # Standard library imports
 from __future__ import absolute_import
 from functools import wraps
+import logging
 
 # Third party imports
 import qtsass
 
 # Local imports
-from ..compat import Path, basestring
+from ..compat import basestring
 from ..types import WeakSet
 from . import resources, scale
+
+
+_log = logging.getLogger(__name__)
 
 
 def ensure_loaded(method):
@@ -167,47 +171,6 @@ class Theme(object):
         self._signals = None
         self._loaded = False
 
-    @property
-    def stylesheet(self):
-        if not self._stylesheet:
-            self._stylesheet = self.compile_stylesheet()
-        return self._stylesheet
-
-    def set_color(self, name, value):
-        '''Set a color value for this theme.
-
-        Colors are converted to hex codes here.
-
-        Arguments:
-            name (str): Name of color attribute to set
-            value (tuple or str): rgb tuple or hex code
-        '''
-        if name not in self.color_variables:
-            raise NameError('"%s" is not a valid color.' % name)
-
-        if is_rgb(value):
-            setattr(self, name, rgb_to_hex(*value))
-        elif is_hex_code(value):
-            setattr(self, name, value)
-        else:
-            raise ValueError('Expected rgb tuple or hex code got %s' % value)
-
-    def hex(self, name):
-        '''Return the named color as a hex code string.'''
-
-        if name not in self.color_variables:
-            raise NameError('"%s" is not a valid color.' % name)
-
-        return getattr(self, name)
-
-    def rgb(self, name):
-        '''Return the named color as an rgb tuple.'''
-
-        if name not in self.color_variables:
-            raise NameError('"%s" is not a valid color.' % name)
-
-        return hex_to_rgb(getattr(self, name))
-
     def load(self):
         '''Creates a QObject used to dispatch on_theme_changed callbacks.'''
 
@@ -224,6 +187,11 @@ class Theme(object):
 
         self._loaded = True
 
+    def set_resources(self, resources):
+        '''Sets the resources this theme uses'''
+
+        self.resources = resources
+
     @ensure_loaded
     def apply(self, widget):
         '''Applies this theme to a widget and adds the widget to an internal
@@ -233,32 +201,11 @@ class Theme(object):
         widget.setStyleSheet(self.stylesheet)
         self._widgets.add(widget)
 
-    def set_resources(self, resources):
-        '''Sets the resources this theme uses'''
-
-        self.resources = resources
-
-    def refresh_stylesheet(self):
-        '''Recompile stylesheet and reapply to all themed widgets.'''
-
-        self.stylesheet = self.compile_stylesheet()
-        if self._signals:
-            self._signals.changed.emit(self.stylesheet)
-        else:
-            self.on_theme_changed()
-
-    def on_theme_changed(self):
-        '''Reapplies stylesheet to all themed widgets.'''
-
-        for widget in self._widgets:
-
-            # Reapply to registered widget
-            widget.setStyleSheet(self.stylesheet)
-
-            # Reapply Stylesheet to children
-            for child in widget.children():
-                if hasattr(child, 'setStyleSheet'):
-                    child.setStyleSheet(self.stylesheet)
+    @property
+    def stylesheet(self):
+        if not self._stylesheet:
+            self._stylesheet = self.compile_stylesheet()
+        return self._stylesheet
 
     def compile_stylesheet(self):
         '''Compile a stylesheet for this theme.'''
@@ -300,8 +247,68 @@ class Theme(object):
                 'scale_px': sass_scale_px(self),
             },
         )
-        print(css)
         return css
+
+    def refresh_stylesheet(self):
+        '''Recompile stylesheet and reapply to all themed widgets.'''
+
+        self.stylesheet = self.compile_stylesheet()
+        if self._signals:
+            self._signals.changed.emit(self.stylesheet)
+        else:
+            self.on_theme_changed()
+
+    def on_theme_changed(self):
+        '''Reapplies stylesheet to all themed widgets.'''
+
+        for widget in self._widgets:
+
+            # Reapply to registered widget
+            widget.setStyleSheet(self.stylesheet)
+
+            # Reapply Stylesheet to children
+            children = widget.children()
+            while children:
+                child = children.pop()
+                if hasattr(child, 'setStyleSheet'):
+                    child.setStyleSheet(self.stylesheet)
+                if hasattr(child, 'children'):
+                    children.extend(child.children)
+
+    def set_color(self, name, value):
+        '''Set a color value for this theme.
+
+        Colors are converted to hex codes here.
+
+        Arguments:
+            name (str): Name of color attribute to set
+            value (tuple or str): rgb tuple or hex code
+        '''
+        if name not in self.color_variables:
+            raise NameError('"%s" is not a valid color.' % name)
+
+        if is_rgb(value):
+            setattr(self, name, rgb_to_hex(*value))
+        elif is_hex_code(value):
+            setattr(self, name, value)
+        else:
+            raise ValueError('Expected rgb tuple or hex code got %s' % value)
+
+    def hex(self, name):
+        '''Return the named color as a hex code string.'''
+
+        if name not in self.color_variables:
+            raise NameError('"%s" is not a valid color.' % name)
+
+        return getattr(self, name)
+
+    def rgb(self, name):
+        '''Return the named color as an rgb tuple.'''
+
+        if name not in self.color_variables:
+            raise NameError('"%s" is not a valid color.' % name)
+
+        return hex_to_rgb(getattr(self, name))
 
     @ensure_loaded
     def pixmap(self, resource, size=None, family=None):
