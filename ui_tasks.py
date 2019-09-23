@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Creates uis with live-linked stylesheets."""
 
@@ -9,26 +10,39 @@ import sys
 
 # Third party imports
 from qtsass.watchers import Watcher
+from invoke import task, Collection, Program, Config
 
 # Local imports
 import construct
 
 
-def dialogs():
+@task
+def watch(ctx):
+    api = construct.API()
+    watcher = Watcher(
+        watch_dir=str(api.ui.resources.path / 'styles'),
+        compiler=api.ui.theme.refresh_stylesheet,
+    )
+    watcher.start()
+
+
+@task(watch)
+def dialogs(ctx):
     '''Show a series of dialogs.'''
 
-    short_notification('alert')
-    short_notification('error')
-    short_notification('success')
-    short_notification('info')
-    notification('alert')
-    notification('error')
-    notification('success')
-    notification('info')
-    ask()
+    short_notification(ctx, 'alert')
+    short_notification(ctx, 'error')
+    short_notification(ctx, 'success')
+    short_notification(ctx, 'info')
+    notification(ctx, 'alert')
+    notification(ctx, 'error')
+    notification(ctx, 'success')
+    notification(ctx, 'info')
+    ask(ctx, )
 
 
-def short_notification(type):
+@task(watch)
+def short_notification(ctx, type):
     '''Show a short notification.'''
 
     api = construct.API()
@@ -36,7 +50,8 @@ def short_notification(type):
     method('This is a short %s message.' % type)
 
 
-def notification(type):
+@task(watch)
+def notification(ctx, type):
     '''Show a notification.'''
 
     api = construct.API()
@@ -48,7 +63,8 @@ def notification(type):
     )
 
 
-def ask(title=None, message=None, icon=None):
+@task(watch)
+def ask(ctx, title=None, message=None, icon=None):
     '''Show an ask dialog.'''
 
     api = construct.API()
@@ -59,7 +75,8 @@ def ask(title=None, message=None, icon=None):
     )
 
 
-def flowlayout():
+@task(watch)
+def flowlayout(ctx):
     '''Show a widget that uses a FlowLayout'''
 
     from Qt import QtWidgets, QtCore
@@ -87,60 +104,9 @@ def flowlayout():
     loop.start()
 
 
-def _setup_autoreload_stylesheets():
-    api = construct.API()
-    watcher = Watcher(
-        watch_dir=str(api.ui.resources.path / 'styles'),
-        compiler=api.ui.theme.refresh_stylesheet,
-    )
-    watcher.start()
-
-
-def _add_func_args(parser, func):
-    spec = inspect.getargspec(func)
-    for arg in spec.args:
-        parser.add_argument('-' + arg)
-
-
-def _main():
-    parser = argparse.ArgumentParser(
-        prog='UI Tasks',
-        usage='ui_tasks <task> [options]',
-        formatter_class=argparse.RawTextHelpFormatter,
-    )
-    parser.add_argument('task', action='store')
-    parser.epilog = 'Tasks:\n'
-
-    tasks = {}
-    funcs = inspect.getmembers(sys.modules[__name__], inspect.isfunction)
-    for name, func in sorted(funcs):
-
-        if name.startswith('_'):
-            continue
-
-        task_parser = argparse.ArgumentParser(
-            prog=name,
-            usage='ui_tasks {} [options]'.format(name),
-            description=func.__doc__,
-            formatter_class=argparse.RawTextHelpFormatter,
-        )
-        _add_func_args(task_parser, func)
-        tasks[name] = {'func': func, 'parser': task_parser}
-
-        parser.epilog += '    {} - {}\n'.format(name, func.__doc__)
-
-    args, task_args = parser.parse_known_args()
-    if args.task not in tasks:
-        print('No task named ' + args.task)
-        print(parser.epliog)
-        sys.exit(1)
-
-    task = tasks[args.task]
-    args = task['parser'].parse_args(task_args)
-
-    _setup_autoreload_stylesheets()
-    task['func'](**args.__dict__)
-
-
 if __name__ == '__main__':
-    _main()
+    prog = Program(
+        name='ui_tasks',
+        version='0.1.0',
+        namespace=Collection.from_module(sys.modules[__name__]),
+    ).run()

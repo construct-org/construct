@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Standard library imports
@@ -7,10 +7,7 @@ import os
 import sys
 
 # Third party imports
-from invoke import task, Collection
-
-# Local imports
-import ui_tasks
+from invoke import task, Collection, Program
 
 
 def joinpath(*parts):
@@ -38,3 +35,9 @@ def build_docs(ctx):
     '''Build documentation using Sphinx.'''
 
     ctx.run('docs\\make html')
+
+
+if __name__ == '__main__':
+    Program(
+        namespace=Collection.from_module(sys.modules[__name__])
+    ).run()
