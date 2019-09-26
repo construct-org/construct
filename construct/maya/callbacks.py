@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import, print_function
+
+# Standard library imports
+import glob
+import logging
 import os
 import re
-import logging
-import glob
 
 # Local imports
 from ..utils import unipath

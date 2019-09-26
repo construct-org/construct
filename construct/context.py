@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import copy
 import getpass
-import os
 import json
+import os
 
 # Local imports
-from .constants import DEFAULT_HOST, PLATFORM
 from .compat import basestring
+from .constants import DEFAULT_HOST, PLATFORM
 
 
 __all__ = ['Context']

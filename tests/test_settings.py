@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
-import sys
+
+# Standard library imports
 import os
 import shutil
+import sys
 
 # Local imports
-from construct.settings import Settings, restore_default_settings
-from construct.errors import InvalidSettings, ValidationError
 from construct.constants import DEFAULT_SETTINGS
+from construct.errors import InvalidSettings, ValidationError
+from construct.settings import Settings, restore_default_settings
+
+# Local imports
 from . import data_dir
 
 

@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
-import os
-import re
+
+# Standard library imports
 import glob
-import logging
 import inspect
 import json
+import logging
+import os
+import re
 
 # Third party imports
 from six import reraise
 
 # Local imports
+from ...compat import Path, wraps
 from ...utils import unipath
-from ...compat import wraps, Path
 
 
 _log = logging.getLogger('construct.ui.resources')

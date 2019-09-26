@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
 
 # Third party imports
@@ -8,12 +7,9 @@ from Qt import QtCore, QtGui, QtWidgets
 
 # Local imports
 from .layouts import HBarLayout
-from .widgets import (
-    H3,
-    P,
-)
-from .theme import theme
 from .scale import pt
+from .theme import theme
+from .widgets import H3, P
 
 
 class FramelessDialog(QtWidgets.QDialog):

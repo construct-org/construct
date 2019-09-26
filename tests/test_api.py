@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import shutil
 import sys
 
 # Local imports
-from construct.settings import restore_default_settings
 import construct
+from construct.settings import restore_default_settings
+
+# Local imports
 from . import data_dir, testAPI
 
 

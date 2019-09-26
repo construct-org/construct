@@ -1,14 +1,6 @@
-bson
-cachetools
-cerberus
-fsfs
-qtsass
 invoke
 nose
-pymongo
-pyyaml
 sphinx
 sphinx_rtd_theme
-pathlib2; python_version<"3.6"
 mock; python_version<"3"
-Qt.py
+isort

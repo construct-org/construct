@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import os
 
 # Local imports
-from .utils import unipath
 from .constants import DEFAULT_PATHS
+from .utils import unipath
 
 
 class Path(list):

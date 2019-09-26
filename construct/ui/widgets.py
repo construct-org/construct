@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
 
 # Third party imports
 from Qt import QtCore, QtWidgets
 
 # Local imports
-from .theme import theme
 from .scale import pt
+from .theme import theme
 
 
 __all__ = [

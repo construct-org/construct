@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
 
 # Third party imports

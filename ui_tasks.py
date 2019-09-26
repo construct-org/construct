@@ -2,15 +2,16 @@
 # -*- coding: utf-8 -*-
 """Creates uis with live-linked stylesheets."""
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import argparse
 import inspect
 import sys
 
 # Third party imports
+from invoke import Collection, Config, Program, task
 from qtsass.watchers import Watcher
-from invoke import task, Collection, Program, Config
 
 # Local imports
 import construct

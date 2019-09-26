@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
-from inspect import getmembers
+
+# Standard library imports
 import logging
 from copy import deepcopy
+from inspect import getmembers
 
 # Local imports
 from ..compat import Path, basestring

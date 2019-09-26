@@ -1,24 +1,25 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import copy
+import logging
 import os
 import shutil
 import sys
-import logging
 
 # Local imports
 from . import schemas
-from .compat import wraps, basestring
+from .compat import basestring, wraps
 from .constants import (
-    SETTINGS_FILE,
-    USER_SETTINGS_FILE,
     DEFAULT_SETTINGS,
-    USER_PATH
+    SETTINGS_FILE,
+    USER_PATH,
+    USER_SETTINGS_FILE,
 )
-from .utils import unipath, ensure_exists, yaml_dump, yaml_load
 from .errors import InvalidSettings, ValidationError
+from .utils import ensure_exists, unipath, yaml_dump, yaml_load
 
 
 _log = logging.getLogger(__name__)

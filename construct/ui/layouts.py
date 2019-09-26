@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
 
 # Third party imports
 from Qt import QtCore
-from Qt.QtWidgets import (
-    QBoxLayout,
-    QLayout,
-    QStyle,
-    QSizePolicy
-)
+from Qt.QtWidgets import QBoxLayout, QLayout, QSizePolicy, QStyle
 
 # Local imports
 from .scale import pt

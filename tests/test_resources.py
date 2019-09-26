@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import print_function
+
+# Standard library imports
 import sys
+
+# Local imports
+import construct
+from construct.ui import resources
+
+# Local imports
+from . import data_dir, setup_api, teardown_api
+
 
 # Mock stuff
 try:
@@ -14,10 +23,6 @@ sys.modules['Qt.QtCore'] = mock.MagicMock()
 sys.modules['Qt.QtGui'] = mock.MagicMock()
 sys.modules['Qt.QtWidgets'] = mock.MagicMock()
 
-# Local imports
-import construct
-from construct.ui import resources
-from . import setup_api, teardown_api, data_dir
 
 
 def setup_module():

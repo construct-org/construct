@@ -1,17 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from Qt.QtGui import (
-    QIconEngine,
-    QIcon,
-    QColor,
-    QImage,
-    QPixmap,
-    QPainter,
-)
+# Third party imports
 from Qt import QtCore
-from Qt.QtSvg import (
-    QSvgRenderer,
-)
+from Qt.QtGui import QColor, QIcon, QIconEngine, QImage, QPainter, QPixmap
+from Qt.QtSvg import QSvgRenderer
 
 
 class SvgIconEngine(QIconEngine):
@@ -93,4 +85,3 @@ class FontIcon(QIcon):
         super(FontIcon, self).__init__(FontIconEngine(char, family, parent))
         self.family = family
         self.char = char
-

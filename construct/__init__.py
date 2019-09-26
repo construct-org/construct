@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Local imports
+from . import api
+from .constants import DEFAULT_API_NAME
+
 
 # Package metadata
 __version__ = '0.2.0'
@@ -11,9 +15,6 @@ __author__ = 'Dan Bradham'
 __email__ = 'danielbradham@gmail.com'
 __url__ = 'https://github.com/construct-org/construct'
 
-# Local imports
-from .constants import DEFAULT_API_NAME
-from . import api
 
 
 def API(name=DEFAULT_API_NAME, **kwargs):

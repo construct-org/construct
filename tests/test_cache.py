@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 from datetime import datetime
 
 # Local imports
 import construct
+
+# Local imports
 from . import setup_api, teardown_api
 
 

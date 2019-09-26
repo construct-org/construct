@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import logging
 import shutil
 
 # Local imports
 from ..constants import USER_PATH
 from ..extensions import Extension
-from ..utils import yaml_load, yaml_dump
+from ..utils import yaml_dump, yaml_load
 
 
 _log = logging.getLogger(__name__)

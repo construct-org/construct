@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
-import sys
+
+# Standard library imports
 import os
 import shutil
+import sys
 
 # Local imports
 import construct
 from construct.extensions import Extension
-from . import data_dir, setup_api, teardown_api
 
+# Local imports
+from . import data_dir, setup_api, teardown_api
 
 
 def setup_module():

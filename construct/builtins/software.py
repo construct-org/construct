@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
+import logging
 import os
 import subprocess
-import logging
 import sys
 
 # Local imports
-from ..extensions import Extension
-from ..utils import get_lib_path, update_env, update_dict
 from ..compat import basestring
+from ..extensions import Extension
+from ..utils import get_lib_path, update_dict, update_env
 
 
 platform = sys.platform.rstrip('1234567890')

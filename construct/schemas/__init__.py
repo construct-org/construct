@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
-import os
-import getpass
+
+# Standard library imports
 import datetime
+import getpass
 import json
+import os
 
 # Third party imports
+from bson.objectid import ObjectId
 from cachetools import cached
 from cerberus import Validator
 from cerberus.schema import SchemaRegistry
-from bson.objectid import ObjectId
 
 # Local imports
-from ..errors import ValidationError
 from ..compat import Path
+from ..errors import ValidationError
 from ..utils import yaml_dump, yaml_load
 
 

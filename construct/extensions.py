@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
-import logging
+
+# Standard library imports
 import inspect
+import logging
 
 # Local imports
 from .utils import iter_modules

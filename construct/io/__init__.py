@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 from copy import deepcopy
 
 # Local imports
+from ..errors import ValidationError
 from .fsfs import FsfsLayer
 from .mongo import MongoLayer
-from ..errors import ValidationError
 
 
 class IO(object):

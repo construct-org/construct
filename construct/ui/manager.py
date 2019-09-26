@@ -2,9 +2,9 @@
 
 
 # Local imports
+from .eventloop import requires_event_loop
 from .resources import Resources
 from .theme import theme
-from .eventloop import requires_event_loop
 
 
 class UIManager(object):

@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function
+
+# Standard library imports
 import os
 import shutil
 import sys
+from copy import deepcopy
 
+# Third party imports
 from nose.tools import nottest
 
+# Local imports
 import construct
-from construct.utils import unipath
-from construct.settings import restore_default_settings
 from construct.constants import DEFAULT_LOGGING
-from copy import deepcopy
+from construct.settings import restore_default_settings
+from construct.utils import unipath
 
 
 this_dir = os.path.abspath(os.path.dirname(__file__))

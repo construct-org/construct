@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import logging
 
 # Third party imports
 import fsfs
 
 # Local imports
-from . import Migration
 from ..compat import Path
+from . import Migration
+
 
 _log = logging.getLogger(__name__)
 

@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 from collections import namedtuple
-from os.path import join, dirname, basename, isfile
+from os.path import basename, dirname, isfile, join
 
 # Local imports
-from ..extensions import Host
-from ..utils import update_env, unipath, copy_file
 from ..compat import Path
+from ..extensions import Host
+from ..utils import copy_file, unipath, update_env
 
 
 __all__ = ['Houdini']

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
-from functools import wraps
+
+# Standard library imports
 import logging
+from functools import wraps
 
 # Third party imports
 import qtsass

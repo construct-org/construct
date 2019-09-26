@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import atexit
-import logging
 import inspect
+import logging
 from functools import wraps
 from logging.config import dictConfig
 
 # Local imports
-from .constants import DEFAULT_LOGGING
-from .utils import unipath, ensure_exists, yaml_dump, yaml_load
-from .events import EventManager
 from . import schemas
-from .context import Context
-from .settings import Settings
-from .path import Path
 from .compat import Mapping, basestring
+from .constants import DEFAULT_LOGGING
+from .context import Context
+from .events import EventManager
 from .extensions import ExtensionManager
 from .io import IO
+from .path import Path
+from .settings import Settings
 from .ui.manager import UIManager
+from .utils import ensure_exists, unipath, yaml_dump
 
 
 __all__ = ['API']

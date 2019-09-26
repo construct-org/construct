@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
-import sys
+# Standard library imports
 import re
+import sys
+
+# Third party imports
+from setuptools import find_packages, setup
 
 
 def get_meta(pyfile, readme):

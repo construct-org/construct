@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
 
 # Local imports
 import construct
 from construct.settings import restore_default_settings
+
+# Local imports
 from . import data_dir, setup_api, teardown_api
 
 

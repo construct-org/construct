@@ -2,8 +2,10 @@
 
 # Standard Library Imports
 from __future__ import absolute_import
-from os.path import basename
+
+# Standard library imports
 from collections import namedtuple
+from os.path import basename
 
 # Local imports
 from ..compat import Path

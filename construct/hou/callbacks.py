@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import, print_function
+
+# Standard library imports
+import logging
 import os
 import re
-import logging
 
 
 _log = logging.getLogger('construct.hou.callbacks')

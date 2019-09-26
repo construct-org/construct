@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
-import sphinx_rtd_theme
+# Standard library imports
 import os
 import sys
+
+# Third party imports
+import sphinx_rtd_theme
+
+# Local imports
+import construct
+
 
 docs_root = os.path.dirname(__file__)
 lib_root = os.path.dirname(docs_root)
 sys.path.insert(1, lib_root)
-import construct
 
 project = construct.__title__
 copyright = '2018, ' + construct.__author__

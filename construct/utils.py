@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import os
+import shutil
 import sys
 from contextlib import contextmanager
-import shutil
+
+# Third party imports
 import yaml
 
 # Local imports
-from .compat import Path, Mapping, basestring
+from .compat import Mapping, Path, basestring
 
 
 __all__ = [

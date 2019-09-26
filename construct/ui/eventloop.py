@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 from functools import wraps
 
 

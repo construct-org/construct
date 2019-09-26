@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import
+
+# Standard library imports
 import os
 import sys
 
 # Third party imports
-from invoke import task, Collection, Program
+from invoke import Collection, Program, task
 
 
 def joinpath(*parts):
