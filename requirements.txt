@@ -1,3 +1,4 @@
+entrypoints
 bson
 cachetools
 cerberus
@@ -5,5 +6,5 @@ fsfs
 qtsass
 pymongo
 pyyaml
-pathlib2; python_version<"3.6"
+pathlib2
 Qt.py

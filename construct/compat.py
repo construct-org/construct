@@ -4,9 +4,9 @@ import six
 
 
 try:
-    from pathlib2 import Path
-except ImportError:
     from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 try:
     from collections.abc import Mapping

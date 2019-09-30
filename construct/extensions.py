@@ -6,7 +6,12 @@ from __future__ import absolute_import
 import inspect
 import logging
 
+# Third party imports
+# Third library imports
+import entrypoints
+
 # Local imports
+from .constants import EXTENSIONS_ENTRY_POINT
 from .utils import iter_modules
 
 
@@ -267,13 +272,24 @@ class ExtensionManager(dict):
         '''Find and iterate over all Extension subclasses
 
         1. Yields Builtin Extensions
+        2. Yields Extensions registered to construct.extensions entry_point
         2. Yields Extensions in python files in CONSTRUCT_PATH
         3. Yields Extensions in settings['extensions']
         '''
 
-        from . import builtins
-        for ext in builtins.extensions:
+        from .ext import extensions
+        for ext in extensions:
             yield ext
+
+        from .hosts import extensions
+        for ext in extensions:
+            yield ext
+
+        entry_points = entrypoints.get_group_all(EXTENSIONS_ENTRY_POINT)
+        for entry_point in entry_points:
+            obj = entry_point.load()
+            for _, ext in inspect.getmembers(obj, is_extension_type):
+                yield ext
 
         ext_paths = [p / 'extensions' for p in self.path]
         for mod in iter_modules(*ext_paths):

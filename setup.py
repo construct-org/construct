@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Standard library imports
 import re
-import sys
 
 # Third party imports
 from setuptools import find_packages, setup
@@ -50,13 +49,14 @@ setup(
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
     install_requires=[
-        'pathlib2; python_version<"3.6"',
+        'pathlib2',
         'fsfs',
         'pyyaml',
         'bson',
         'cachetools',
         'cerberus',
         'Qt.py',
+        'entrypoints',
     ],
     entry_points={
         'console_scripts': [
