@@ -76,8 +76,8 @@ def test_simple_extension():
 def test_builtins_loaded():
     '''Ensure all builtin extensions are loaded'''
 
-    import construct.builtins
+    from construct import ext, hosts
     api = construct.API(__name__)
 
-    for ext in construct.builtins.extensions:
+    for ext in ext.extensions + hosts.extensions:
         assert api.extensions.loaded(ext.identifier)
