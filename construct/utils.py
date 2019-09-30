@@ -31,7 +31,12 @@ package_path = Path(__file__).parent.resolve()
 
 
 def get_lib_path():
-    return package_path.parent
+    lib = package_path.parent
+    if lib.name == 'construct':
+        # We're in develop mode so we check a construct dep instead
+        import entrypoints
+        return Path(entrypoints.__file__).parent
+    return lib
 
 
 def yaml_dump(data, **kwargs):

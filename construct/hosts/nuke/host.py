@@ -8,10 +8,9 @@ from collections import namedtuple
 from os.path import basename
 
 # Local imports
-from .. import API
-from ..compat import Path
-from ..extensions import Host
-from ..utils import copy_file, update_env
+from ...compat import Path
+from ...extensions import Host
+from ...utils import copy_file, update_env
 
 
 __all__ = ['Nuke']
@@ -82,7 +81,7 @@ class Nuke(Host):
         nuke.removeFavoriteDir('asset')
         nuke.removeFavoriteDir('workspace')
         nuke.addFavoriteDir(
-            fav_name,
+            'workspace',
             directory=directory,
             type=(nuke.IMAGE | nuke.SCRIPT | nuke.GEO),
             icon=fav_icon,

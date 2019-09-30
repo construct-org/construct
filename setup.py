@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Standard library imports
 import re
-import sys
 
 # Third party imports
 from setuptools import find_packages, setup
@@ -57,6 +56,7 @@ setup(
         'cachetools',
         'cerberus',
         'Qt.py',
+        'entrypoints',
     ],
     entry_points={
         'console_scripts': [

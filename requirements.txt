@@ -1,3 +1,4 @@
+entrypoints
 bson
 cachetools
 cerberus

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Standard Library Imports
 from __future__ import absolute_import
 
 # Standard library imports
@@ -8,9 +7,9 @@ from collections import namedtuple
 from os.path import basename
 
 # Local imports
-from ..compat import Path
-from ..extensions import Host
-from ..utils import copy_file, update_env
+from ...compat import Path
+from ...extensions import Host
+from ...utils import copy_file, update_env
 
 
 __all__ = ['Maya']

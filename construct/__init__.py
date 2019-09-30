@@ -16,7 +16,6 @@ __email__ = 'danielbradham@gmail.com'
 __url__ = 'https://github.com/construct-org/construct'
 
 
-
 def API(name=DEFAULT_API_NAME, **kwargs):
     '''Wraps :class:`construct.api.API` and maintains a cache of API objects.
 

@@ -14,6 +14,7 @@ PLATFORM = sys.platform.rstrip('1234567890')
 if PLATFORM == 'darwin':
     PLATFORM = 'mac'
 
+EXTENSIONS_ENTRY_POINT = 'construct.extensions'
 SETTINGS_FILE = 'construct.yaml'
 USER_SETTINGS_FILE = unipath('~/.construct/construct.yaml')
 USER_PATH = unipath('~/.construct')
