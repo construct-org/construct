@@ -4,12 +4,12 @@ from __future__ import absolute_import
 
 # Standard library imports
 from collections import namedtuple
-from os.path import basename, dirname, isfile, join
+from os.path import basename, isfile
 
 # Local imports
-from ..compat import Path
-from ..extensions import Host
-from ..utils import copy_file, unipath, update_env
+from ...compat import Path
+from ...extensions import Host
+from ...utils import copy_file, update_env
 
 
 __all__ = ['Houdini']
@@ -35,6 +35,7 @@ class Houdini(Host):
 
     @property
     def version(self):
+        import hou
         return Version(hou.applicationVersion())
 
     def modified(self):
@@ -124,7 +125,7 @@ class Houdini(Host):
         startup_path = (package_path / 'startup').as_posix()
         update_env(
             env,
-            HOUDINI_PATH=[startup_path],
+            HOUDINI_PATH=[startup_path, '&'],
         )
 
     def after_launch(self, api, ctx):

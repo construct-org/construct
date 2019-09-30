@@ -168,7 +168,13 @@ class Software(Extension):
         # Let Host Extension add to the environment
         host = self.api.extensions.get(software['host'], None)
         if host:
+            _log.debug('Executing before_launch: %s' % host)
             host.before_launch(self.api, software, env, ctx)
+        else:
+            _log.debug(
+                'Skipping before_launch...'
+                '%s has no registered ext.' % software['host']
+            )
 
         _log.debug('Launching %s' % name.title())
         _run(cmd, env=env)
@@ -198,7 +204,13 @@ class Software(Extension):
         # Let Host Extension add to the environment
         host = self.api.extensions.get(software['host'], None)
         if host:
+            _log.debug('Executing before_launch: %s' % host)
             host.before_launch(self.api, software, env, ctx)
+        else:
+            _log.debug(
+                'Skipping before_launch...'
+                '%s has no registered ext.' % software['host']
+            )
 
         _log.debug('Launching %s' % name.title())
         _run(cmd, env=env)

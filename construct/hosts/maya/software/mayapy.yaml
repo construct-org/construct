@@ -1,0 +1,12 @@
+schema_version: '0.1.0'
+label: 'MayaPy 2019'
+icon: 'icons/mayapy.png'
+host: 'maya'
+cmd:
+    linux: '/usr/autodesk/maya2019/bin/mayapy'
+    mac: '/Applications/Autodesk/maya2019/bin/mayapy'
+    win: 'C:/Program Files/Autodesk/Maya2019/bin/mayapy.exe'
+args: []
+env: {}
+template: 'templates/maya_default'
+extensions: ['.mb', '.ma', '.obj', '.abc', '.fbx', '.usd']

@@ -3,13 +3,7 @@
 from __future__ import absolute_import, print_function
 
 # Standard library imports
-import glob
 import logging
-import os
-import re
-
-# Local imports
-from ..utils import unipath
 
 
 _log = logging.getLogger('construct.maya.callbacks')

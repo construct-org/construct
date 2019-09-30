@@ -4,8 +4,6 @@ from __future__ import absolute_import, print_function
 
 # Standard library imports
 import logging
-import os
-import re
 
 
 _log = logging.getLogger('construct.hou.callbacks')

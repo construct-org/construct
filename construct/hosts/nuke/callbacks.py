@@ -4,7 +4,6 @@ from __future__ import absolute_import
 
 # Standard library imports
 import logging
-import os
 
 
 _log = logging.getLogger('construct.nuke.callbacks')
