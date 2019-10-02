@@ -2,6 +2,37 @@
 Release Notes
 =============
 
+0.1.25 (2019-10-02)
+
+* Fix file.save and file.save_next_version not respecting current extension
+
+
+0.1.24 (2019-08-17)
+
+* Add SaveNextVersion Action
+* Add SetWorkspace Action
+* Add ActionRunner logging
+* Use entrypoints package instead of pkg_resources
+
+    * Fixes issues with older version of pkg_resources shipped with Nuke
+
+
+0.1.23 (2019-08-05)
+
+* Add slight delay to cli
+* Use yaml safe methods to get rid of all warnings
+* Use nose for testing on appveyor
+
+
+0.1.22 (2019-02-13)
+
+* Add support for fsfs search_levels
+* Remove pipenv - it's not a good fit for construct
+* Add Time actions
+
+    * Save and Sync FPS
+    * Save and Sync Frameranges
+
 
 0.1.21 (2018-06-15)
 
