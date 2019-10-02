@@ -132,22 +132,24 @@ class Save(Action):
 
         params['workspace']['default'] = ctx.workspace
         name = ctx.task.parent().name
-        if ctx.file:
-            path_template = get_path_template('workspace_file')
-            try:
-                data = path_template.parse(str(ctx.file))
-            except ParseError:
-                pass
-            else:
-                name = data['name']
+        extensions = ctx.workspace.config['extensions']
+        extension = extensions[0]
+        path_template = get_path_template('workspace_file')
+        try:
+            data = path_template.parse(str(ctx.file))
+        except ParseError:
+            pass
+        else:
+            name = data['name']
+            extension = data['ext']
 
         params['name']['default'] = name
 
-        extensions = ctx.workspace.config['extensions']
-        params['ext']['default'] = extensions[0]
+        params['ext']['default'] = extension
         params['ext']['options'] = extensions
         params['ext']['required'] = False
-        next_version = ctx.workspace.get_next_version(name, extensions[0])
+
+        next_version = ctx.workspace.get_next_version(name, extension)
         params['version']['default'] = next_version
         params['version']['required'] = False
         return params
@@ -253,6 +255,8 @@ class SaveNextVersion(Action):
 
         params['workspace']['default'] = ctx.workspace
         name = ctx.task.parent().name
+        extensions = ctx.workspace.config['extensions']
+        extension = extensions[0]
         path_template = get_path_template('workspace_file')
         try:
             data = path_template.parse(str(ctx.file))
@@ -260,15 +264,15 @@ class SaveNextVersion(Action):
             pass
         else:
             name = data['name']
+            extension = data['ext']
 
         params['name']['default'] = name
 
-        extensions = ctx.workspace.config['extensions']
-        params['ext']['default'] = extensions[0]
+        params['ext']['default'] = extension
         params['ext']['options'] = extensions
         params['ext']['required'] = False
 
-        next_version = ctx.workspace.get_next_version(name, extensions[0])
+        next_version = ctx.workspace.get_next_version(name, extension)
         params['version']['default'] = next_version
         params['version']['required'] = False
 
