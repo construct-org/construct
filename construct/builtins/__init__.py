@@ -78,15 +78,20 @@ class Builtins(Extension):
         self.add_task(templates.NewTemplate, templates.validate_template)
         self.add_task(templates.NewTemplate, templates.commit_template)
 
-        self.add_action(files.Publish)
-        self.add_action(files.PublishFile)
-
         self.add_action(files.Open)
         self.add_task(files.Open, files.open_file)
 
         self.add_action(files.Save)
         self.add_task(files.Save, files.build_filename)
         self.add_task(files.Save, files.save_file)
+
+        self.add_action(files.Publish)
+        self.add_task(files.Publish, files.stage_scene)
+        self.add_task(files.Publish, files.validate_scene)
+        self.add_task(files.Publish, files.ensure_saved)
+        self.add_task(files.Publish, files.publish_scene)
+        self.add_task(files.Publish, files.save_next_workfile)
+        self.add_task(files.Publish, files.open_next_workfile)
 
         self.add_action(files.SaveNextVersion)
         self.add_task(files.SaveNextVersion, files.build_filename)
