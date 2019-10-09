@@ -218,12 +218,51 @@ class Workspace(Entry):
             try:
                 data = path_template.parse(f.name)
                 data['version'] = int(data['version'])
+                file_type = construct.get_file_type(f.name)
+                if file_type:
+                    file_type = file_type[0]
+                else:
+                    file_type = scene_data['ext'][1:]
+                data['file_type'] = file_type
             except ParseError:
                 continue
             versions[f.name] = data
         return versions
 
+    def get_latest_version(self, name, ext):
+        '''Get the latest version of a workfile.
+
+        Arguments:
+            name (str): The name of the version to lookup
+            ext (str): The extension of the workfile
+        Returns:
+            version dict
+        '''
+        task = self.parent().short
+        versions = self.get_work_files()
+        version = 0
+        latest_version = None
+
+        for data in versions.values():
+            is_match = (
+                data['name'] == name and
+                data['task'] == task and
+                data['ext'] == ext
+            )
+            if is_match and data['version'] > version:
+                latest_version = data
+
+        return latest_version
+
     def get_next_version(self, name, ext):
+        '''Get the next version number of a workfile.
+
+        Arguments:
+            name (str): The name of the version to lookup
+            ext (str): The extension of the workfile
+        Returns:
+            int
+        '''
         task = self.parent().short
         versions = self.get_work_files()
         version = 0
