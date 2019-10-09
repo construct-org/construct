@@ -4,7 +4,7 @@ import abc
 import os
 import inspect
 import logging
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from fnmatch import fnmatch
 
 from construct.constants import EXTENSIONS_ENTRY_POINT
@@ -257,8 +257,8 @@ class ExtensionCollector(object):
     up extensions via attribute access.'''
 
     def __init__(self):
-        self.by_name = {}
-        self.by_attr = {}
+        self.by_name = OrderedDict()
+        self.by_attr = OrderedDict()
 
     def __getattr__(self, name):
         if name in self.by_name:

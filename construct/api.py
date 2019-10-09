@@ -121,14 +121,14 @@ def init(root=None, host=None, extension_paths=None, logging=None):
     if host:
         _context.host = host
 
+    # Register builtins
+    from construct.builtins import Builtins
+    extensions.register(Builtins)
+
     # Discover extensions
     _log.debug('Discovering extensions...')
     extension_paths = extension_paths or []
     extensions.discover(*extension_paths)
-
-    # Register builtins
-    from construct.builtins import Builtins
-    extensions.register(Builtins)
 
     _log.debug('Initialized!')
     _initialized = True
