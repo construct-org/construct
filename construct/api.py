@@ -47,6 +47,7 @@ __all__ = [
     'get_host',
     'get_form',
     'get_form_cls',
+    'get_file_type',
     'show_form',
     'new_project',
     'new_sequence',
@@ -254,6 +255,16 @@ def show_form(action_identifier, action=None, ctx=None, parent=None):
 
     form.show()
     return form
+
+
+@log_call
+def get_file_type(file):
+    '''Get filetype for the given file'''
+
+    ext = os.path.splitext(file)[-1]
+    for file_type_name, file_type in config['FILE_TYPES'].items():
+        if ext in file_type['extensions']:
+            return file_type_name, file_type
 
 
 @log_call
