@@ -95,7 +95,7 @@ PATH_TEMPLATES:
     sequence: '{project}/{collection}/{sequence}'
     shot: '{project}/{collection}/{sequence}/{shot}'
     task: '{parent}/{task}'
-    publish: '{task}/publish/{file_type}/{task:[^_/]+}_{name}/v{versio:\d+}'
+    publish: '{task}/publish/{file_type}'
     publish_file: '{task:[^_/]+}_{name}_v{version:\d+}{ext:\.\w+}'
     workspace: '{task}/work/{workspace}'
     workspace_file: '{task:[^_/]+}_{name}_v{version:\d+}{ext:\.\w+}'
@@ -175,6 +175,12 @@ SOFTWARE:
 FILE_TYPES:
     alembic:
         extensions: ['.abc']
+        icon: 'default'
+    usd:
+        extensions: ['.usd']
+        icon: 'default'
+    fbx:
+        extensions: ['.fbx']
         icon: 'default'
     maya:
         extensions: [ '.mb', '.ma']
