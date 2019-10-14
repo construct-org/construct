@@ -2,6 +2,25 @@
 Release Notes
 =============
 
+0.1.28 (2019-10-14)
+
+* Fix builtin task descriptions
+
+
+0.1.27 (2019-10-09)
+
+* Add Publish Action
+* Fix extension load order
+* Add get_file_type api method
+* Update default FILE_TYPES
+* Add get_latest_version to Workspace model
+
+
+0.1.26 (2019-10-02)
+
+* Fix construct.ps1 scrim
+
+
 0.1.25 (2019-10-02)
 
 * Fix file.save and file.save_next_version not respecting current extension
