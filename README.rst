@@ -26,8 +26,8 @@ Features
      + manage and navigate your projects
      + automatically generate commands from Actions
 
-Core Packages
-=============
+Extension Packages
+==================
 
 +----------------------+------------------------------------------------+
 | package              | description                                    |
@@ -37,6 +37,8 @@ Core Packages
 | construct_launcher_  | Application launcher                           |
 +----------------------+------------------------------------------------+
 | construct_maya_      | Autodesk Maya integration                      |
++----------------------+------------------------------------------------+
+| construct_hou_       | Side FX Houdini integration                     |
 +----------------------+------------------------------------------------+
 | construct_nuke_      | The Foundry Nuke integration                   |
 +----------------------+------------------------------------------------+
@@ -62,6 +64,7 @@ Documentation
 .. _construct_templates: https://github.com/construct-org/construct_templates
 .. _construct_launcher: https://github.com/construct-org/construct_launcher
 .. _construct_maya: https://github.com/construct-org/construct_maya
+.. _construct_hou: https://github.com/construct-org/construct_hou
 .. _construct_nuke: https://github.com/construct-org/construct_nuke
 .. _construct_ui: https://github.com/construct-org/construct_ui
 .. _fsfs: https://github.com/danbradham/fsfs

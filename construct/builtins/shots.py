@@ -100,6 +100,7 @@ class NewShot(Action):
 @pass_kwargs
 @returns(store('shot_item'))
 def stage_shot(project, collection, sequence, name, template=None):
+    '''Stage a new shot Entry'''
 
     path_template = api.get_path_template('shot')
     shot_path = path_template.format(dict(
@@ -126,6 +127,8 @@ def stage_shot(project, collection, sequence, name, template=None):
 @requires(success('stage_shot'))
 @params(store('shot_item'))
 def validate_shot(shot_item):
+    '''Make sure shot does not exist'''
+
     if os.path.exists(shot_item['path']):
         raise Abort('Shot already exists: ' + shot_item['name'])
     return True
@@ -136,7 +139,7 @@ def validate_shot(shot_item):
 @params(store('shot_item'))
 @returns(artifact('shot'))
 def commit_shot(shot_item):
-    '''Make new task'''
+    '''Create new shot'''
 
     if shot_item['template']:
         shot = shot_item['template'].copy(shot_item['path'])

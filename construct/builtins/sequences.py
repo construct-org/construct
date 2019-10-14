@@ -90,6 +90,7 @@ class NewSequence(Action):
 @pass_kwargs
 @returns(store('sequence_item'))
 def stage_sequence(project, collection, name, template=None):
+    '''Stage new sequence Entry'''
 
     path_template = api.get_path_template('sequence')
     sequence_path = path_template.format(dict(
@@ -115,6 +116,8 @@ def stage_sequence(project, collection, name, template=None):
 @requires(success('stage_sequence'))
 @params(store('sequence_item'))
 def validate_sequence(sequence_item):
+    '''Make sure new sequence does not exist.'''
+
     if os.path.exists(sequence_item['path']):
         raise Abort('Sequence already exists: ' + sequence_item['name'])
     return True
@@ -125,7 +128,7 @@ def validate_sequence(sequence_item):
 @params(store('sequence_item'))
 @returns(artifact('sequence'))
 def commit_sequence(sequence_item):
-    '''Make new task'''
+    '''Make new sequence'''
 
     if sequence_item['template']:
         sequence = sequence_item['template'].copy(sequence_item['path'])
