@@ -70,10 +70,9 @@ class Context(dict):
     '''
 
     _keys = [
+        'platform',
         'user',
-        'platform',
         'host',
-        'platform',
         'project',
         'folder',
         'asset',

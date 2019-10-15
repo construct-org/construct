@@ -218,3 +218,13 @@ def copy_file(src, dest):
         dest (str or Path): Destination file or directory
     '''
     shutil.copy(str(src), str(dest))
+
+
+class classproperty(object):
+    '''Like a property but for a Class object.'''
+
+    def __init__(self, fn):
+        self.fn = fn
+
+    def __get__(self, obj, type):
+        return self.fn(type)

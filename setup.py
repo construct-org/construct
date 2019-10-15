@@ -57,6 +57,10 @@ setup(
         'cerberus',
         'Qt.py',
         'entrypoints',
+        'win_unicode_console',
+        'colorama',
+        'scrim',
+        'qtsass @ git+ssh://git@github.com/spyder-ide/qtsass',  # TODO: pypi
     ],
     entry_points={
         'console_scripts': [

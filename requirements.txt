@@ -1,10 +1,12 @@
-entrypoints
 bson
 cachetools
 cerberus
+colorama
+entrypoints
 fsfs
-qtsass
-pymongo
-pyyaml
 pathlib2; python_version<"3.6"
+pyyaml
 Qt.py
+qtsass
+scrim
+win_unicode_console
