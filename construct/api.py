@@ -11,6 +11,7 @@ from logging.config import dictConfig
 
 # Local imports
 from . import schemas
+from .actions import ActionManager
 from .compat import Mapping, basestring
 from .constants import DEFAULT_LOGGING
 from .context import Context
@@ -82,6 +83,7 @@ class API(object):
         self.path = Path(kwargs.pop('path', None))
         self.settings = Settings(self.path)
         self.extensions = ExtensionManager(self)
+        self.actions = ActionManager(self)
         self.context = Context()
         self.schemas = schemas
         self.io = IO(self)
