@@ -3,16 +3,13 @@
 from __future__ import absolute_import
 
 # Standard library imports
-import inspect
 import logging
-
-# Third party imports
-import entrypoints
+import sys
+from collections import OrderedDict
 
 # Local imports
-from .constants import EXTENSIONS_ENTRY_POINT
-from .schemas import new_validator
-from .utils import iter_modules
+from .compat import reraise
+from .errors import ActionError
 
 
 __all__ = [
@@ -27,56 +24,26 @@ _log = logging.getLogger(__name__)
 
 
 class Action(object):
-    '''The Action class allows users to extend Construct with their own
-    behavior and functionality. When writing your own Actions use the
-    `setup` method instead of `__init__` to perform any setup your Action
-    requires like creating a database connection. The `load` method should be
-    used to register event handlers and extend the base API. The `unload`
-    method should be used to undo everything that was done in `load`.
-
-    Actions commonly do the following:
-
-     - Emit custom events
-     - Provide event handlers
-     - Provide Methods and Objects to extend the base API
-
-    Look at construct.builtins to see the Actions that provide the core
-    functionality of Construct.
+    '''An action is an executable tool that can be presented to users in
+    Constructs UI.
     '''
 
     description = ''
     icon = ''
     identifier = ''
     label = ''
-    menu = ''
 
     def __init__(self, api):
         self.api = api
 
-    def __call__(self, *args, **kwargs):
-
-        arguments = inspect.getcallargs(self.run, *args, **kwargs)
-
-        # Create Cerberus Validator
-        ctx = kwargs.pop('ctx', self.api.context.copy())
-        v = new_validator(self.parameters(self.api, ctx))
-        kwargs = v.validated(arguments)
-
-        # TODO: Validate arguments
+    def __call__(self, ctx=None):
         try:
-            return self.run(self.api)
-        except Exception as e:
-            # TODO: Raise an ActionError
-            #       If gui show an error dialog.
-            raise
+            self.run(self.api, ctx or self.api.context.copy())
+        except:
+            exc_typ, exc_value, exc_tb = sys.exc_info()
+            reraise(ActionError, ActionError(exc_value), exc_tb)
 
-    def parameters(self, api, ctx=None):
-        '''Subclasses should implement return a Cerberus Validation Schema
-        to validate arguments passed to the run method.
-        '''
-        return {}
-
-    def run(self, *args, **kwargs):
+    def run(self, api, ctx):
         '''Subclasses should implement run to perform the Action's work.'''
         return NotImplemented
 
@@ -104,13 +71,13 @@ def is_action(obj):
     return isinstance(obj, ACTION_TYPES)
 
 
-class ActionManager(dict):
+class ActionManager(OrderedDict):
 
     def __init__(self, api):
         self.api = api
 
     def load(self):
-        '''Discover and load all Actions'''
+        pass
 
     def unload(self):
         '''Unload all Actions'''
@@ -120,7 +87,8 @@ class ActionManager(dict):
         '''Register an Action'''
 
         if self.loaded(action):
-            _log.debug('Action already loaded: %s' % action)
+            _log.error('Action already loaded: %s' % action)
+            return
 
         _log.debug('Loading action: %s' % action)
         if is_action_type(action):
@@ -143,44 +111,8 @@ class ActionManager(dict):
     def loaded(self, action):
         '''Check if an Action has been loaded.'''
 
-        identifier = getattr(action, 'identifer', action)
+        identifier = getattr(action, 'identifier', action)
         return identifier in self
-
-    def discover(self):
-        '''Find and iterate over all Action subclasses
-
-        1. Yields Builtin Actions
-        2. Yields Actions registered to construct.actions entry_point
-        2. Yields Actions in python files in CONSTRUCT_PATH
-        3. Yields Actions in settings['actions']
-        '''
-
-        from .action import actions
-        for action in actions:
-            yield action
-
-        from .hosts import actions
-        for action in actions:
-            yield action
-
-        entry_points = entrypoints.get_group_all(EXTENSIONS_ENTRY_POINT)
-        for entry_point in entry_points:
-            obj = entry_point.load()
-            for _, action in inspect.getmembers(obj, is_action_type):
-                yield action
-
-        action_paths = [p / 'actions' for p in self.path]
-        for mod in iter_modules(*action_paths):
-            for _, action in inspect.getmembers(mod, is_action_type):
-                yield action
-
-        for module_path in self.settings.get('actions', []):
-            try:
-                mod = __import__(module_path)
-            except ImportError:
-                _log.debug('Action module does not exist: ' + module_path)
-            for _, action in inspect.getmembers(mod, is_action_type):
-                yield action
 
     def ls(self, typ=None):
         '''Get a list of available actions.
@@ -190,7 +122,7 @@ class ActionManager(dict):
 
         Examples:
             ls()  # lists all actions
-            ls(Host)  # list only Host actions
+            ls(ActionWrapper)  # list only ActionWrapper
         '''
 
         matches = []
