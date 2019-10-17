@@ -11,12 +11,12 @@ from logging.config import dictConfig
 
 # Local imports
 from . import schemas
-from .actions import ActionManager
+from .actions import Action, ActionManager
 from .compat import Mapping, basestring
 from .constants import DEFAULT_LOGGING
 from .context import Context
 from .events import EventManager
-from .extensions import ExtensionManager
+from .extensions import Extension, ExtensionManager, Host
 from .io import IO
 from .path import Path
 from .settings import Settings
@@ -24,7 +24,13 @@ from .ui.manager import UIManager
 from .utils import ensure_exists, unipath, yaml_dump
 
 
-__all__ = ['API']
+__all__ = [
+    'schemas',
+    'Action',
+    'Extension',
+    'Host',
+    'Context',
+]
 
 _log = logging.getLogger(__name__)
 _cache = {}
