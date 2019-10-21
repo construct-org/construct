@@ -222,7 +222,7 @@ class Workspace(Entry):
                 if file_type:
                     file_type = file_type[0]
                 else:
-                    file_type = scene_data['ext'][1:]
+                    file_type = data['ext'][1:]
                 data['file_type'] = file_type
             except ParseError:
                 continue
