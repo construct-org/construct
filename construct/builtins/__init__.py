@@ -5,14 +5,15 @@ from construct.utils import package_path
 from construct.builtins import (
     assets,
     collections,
+    edit,
     files,
     projects,
     sequences,
     shots,
     tasks,
     templates,
+    time,
     workspaces,
-    time
 )
 
 
@@ -110,3 +111,6 @@ class Builtins(Extension):
         self.add_action(time.SyncFPS)
         self.add_task(time.SyncFPS, time.get_frame_rate)
         self.add_task(time.SyncFPS, time.apply_frame_rate)
+
+        self.add_action(edit.Edit)
+        self.add_task(edit.Edit, edit.edit)
