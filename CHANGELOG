@@ -2,6 +2,17 @@
 Release Notes
 =============
 
+0.1.30 (2019-10-29)
+
+* Add edit cli action
+  * Opens the current entry in sublime text or the exe in EDITOR env var
+
+
+0.1.29 (2019-10-21)
+
+* Minor patches
+
+
 0.1.28 (2019-10-14)
 
 * Fix builtin task descriptions
