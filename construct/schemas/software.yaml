@@ -1,15 +1,19 @@
 schema_version:
     type: string
     default: 0.1.0
+
 label:
     type: string
     required: True
+
 icon:
     type: string
     required: True
+
 host:
     type: string
     required: True
+
 cmd:
     type: dict
     required: True
@@ -20,17 +24,21 @@ cmd:
             anyof_type: [string, list]
         win:
             anyof_type: [string, list]
+
 args:
     type: list
     default_setter: empty_list
+
 env:
     type: dict
-    valueschema:
+    valuesrules:
         anyof_type: [string, list, dict]
     default_setter: empty_dict
+
 template:
     type: string
     default_setter: empty_string
+
 extensions:
     type: list
     default_setter: empty_list

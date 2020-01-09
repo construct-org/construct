@@ -1,55 +1,67 @@
 schema_version:
     type: string
     default: 0.1.0
+
 _id:
     type: objectid
     default_setter: objectid
+
 _type:
     type: string
     default: version
+
 created_at:
     type: datetime
     default_setter: utcnow
+
 created_by:
     type: string
     default_setter: getuser
+
 name:
     type: string
     required: True
+
 instance:
     type: integer
     default: 0
+
 version:
     type: integer
     required: True
+
 file_type:
     type: string
     required: True
+
 identifier:
     type: string
     required: True
+
 comments:
     type: list
     schema:
         type: dict
         schema: comment
+
 thumbnail:
     type: binary
+
 images:
     type: list
     schema:
         type: binary
+
 is_sequence:
     type: boolean
     default: False
+
 start_frame:
     type: integer
+
 end_frame:
     type: integer
+
 padding:
     type: integer
-locations:
-    type: dict
-    valueschema:
-        type: string
-    required: True
+
