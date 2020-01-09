@@ -1,6 +1,7 @@
 invoke
+isort
+mock; python_version<"3"
 nose
+PySide2
 sphinx
 sphinx_rtd_theme
-mock; python_version<"3"
-isort

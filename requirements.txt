@@ -4,9 +4,9 @@ cerberus
 colorama
 entrypoints
 fsfs
+git+https://github.com/spyder-ide/qtsass
 pathlib2; python_version<"3.6"
 pyyaml
 Qt.py
-qtsass
 scrim
 win_unicode_console
