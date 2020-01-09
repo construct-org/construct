@@ -1,56 +1,196 @@
 schema_version:
     type: string
     default: 0.1.0
+
 _id:
     type: objectid
     default_setter: objectid
+
 _type:
     type: string
     default: project
-created_at:
-    type: datetime
-    default_setter: utcnow
-created_by:
-    type: string
-    default_setter: getuser
+
 name:
     type: string
     required: True
+
 description:
     type: string
     default_setter: empty_string
-thumbnail:
-    type: binary
-locations:
+
+created_at:
+    type: datetime
+    default_setter: utcnow
+
+created_by:
+    type: string
+    default_setter: getuser
+
+fps:
+    type: float
+    default: 24.0
+
+people:
     type: dict
-    valueschema:
+    allow_unknown: True
+    valuesrules:
         type: string
-    required: True
+    required: False
+
 tree:
     type: dict
     allow_unknown: True
-    valueschema:
+    valuesrules:
         type: string
     schema:
-        groups:
+        bin:
             type: string
         asset:
             type: string
-        asset_work:
+        workspace:
             type: string
-        asset_publish:
+        publish:
             type: string
-        asset_review:
+        review:
+            type: string
+        render:
             type: string
         file:
             type: string
-        sequence:
+        file_sequence:
             type: string
     default:
-        folders: ''
-        asset: '{asset}'
-        asset_work: '{asset}/{task}/work/{host}'
-        asset_publish: '{asset}/{task}/publish/{ext}'
-        asset_reviews: '{asset}/{task}/review'
-        file: '{task}_{name}_v{version:0>3d}.{ext}'
-        sequence: '{task}_{name}_v{version:0>3}.{frame:0>4d}.{ext}'
+        bin: '{project}/{bin}'
+        asset: '{project}/{bin}/{asset_type}/{asset}'
+        workspace: '{project}/{bin}/{asset_type}/{asset}/{task}/work/{host}'
+        publish: '{project}/{bin}/{asset_type}/{asset}/{task}/publish/{ext}'
+        review: '{project}/review/{task}/{bin}/{asset_type}/{asset}'
+        render: '{project}/renders/{task}/{bin}/{asset_type}/{asset}'
+        file: '{task}_{name}_v{version}.{ext}'
+        file_sequence: '{task}_{name}_v{version}.{frame}.{ext}'
+
+asset_types:
+    type: dict
+    allow_unknown: True
+    valuesrules:
+        type: dict
+        require_all: True
+        schema:
+            name:
+                type: string
+            plural:
+                type: string
+            icon:
+                type: string
+                default: empty_string
+            order:
+                type: integer
+    default:
+        asset:
+            name: asset
+            plural: assets
+            icon: asset.svg
+            order: 0
+        shot:
+            name: shot
+            plural: shots
+            icon: shot.svg
+            order: 1
+
+task_types:
+    type: dict
+    allow_unknown: True
+    valuesrules:
+        type: dict
+        require_all: True
+        schema:
+            name:
+                type: string
+            short:
+                type: string
+            icon:
+                type: string
+                default: empty_string
+            order:
+                type: integer
+    default:
+        design:
+            name: design
+            short: dsn
+            icon: design.svg
+            order: 0
+        model:
+            name: model
+            short: mdl
+            icon: model.svg
+            order: 1
+        texture:
+            name: texture
+            short: tx
+            icon: texture.svg
+            order: 2
+        shade:
+            name: shade
+            short: shd
+            icon: shade.svg
+            order: 3
+        rig:
+            name: rig
+            short: rig
+            icon: rig.svg
+            order: 4
+        animation:
+            name: animation
+            short: anim
+            icon: anim.svg
+            order: 5
+        fx:
+            name: fx
+            short: fx
+            icon: fx.svg
+            order: 6
+        lighting:
+            name: lighting
+            short: lgt
+            icon: light.svg
+            order: 7
+        compositing:
+            name: compositing
+            short: comp
+            icon: comp.svg
+            order: 8
+
+bins:
+    type: dict
+    allow_unknown: True
+    valuesrules:
+        type: dict
+        require_all: True
+        schema:
+            name:
+                type: string
+            description:
+                type: string
+                default: empty_string
+            icon:
+                type: string
+                default: empty_string
+            order:
+                type: integer
+
+assets:
+    type: dict
+    allow_unknown: True
+    valuesrules:
+        type: dict
+        require_all: True
+        schema:
+            _id:
+                type: objectid
+            name:
+                type: string
+            bin:
+                type: string
+            asset_type:
+                type: string
+
