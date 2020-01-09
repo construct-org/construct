@@ -49,18 +49,18 @@ setup(
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
     install_requires=[
-        'pathlib2; python_version<"3.6"',
-        'fsfs',
-        'pyyaml',
         'bson',
         'cachetools',
         'cerberus',
-        'Qt.py',
-        'entrypoints',
-        'win_unicode_console',
         'colorama',
+        'entrypoints',
+        'fsfs',
+        'pathlib2; python_version<"3.6"',
+        'pyyaml',
+        'Qt.py',
+        'qtsass @ git+https://github.com/spyder-ide/qtsass', # TODO: pypi
         'scrim',
-        'qtsass @ git+ssh://git@github.com/spyder-ide/qtsass',  # TODO: pypi
+        'win_unicode_console',
     ],
     entry_points={
         'console_scripts': [
