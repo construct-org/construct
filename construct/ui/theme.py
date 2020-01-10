@@ -252,8 +252,7 @@ class Theme(object):
 
     def refresh_stylesheet(self):
         '''Recompile stylesheet and reapply to all themed widgets.'''
-
-        self.stylesheet = self.compile_stylesheet()
+        self._stylesheet = self.compile_stylesheet()
         if self._signals:
             self._signals.changed.emit(self.stylesheet)
         else:
@@ -274,7 +273,7 @@ class Theme(object):
                 if hasattr(child, 'setStyleSheet'):
                     child.setStyleSheet(self.stylesheet)
                 if hasattr(child, 'children'):
-                    children.extend(child.children)
+                    children.extend(child.children())
 
     def set_color(self, name, value):
         '''Set a color value for this theme.
