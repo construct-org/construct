@@ -16,6 +16,7 @@ __all__ = [
     'H3',
     'H4',
     'H5',
+    'Header',
     'P',
 ]
 
@@ -30,26 +31,32 @@ class BaseLabel(QtWidgets.QLabel):
 
 
 class H1(BaseLabel):
+
     css_id = 'h1'
 
 
 class H2(BaseLabel):
+
     css_id = 'h2'
 
 
 class H3(BaseLabel):
+
     css_id = 'h3'
 
 
 class H4(BaseLabel):
+
     css_id = 'h2'
 
 
 class H5(BaseLabel):
+
     css_id = 'h3'
 
 
 class P(BaseLabel):
+
     css_id = 'p'
 
     def __init__(self, *args, **kwargs):
@@ -58,6 +65,7 @@ class P(BaseLabel):
 
 
 class Button(QtWidgets.QPushButton):
+
     css_id = 'text-button'
 
     def __init__(self, text, icon=None, icon_size=None, **kwargs):
@@ -71,6 +79,7 @@ class Button(QtWidgets.QPushButton):
 
 
 class ToolButton(QtWidgets.QPushButton):
+
     css_id = 'tool-button'
 
     def __init__(self, text, icon=None, icon_size=None, **kwargs):
@@ -104,6 +113,7 @@ class ToolButton(QtWidgets.QPushButton):
 
 
 class Glyph(QtWidgets.QLabel):
+
     css_id = 'icon'
 
     def __init__(self, icon, icon_size, parent=None):

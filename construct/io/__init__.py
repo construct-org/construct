@@ -7,7 +7,7 @@ from copy import deepcopy
 
 # Local imports
 from ..errors import ValidationError
-from .fsfs import FsfsLayer
+from .fsfslayer import FsfsLayer
 
 
 class IO(object):
