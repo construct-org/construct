@@ -9,8 +9,12 @@ import logging
 from functools import wraps
 from logging.config import dictConfig
 
+# Third party imports
+import fsfs
+
 # Local imports
 from . import schemas
+from .cli.actions import CliAction
 from .compat import Mapping, basestring
 from .constants import DEFAULT_LOGGING
 from .context import Context
@@ -88,6 +92,7 @@ class API(object):
         self.ui = UIManager(self)
         self._logging_dict = kwargs.pop('logging', None)
         self._registered_members = {}
+        self._registered_cli_actions = set()
         self.init()
 
     def _setup_logging(self):
@@ -219,6 +224,12 @@ class API(object):
 
         return ctx
 
+    def get_template(self, name):
+        return self.path.find('templates/' + name)
+
+    def get_templates(self, pattern='*'):
+        return self.path.glob('templates/' + pattern)
+
     def define(self, event, doc):
         '''Define a new event
 
@@ -317,6 +328,38 @@ class API(object):
             self.__dict__.pop(name, None)
         else:
             _log.debug(name + ' was not registered with api.extend.')
+
+    def register_cli_action(self, action):
+        '''Register a CliAction.
+
+        .. seealso:: :class:`construct.cli.commands.CliAction`
+
+        Arguments:
+            action (CliAction): The cli action to register
+        '''
+
+        if not issubclass(action, CliAction):
+            _log.error('expected CliAction got %s' % type(action))
+            return
+
+        _log.debug('Registering CliAction %s.' % action)
+        self._registered_cli_actions.add(action)
+
+    def unregister_cli_action(self, action):
+        '''Unregister a CliAction.
+
+        Arguments:
+            action (CliAction): The cli action to unregister
+        '''
+        _log.debug('Unregistering CliAction %s.' % action)
+        self._registered_cli_actions.discard(action)
+
+    def get_cli_actions(self, ctx=None):
+        ctx = ctx or self.get_context()
+        return [
+            c for c in self._registered_cli_actions
+            if c.is_available(ctx)
+        ]
 
     @property
     def host(self):
