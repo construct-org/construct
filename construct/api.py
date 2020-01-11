@@ -172,6 +172,53 @@ class API(object):
         _log.debug('Done uninitializing.')
         _log.debug('Goodbye!')
 
+    def get_context(self):
+        '''Get a copy of the current context.
+
+        .. seealso:: :class:`construct.context.Context`
+        '''
+
+        return self.context.copy()
+
+    def set_context(self, ctx):
+        '''Set the current context.
+
+        Arguments:
+            ctx (Context) - Sets api.
+        '''
+
+        self.context = ctx
+
+    def update_context(self, **data):
+        '''Update the current context.
+
+        Arguments:
+            **data - Context keys and values.
+        '''
+
+        self.context.update(data)
+
+    def set_context_from_path(self, path):
+        '''Set the current api context using a file or directory path.'''
+
+        self.context = self.context_from_path(path)
+
+    def context_from_path(self, path):
+
+        ctx = Context(host=self.context.host)
+
+        path = unipath(path)
+        if path.is_file():
+            ctx.file = path
+
+        for entry in fsfs.search(path, direction=fsfs.UP):
+            tags = entry.tags
+            for key in Context._keys:
+                if key in tags:
+                    setattr(ctx, key, entry.read())
+
+        return ctx
+
     def define(self, event, doc):
         '''Define a new event
 
