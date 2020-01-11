@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 # Standard library imports
 import argparse
+from collections import OrderedDict
 
 # Local imports
 import construct
@@ -10,9 +11,11 @@ from construct.cli.constants import (
     ACTIONS_TITLE,
     COMMANDS_TITLE,
     CONTEXT_TITLE,
+    DEPRECATED_TITLE,
 )
 
 # Local imports
+from ..utils import is_deprecated
 from .utils import style, styled
 
 
@@ -29,12 +32,11 @@ def new_formatter(parent, formatter_type):
     )
 
 
-def format_context():
-    api = construct.API()
-    ctx = api.context.copy()
+def format_context(ctx):
+    '''Format current context.'''
+
     ctx_data = []
-    for k in ctx._keys:
-        v = ctx[k]
+    for k, v in ctx.items():
         if not v:
             continue
         try:
@@ -48,27 +50,32 @@ def format_context():
     )
 
 
-def format_commands():
-    from construct.cli.commands import commands
-    return format_section(
-        COMMANDS_TITLE,
-        [(c.name, c.short_description) for c in commands],
-        lcolor=styled('{bright}')
-    )
+def format_commands(cmds, title=None):
+    '''Format builtin cli commands.'''
+    if not cmds:
+        return
 
+    c = [(c.name, c.short_description) for c in cmds if not is_deprecated(c)]
+    d = [(c.name, c.short_description) for c in cmds if is_deprecated(c)]
 
-def format_actions():
-    api = construct.API()
-    actions = api.actions.get_available()
-    return format_section(
-        ACTIONS_TITLE,
-        [(a.identifier, a.description) for a in actions],
-        lcolor=styled('{bright}')
-    )
+    title = title or COMMANDS_TITLE
+    result = ''
+    if c:
+        result += format_section(title, c, lcolor=styled('{bright}'))
+    if d:
+        result += '\n'
+        result += format_section(DEPRECATED_TITLE, d, lcolor=styled('{dim}'))
+
+    return result
 
 
 def format_section(title, data, indent='', lcolor=reset, rcolor=reset):
-    '''Format a section'''
+    '''Format a section like...
+
+    title:
+        name - description
+        ...
+    '''
 
     if isinstance(data, dict):
         data = list(data.items())
@@ -84,20 +91,29 @@ def format_section(title, data, indent='', lcolor=reset, rcolor=reset):
     return '\n'.join(lines)
 
 
-class Contextual(
+class ContextualFormatter(
     argparse.RawDescriptionHelpFormatter,
     argparse.ArgumentDefaultsHelpFormatter
 ):
 
     def _format_action(self, action):
-        help = super(Contextual, self)._format_action(action)
-        sep = ' ' * self._indent_increment
-        parts = help.split(sep)
-        left = styled('{bright}{}{reset}', sep.join(parts[:-1]))
-        right = parts[-1]
-        return sep.join([left, right])
+        '''Colorize Arguments section.'''
 
-    def add_usage(self, usage, actions, groups, prefix=None):
+        help = super(ContextualFormatter, self)._format_action(action)
+        lines = help.split('\n')
+        name = lines[0].split()[0]
+        nice_name = styled('{bright}{}{reset}', name)
+        lines[0] = lines[0].replace(name, nice_name, 1)
+        for i, line in enumerate(lines):
+            if '(default: None)' in line:
+                line = line.replace('(default: None)', '', 1)
+                if not line.strip():
+                    lines.pop(i)
+                else:
+                    lines[i] = line
+        return '\n'.join(lines)
+
+    def add_usage(self, usage, groups, prefix=None):
 
         parent = getattr(self, 'parent', None)
         if parent:
@@ -107,10 +123,9 @@ class Contextual(
             description = None
 
         prefix = 'Usage: '
-        super(Contextual, self).add_usage(usage, actions, groups, prefix)
+        super(ContextualFormatter, self).add_usage(usage, groups, prefix)
         if description:
             self.add_text('\n' + description)
-        # self.add_text(format_context() + '\n')
 
     def add_section(self, header, lines):
         self.start_section(header)
@@ -125,10 +140,15 @@ class Contextual(
         self._add_item(format_lines, lines)
 
 
-class Root(Contextual):
+class RootFormatter(ContextualFormatter):
 
-    def add_usage(self, usage, actions, groups, prefix=None):
-        super(Root, self).add_usage(usage, actions, groups, prefix)
-        self.add_text(format_context() + '\n')
-        self.add_text(format_commands())
-        # self.add_text(format_actions())
+    def add_usage(self, usage, groups, prefix=None):
+        super(RootFormatter, self).add_usage(usage, groups, prefix)
+        from . import commands, actions
+        api = construct.API()
+        ctx = api.get_context()
+
+        self.add_text(format_context(ctx))
+        self.add_text(format_commands(commands.get_available(ctx)))
+        actions = api.get_cli_actions(ctx) + actions.get_available(ctx)
+        self.add_text(format_commands(actions, ACTIONS_TITLE))
