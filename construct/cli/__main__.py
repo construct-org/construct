@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function
 
 # Standard library imports
 import argparse
+import os
 import sys
 from collections import OrderedDict
 
@@ -12,9 +13,9 @@ import win_unicode_console
 
 # Local imports
 from .. import API
-from .commands import commands
+from . import actions, commands
 from .constants import OPTIONS_TITLE
-from .formatters import Root
+from .formatters import ContextualFormatter, RootFormatter, new_formatter
 from .utils import styled
 
 
@@ -53,7 +54,7 @@ def setup_parser():
     parser = argparse.ArgumentParser(
         'construct',
         usage=usage,
-        formatter_class=Root,
+        formatter_class=RootFormatter,
         add_help=False,
     )
     parser._optionals.title = OPTIONS_TITLE
@@ -87,6 +88,7 @@ def main():
     win_unicode_console.enable()
     colorama.init()
 
+    subcommands = OrderedDict()
     parser = setup_parser()
     args, extra_args = parser.parse_known_args()
     root_flags = [f for f, v in args.__dict__.items()
@@ -96,16 +98,21 @@ def main():
     logging_level = ('WARNING', 'DEBUG')[args.__dict__['-v']]
     api = API(logging=logging_config(logging_level))
     api.context['host'] = 'cli'
-    # api.set_context_from_path(os.getcwd())
+    api.set_context_from_path(os.getcwd())
+    ctx = api.get_context()
 
     # Add all subcommands including contextual actions
-    subcommands = OrderedDict()
 
-    for command in commands:
-        subcommands[command.name] = command(parser)
+    formatter = new_formatter(parser, ContextualFormatter)
 
-    # for action in construct.actions:
-    #     subcommands[action.identifier] = ActionCommand(action, parser)
+    for cmd in commands.get_available(ctx):
+        subcommands[cmd.name] = cmd(api, parser, formatter)
+
+    for action in actions.get_available(ctx):
+        subcommands[action.name] = action(api, parser, formatter)
+
+    for action in api.get_cli_actions(ctx):
+        subcommands[action.name] = action(api, parser, formatter)
 
     # Print root help if we received no command argument
     if not args.command:
@@ -121,8 +128,7 @@ def main():
 
     command = subcommands[command_name]
     args, extra_args = command.parse(command_args)
-    args.__dict__.pop('verbose')
-    command.run(args, *extra_args)
+    command._run(args, *extra_args)
 
 
 if __name__ == '__main__':

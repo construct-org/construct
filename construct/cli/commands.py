@@ -5,27 +5,28 @@ from __future__ import absolute_import, print_function
 import argparse
 import logging
 import os
-import sys
-import traceback
 from textwrap import dedent
 
 # Third party imports
+import fsfs
 from scrim import get_scrim
 
 # Local imports
 import construct
 
 # Local imports
-from ..utils import classproperty
+from ..io.fsfs import select_by_name
+from ..utils import classproperty, deprecated, get_subclasses, is_deprecated
 from .constants import ARGUMENTS_TITLE, OPTIONS_TITLE
-from .formatters import Contextual, format_section, new_formatter
-from .utils import abort, error, styled
+from .formatters import format_section
+from .utils import error, styled
 
 
 _log = logging.getLogger(__name__)
+scrim = get_scrim()
 
 
-class Command(object):
+class CliCommand(object):
     '''Base class for all CLI Commands. Override :meth:`setup_parser` to add
     arguments to a command. Implement :meth:`run` to customize what happens
     when the command is invoked.
@@ -33,11 +34,12 @@ class Command(object):
 
     name = None
 
-    def __init__(self, parent):
+    def __init__(self, api, parent, formatter):
+        self.api = api
         self.parent = parent
         self.parser = argparse.ArgumentParser(
             self.name,
-            formatter_class=new_formatter(self, Contextual)
+            formatter_class=formatter
         )
         self.parser._optionals.title = OPTIONS_TITLE
         self.parser._positionals.title = ARGUMENTS_TITLE
@@ -50,11 +52,7 @@ class Command(object):
         self._parser_setup = False
 
     @classmethod
-    def _available(cls):
-        return cls.name and cls.available()
-
-    @classmethod
-    def available(cls):
+    def is_available(cls, ctx=None):
         '''Implement this to set when a command is available.'''
         return True
 
@@ -101,29 +99,63 @@ class Command(object):
         args, extra_args = self.parser.parse_known_args(args)
         return args, extra_args
 
+    def _run(self, args, *extra_args):
+        if is_deprecated(self):
+            print(styled(
+                '{fg.red}{bright}*Deprecated* {reset}{}',
+                self._deprecation_warning,
+            ))
+        self.run(args, *extra_args)
+
     def run(self, args, *extra_args):
         return NotImplemented
 
 
-class Version(Command):
-    '''Version information'''
+class Version(CliCommand):
+    '''Construct Version Info'''
 
     name = 'version'
 
     def run(self, args, *extra_args):
-        section = format_section(
-            '',
+        print()
+        print(format_section(
+            'Construct',
             [
-                ('', ''),
-                ('name', construct.__title__),
                 ('version', construct.__version__),
                 ('url', construct.__url__),
                 ('package', os.path.dirname(construct.__file__)),
-                ('config', os.environ.get('CONSTRUCT_CONFIG', 'default')),
+                ('settings', self.api.settings.file),
             ],
             lcolor=styled('{bright}')
-        )
-        print(section)
+        ))
+
+        import cerberus
+        import entrypoints
+        import fsfs
+        import pymongo
+        import yaml
+        import qtsass
+        import scrim
+        deps = []
+        deps.extend([
+            ('cerberus', cerberus.__version__),
+            ('entrypoints', entrypoints.__version__),
+            ('fsfs', fsfs.__version__),
+            ('pymongo', pymongo.__version__),
+            ('pyyaml', yaml.__version__),
+            ('qtsass', qtsass.__version__),
+            ('scrim', scrim.__version__),
+        ])
+        try:
+            import Qt
+            deps.extend([
+                ('Qt.py', Qt.__version__),
+                ('Qt Binding', Qt.__binding__ + '-' + Qt.__binding_version__),
+            ])
+        except ImportError:
+            pass
+
+        print(format_section('Dependencies', deps, lcolor=styled('{bright}')))
 
 
 def requires_scrim(command):
@@ -133,126 +165,171 @@ def requires_scrim(command):
         https://github.com/danbradham/scrim
     '''
 
-    command.available = staticmethod(lambda: get_scrim().shell)
+    command._is_available = command.is_available
+
+    def is_available(cls, ctx=None):
+        return command._is_available(ctx) and scrim.shell
+
+    command.is_available = is_available
+
     return command
 
 
-@requires_scrim
-class Home(Command):
-    '''Go to root directory'''
+class Locations(CliCommand):
+    '''List configured locations'''
 
-    name = 'home'
-
-    def run(self, args, *extra_args):
-        ctx = construct.get_context()
-
-        if not os.path.exists(ctx.root):
-            os.makedirs(ctx.root)
-
-        scrim = get_scrim()
-        scrim.pushd(ctx.root)
-
-
-@requires_scrim
-class Pop(Command):
-    '''Go back to last location'''
-
-    name = 'pop'
+    name = 'locations'
 
     def run(self, args, *extra_args):
-        scrim = get_scrim()
-        scrim.popd()
+        print()
+        self.api.show(self.api.settings['locations'])
 
 
 @requires_scrim
-class Push(Command):
-    '''Go to first search result'''
+class Go(CliCommand):
+    '''Navigate locations and projects
 
-    name = 'push'
+    Go to your default location and mount:
+        > construct go
+
+    Go to a specific location and mount:
+        > construct go local/projects
+
+    Once in a mount - Go to an asset in a project:
+        > construct go MyProject/assets/table
+    '''
+
+    name = 'go'
 
     def setup_parser(self, parser):
         parser.add_argument(
             'name',
             nargs='?',
-            help='Name of Entry like: my_project or my_project/my_asset',
-        )
-        parser.add_argument(
-            '-r', '--root',
-            default=os.getcwd(),
-            help='Root directory of search',
-            type=str,
-        )
-        parser.add_argument(
-            '--up',
-            action='store_true',
-            default=False,
-            help='Search up tree instead of down',
-            dest='direction'
-        )
-        parser.add_argument(
-            '-t', '--tags',
-            nargs='*',
-            help='List of tags like: project'
-        )
-        parser.add_argument(
-            '-d', '--depth',
-            type=int,
-            required=False,
-            help='Search depth'
+            help='Name or list of names separated by /',
         )
 
     def run(self, args, *extra_args):
 
-        import fsfs
-        api = construct.API()
-        ctx = api.context.copy()
+        location = self.api.settings['my_location']
+        mount = self.api.settings['my_mount']
 
-        if not args.tags and args.name:
-            query = dict(
-                selector=args.name,
-                root=args.root,
-                skip_root=True
-            )
-            entry = fsfs.quick_select(**query)
+        location_mount = self.api.get_mount_from_path(os.getcwd())
+        if location_mount:
+            location, mount = location_mount
+
+        # No args - go to default location and mount
+        if not args.name:
+            mount = self.api.get_mount(location, mount)
+
+            if not mount.is_dir():
+                mount.mkdir(parents=True, exist_ok=True)
+
+            scrim.pushd(mount)
+            return
+
+        selector_had_mount = False
+
+        names = args.name.split('/')
+        if names[0] in self.api.settings['locations']:
+            location = names.pop(0)
+
+        if len(names):
+            if names[0] in self.api.settings['locations'][location]:
+                mount = names.pop(0)
+                selector_had_mount = True
+
+        selector = '/'.join(names)
+
+        # Name started with a mount name
+        if selector_had_mount:
+            mount = self.api.get_mount(location, mount)
+            if not selector:
+
+                if not mount.is_dir():
+                    mount.mkdir(parents=True, exist_ok=True)
+
+                scrim.pushd(str(mount))
+                return
+
+            root = mount
         else:
-            query = dict(
-                root=args.root,
-                name=args.name,
-                tags=args.tags,
-                direction=args.direction,
-                depth=args.depth or (3 if ctx.project else 2),
-                skip_root=True
-            )
-            # Get a better match, not just the first hit
-            entries = list(fsfs.search(**query))
+            root = os.getcwd()
 
-            if not entries:
-                error('Could not find entry...')
-                sys.exit(1)
+        # Search by name selector from cwd
+        found = select_by_name(root, selector)
+        if found:
+            scrim.pushd(str(found))
+            return
 
-            if len(entries) == 1:
-                entry = entries[0]
-            else:
-                # The shortest entry has to be the closest to our query
-                entry = min(entries, key=lambda e: len(e.path))
+        # Search current project or default mount
+        if self.api.context.project:
+            root = fsfs.search(
+                root=os.getcwd(),
+                direction=fsfs.UP,
+            ).tags('project').one().path
+        else:
+            root = self.api.get_mount()
 
-        if not entry:
-            error('Could not find entry...')
-            sys.exit(1)
+        found = select_by_name(root, selector)
+        if found:
+            scrim.pushd(str(found))
+            return
 
-        path = entry.path
-        if args.name:
-            parts = args.name.split('/')
-            for part in parts:
-                highlight = styled('{bright}{fg.yellow}{}{reset}', part)
-                path = path.replace(part, highlight)
-        print(path)
-
-        scrim = get_scrim()
-        scrim.pushd(os.path.abspath(entry.path))
+        error('Could not find %s' % args.name)
 
 
-class Search(Command):
+@deprecated('Use go instead of push.', silent=True)
+@requires_scrim
+class Push(Go):
+    '''Go to first search result - use go instead'''
+
+    name = 'push'
+
+
+@deprecated('Use go instead of home.', silent=True)
+@requires_scrim
+class Home(CliCommand):
+    '''Go to default mount location - use go instead'''
+
+    name = 'home'
+
+    def run(self, args, *extra_args):
+
+        location = self.api.settings['my_location']
+        mount = self.api.settings['my_mount']
+
+        location_mount = self.api.get_mount_from_path(os.getcwd())
+        if location_mount:
+            location, mount = location_mount
+
+        mount = self.api.get_mount(location, mount)
+
+        if not mount.is_dir():
+            mount.mkdir(parents=True, exist_ok=True)
+
+        scrim.pushd(str(mount))
+        return
+
+
+@requires_scrim
+class Back(CliCommand):
+    '''Go back to last location'''
+
+    name = 'back'
+
+    def run(self, args, *extra_args):
+        scrim.popd()
+
+
+@deprecated('Use back instead of home.', silent=True)
+@requires_scrim
+class Pop(Back):
+    '''Go back to last location - use back instead'''
+
+    name = 'pop'
+
+
+class Search(CliCommand):
     '''Search for Entries
 
     Examples:
@@ -281,34 +358,34 @@ class Search(Command):
             action='store_true',
             default=False,
             help='Search up tree instead of down',
-            dest='direction'
+            dest='direction',
         )
         parser.add_argument(
             '-t', '--tags',
             nargs='*',
-            help='List of tags like: project'
+            help='List of tags like: project',
         )
         parser.add_argument(
             '-d', '--depth',
             type=int,
             required=False,
-            help='Search depth'
+            help='Search depth',
         )
 
     def run(self, args, *extra_args):
-        api = construct.API()
-        ctx = api.context.copy()
-        query = dict(
+        ctx = self.api.get_context()
+        query = fsfs.search(
             root=args.root,
-            name=args.name,
-            tags=args.tags,
             direction=args.direction,
-            depth=args.depth or (3 if ctx.project else 1),
+            depth=args.depth or (4 if ctx.project else 2),
         )
-        entries = construct.search(**query)
+        if args.tags:
+            query = query.tags(*args.tags)
+        if args.name:
+            query = query.name(args.name)
 
         i = 0
-        for i, entry in enumerate(entries):
+        for i, entry in enumerate(query):
             path = entry.path
             if args.name:
                 parts = args.name.split('/')
@@ -321,7 +398,7 @@ class Search(Command):
             print(('Found 0 result.'))
 
 
-class Read(Command):
+class Read(CliCommand):
     '''Read metadata'''
 
     name = 'read'
@@ -340,7 +417,7 @@ class Read(Command):
         print(fsfs.encode_data(data))
 
 
-class Write(Command):
+class Write(CliCommand):
     '''Write metadata'''
 
     name = 'write'
@@ -388,7 +465,7 @@ class Write(Command):
             print('Wrote data to ' + args.root)
 
 
-class Tag(Command):
+class Tag(CliCommand):
     '''Tag a directory
 
     Examples:
@@ -413,7 +490,7 @@ class Tag(Command):
         fsfs.tag(args.root, *args.tags)
 
 
-class Untag(Command):
+class Untag(CliCommand):
     '''Untag a directory
 
     Examples:
@@ -438,106 +515,21 @@ class Untag(Command):
         fsfs.untag(args.root, *args.tags)
 
 
-class ActionCommand(Command):
-    ''':class:`Action` CLI command class'''
-
-    def __init__(self, action, parent):
-        _log.debug('Initializing ActionCommand for %s' % action.identifier)
-        self.action = action
-        self.name = action.identifier
-        super(ActionCommand, self).__init__(parent)
-
-    @property
-    def short_description(self):
-        return self.action.short_description
-
-    @property
-    def description(self):
-        return self.action.description
-
-    def custom_validator(self, name, cast, *validators):
-        def check_value(value):
-            value = cast(value)
-            if not all([v(value) for v in validators]):
-                msg = '%s: invalid value: %r' % (name, value)
-                raise abort(msg)
-            return value
-        return check_value
-
-    def add_option(self, parser, param_name, param_options):
-        '''Add an argument to parser from an action parameter'''
-        param_flag = '--' + param_name
-
-        # Handle bool options
-        if param_options['type'] is bool:
-            arg_spec = dict(
-                action='store_true',
-                dest=param_name,
-                help=param_options.get('help', None),
-                default=param_options.get('default', False),
-            )
-            return parser.add_argument(param_flag, **arg_spec)
-
-        # Handle all other options
-        arg_spec = dict(
-            action=('store', 'store_true')[param_options['type'] is bool],
-            type=param_options.get('type', str),
-            dest=param_name,
-            help=param_options.get('help', None),
-            # required=param_options.get('required', False),
-            default=param_options.get('default', None),
-            choices=param_options.get('options', None)
-        )
-
-        # Build a validator if we get a tuple of types, argparse calls
-        # type(arg), so our validator casts the argument first, then
-        # validates it.
-        cast = arg_spec['type']
-        validators = param_options.get('validator', [])
-        if isinstance(param_options['type'], tuple):
-            cast = param_options['type'][0]
-            validators.append(lambda x: isinstance(x, param_options['type']))
-
-        if validators:
-            arg_spec['type'] = self.custom_validator(
-                param_flag,
-                cast,
-                *validators
-            )
-
-        parser.add_argument(param_flag, **arg_spec)
-
-    def setup_parser(self, parser):
-        api = construct.API()
-        ctx = api.context.copy()
-        params = self.action.params(ctx)
-        for param_name, param_options in params.items():
-            self.add_option(parser, param_name, param_options)
-
-    def run(self, args, *extra_args):
-        try:
-            action = self.action(*extra_args, **args.__dict__)
-            action.run()
-        except ActionControlFlowError as e:
-            msg = styled(
-                '{bright}{fg.red}Control Flow Error:{fg.reset} {}'
-                ' raised critical error {fg.red}{}{reset}',
-                self.action.identifier,
-                e.__class__.__name__
-            )
-            print(msg)
-        except ArgumentError as e:
-            msg = styled('{bright}{fg.red}Argument Error:{fg.reset} {}', e)
-            print(msg)
-        except Exception as e:
-            msg = styled(
-                '{bright}{fg.red}Action Error:{fg.reset} {}'
-                ' raised unexpected error {fg.red}{}{reset}\n',
-                self.action.identifier,
-                e.__class__.__name__
-            )
-            print(msg)
-            traceback.print_exc()
+commands = [
+    Version,
+    Locations,
+    Search,
+    Go,
+    Push,
+    Home,
+    Back,
+    Pop,
+    Read,
+    Write,
+    Tag,
+    Untag,
+]
 
 
-commands = [c for c in Command.__subclasses__() if c._available()]
+def get_available(ctx=None):
+    return [c for c in commands if c.is_available(ctx)]
