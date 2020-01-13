@@ -169,9 +169,6 @@ bins:
         schema:
             name:
                 type: string
-            description:
-                type: string
-                default: empty_string
             icon:
                 type: string
                 default: empty_string
