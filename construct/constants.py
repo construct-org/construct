@@ -32,13 +32,13 @@ DEFAULT_LOCATIONS = {
     }
 }
 DEFAULT_TREE = {
-    'folders': '',
-    'asset': '{asset}',
-    'asset_work': '{asset}/{task}/work/{host}',
-    'asset_publish': '{asset}/{task}/publish/{ext}',
-    'asset_reviews': '{asset}/{task}/review',
-    'file': '{task}_{name}_v{version:0>3d}.{ext}',
-    'sequence': '{task}_{name}_v{version:0>3}.{frame:0>4d}.{ext}',
+    'asset': '{mount}/{project}/{bin}/{asset_type}/{asset}',
+    'workspace': '{mount}/{project}/{bin}/{asset}/work/{task}/{host}',
+    'publish': '{mount}/{project}/{bin}/{asset}/publish/{item}/v{version:0>3d}',
+    'review': '{mount}/{project}/{bin}/{asset}/review/{task}/{host}',
+    'render': '{mount}/{project}/{bin}/{asset}/render/{task}/{host}',
+    'file': '{task_short}_{name}_v{version:0>3d}.{ext}',
+    'file_sequence': '{task_short}_{name}_v{version:0>3d}.{frame}.{ext}',
 }
 DEFAULT_LOGGING = dict(
     version=1,

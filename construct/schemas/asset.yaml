@@ -34,6 +34,10 @@ asset_type:
     type: string
     required: True
 
+group:
+    type: string
+    default_setter: empty_string
+
 tags:
     type: list
     schema:

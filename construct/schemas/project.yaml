@@ -60,14 +60,13 @@ tree:
         file_sequence:
             type: string
     default:
-        bin: '{project}/{bin}'
-        asset: '{project}/{bin}/{asset_type}/{asset}'
-        workspace: '{project}/{bin}/{asset_type}/{asset}/{task}/work/{host}'
-        publish: '{project}/{bin}/{asset_type}/{asset}/{task}/publish/{ext}'
-        review: '{project}/review/{task}/{bin}/{asset_type}/{asset}'
-        render: '{project}/renders/{task}/{bin}/{asset_type}/{asset}'
-        file: '{task}_{name}_v{version}.{ext}'
-        file_sequence: '{task}_{name}_v{version}.{frame}.{ext}'
+        asset: '{mount}/{project}/{bin}/{asset}'
+        workspace: '{mount}/{project}/{bin}/{asset}/work/{task}/{host}'
+        publish: '{mount}/{project}/{bin}/{asset}/publish/{task_short}_{name}/v{version:0>3d}'
+        review: '{mount}/{project}/{bin}/{asset}/review/{task}/{host}'
+        render: '{mount}/{project}/{bin}/{asset}/render/{task}/{host}'
+        file: '{task_short}_{name}_v{version:0>3d}.{ext}'
+        file_sequence: '{task_short}_{name}_v{version:0>3d}.{frame}.{ext}'
 
 asset_types:
     type: dict
@@ -78,8 +77,6 @@ asset_types:
         schema:
             name:
                 type: string
-            plural:
-                type: string
             icon:
                 type: string
                 default: empty_string
@@ -88,12 +85,10 @@ asset_types:
     default:
         asset:
             name: asset
-            plural: assets
             icon: asset.svg
             order: 0
         shot:
             name: shot
-            plural: shots
             icon: shot.svg
             order: 1
 
@@ -171,9 +166,18 @@ bins:
                 type: string
             icon:
                 type: string
-                default: empty_string
+                default_setter: empty_string
             order:
                 type: integer
+    default:
+        assets:
+            name: assets
+            icon: asset.svg
+            order: 0
+        shots:
+            name: shots
+            icon: shot.svg
+            order: 1
 
 assets:
     type: dict
@@ -190,4 +194,6 @@ assets:
                 type: string
             asset_type:
                 type: string
-
+            group:
+                type: string
+                default_setter: empty_string
