@@ -75,7 +75,8 @@ class IO(object):
             Generator or cursor yielding projects
         '''
 
-        location = location or self.settings['my_location']
+        location = location or self.api.context.location
+
         return self.fsfs.get_projects(location, mount)
 
     def get_project_by_id(self, _id, location=None, mount=None):
@@ -92,6 +93,8 @@ class IO(object):
         Returns:
             Project dict or None
         '''
+
+        location = location or self.api.context.location
 
         return self.fsfs.get_project_by_id(_id, location, mount)
 
@@ -110,7 +113,8 @@ class IO(object):
             Project dict or None
         '''
 
-        location = location or self.settings['my_location']
+        location = location or self.api.context.location
+
         return self.fsfs.get_project(name, location, mount)
 
     def new_project(self, name, location, mount, data=None):

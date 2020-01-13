@@ -2,6 +2,9 @@
 
 from __future__ import absolute_import
 
+# Standard library imports
+import unittest
+
 # Third party imports
 import fsfs
 
@@ -75,6 +78,7 @@ def teardown_module():
     teardown_api(__name__)
 
 
+@unittest.skip('Temporarily Disabled.')
 def test_initial_migration():
 
     project_root = data_dir(__name__, 'projects', 'old_style_project')

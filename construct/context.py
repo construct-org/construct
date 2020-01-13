@@ -121,7 +121,7 @@ class Context(dict):
 
         for key in self._keys:
             env_key = ('construct_' + key).upper()
-            value = env.get(key, None)
+            value = env.get(env_key, None)
             if value:
                 try:
                     self[key] = decode(value)
@@ -153,3 +153,10 @@ class Context(dict):
                 else:
                     env[env_key] = encode(value)
         return env
+
+    @classmethod
+    def clear_env(cls, env=None):
+        env = env or os.environ
+        for key in cls._keys:
+            env_key = ('construct_' + key).upper()
+            os.environ.pop(env_key, None)
