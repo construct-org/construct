@@ -76,6 +76,13 @@ def search_by_name(path, name, max_depth=10):
         return best
 
 
+def exists(path):
+    '''Check if a path is already initialized.'''
+
+    paths = [path / data_dir, path / data_dir / data_file]
+    return all([p.exists() for p in paths])
+
+
 def init(path, _id=None):
     '''Initialize .data for a directory.
 
@@ -211,7 +218,7 @@ def delete(path, remove_root=False):
 
     path = Path(path)
 
-    if not path.exists:
+    if not path.exists():
         return
 
     path_data_dir = path / data_dir
