@@ -14,6 +14,7 @@ from . import schemas
 from .compat import Mapping, basestring
 from .constants import DEFAULT_LOGGING
 from .context import Context
+from .errors import ContextError
 from .events import EventManager
 from .extensions import ExtensionManager
 from .io import IO
@@ -186,11 +187,35 @@ class API(object):
     def set_context(self, ctx):
         '''Set the current context.
 
+        Examples:
+            Set the active context permanently::
+
+                >>> new_ctx = api.get_context()
+                >>> new_ctx.project = 'A_PROJECT'
+                >>> api.set_context(new_context)
+
+            Temporarily set context::
+
+                >>> with api.set_context(new_ctx):
+                ...     # Do something while ctx is new_ctx
+
         Arguments:
             ctx (Context) - Sets api.
         '''
 
+        _api = self
+        _ctx = self.context
         self.context = ctx
+
+        class _AsContextManager(object):
+
+            def __enter__(self):
+                pass
+
+            def __exit__(self, *args):
+                _api.context = _ctx
+
+        return _AsContextManager()
 
     def update_context(self, **data):
         '''Update the current context.
