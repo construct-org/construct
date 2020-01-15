@@ -138,7 +138,6 @@ class IO(object):
         # Prepare data
         data = data or {}
         data.setdefault('name', name)
-        data.setdefault('locations', {location: mount})
 
         self.api.send('before_new_project', self.api, data)
 
@@ -174,8 +173,7 @@ class IO(object):
 
         self.api.send('before_update_project', self.api, project, data)
 
-
-        #Update and validate data
+        # Update and validate data
         updated = deepcopy(project)
         updated.update(data)
 
@@ -202,173 +200,67 @@ class IO(object):
 
         return self.fsfs.delete_project(project)
 
-    def get_folders(self, parent):
-        '''Get all the folders in the specified parent.
+    def get_assets(self, project, bin=None, asset_type=None, group=None):
+        '''Get all the assets in the specified project.
 
         Arguments:
-            parent (dict): Project or Folder dict
-
-        Returns:
-            Generator or cursor yielding folders
-        '''
-
-        return self.fsfs.get_folders(parent)
-
-    def get_folder(self, name, parent):
-        '''Get one folder that matches the given name.
-
-        Arguments:
-            name (str): Partial name of folder.
-            parent (dict): Project or Folder dict
-
-        Returns:
-            Folder dict or None
-        '''
-
-        return self.fsfs.get_folder(name, parent)
-
-    def new_folder(self, name, parent, data=None):
-        '''Create a new folder in the specified parent.
-
-        Events:
-            before_new_folder: Sent with api and folder data
-            after_new_folder: Sent with api and result folder data
-
-        Arguments:
-            name (str): Full name of new folder.
-            parent (dict): Project or Folder dict.
-
-        Returns:
-            New Folder dict.
-        '''
-
-        # TODO: Use a better error here.
-        assert parent['_type'] in ['project', 'folder'], 'Parent must be a project or folder.'
-
-        # Prepare data
-        data = data or {}
-        data.setdefault('name', name)
-        data.setdefault('parent_id', parent['_id'])
-        if parent['_type'] == 'project':
-            data['project_id'] = parent['_id']
-        else:
-            data['project_id'] = parent['project_id']
-
-        self.api.send('before_new_folder', self.api, data)
-
-        # Validate data
-        v = self.api.schemas.get_validator('folder', allow_unknown=True)
-        data = v.validated(data)
-        if not data:
-            raise ValidationError(
-                'Invalid folder data: %s' % v.errors,
-                errors=v.errors
-            )
-
-        # Create our new project
-        result = self.fsfs.new_folder(name, parent, data)
-
-        self.api.send('after_new_folder', self.api, result)
-        return result
-
-    def update_folder(self, folder, data):
-        '''Update a folder's data.
-
-        Events:
-            before_update_folder: Sent with api, folder, and update
-            after_update_folder: Sent with api, updated folder
-
-        Arguments:
-            folder (dict): Folder data containing at least a name
-            data (dict): Data to update
-
-        Returns:
-            Updated folder data.
-        '''
-
-        self.api.send('before_update_folder', self.api, folder, data)
-
-        #Update and validate data
-        updated = deepcopy(folder)
-        updated.update(data)
-
-        v = self.api.schemas.get_validator('folder', allow_unknown=True)
-        updated = v.validated(updated, update=True)
-        if not updated:
-            raise ValidationError(
-                'Invalid folder data: %s' % v.errors,
-                errors=v.errors
-            )
-
-        # Update our project
-        result = self.fsfs.update_folder(folder, updated)
-        self.api.send('after_update_folder', self.api, result)
-        return result
-
-    def delete_folder(self, folder):
-        '''Delete a folder.
-
-        .. warning:: This does not delete your folder data on the file system.
-        It simply removes metadata. You are in charge of deleting on your
-        file system.
-        '''
-
-        return self.fsfs.delete_folder(folder)
-
-    def get_assets(self, parent, asset_type=None):
-        '''Get all the assets in the specified parent.
-
-        Arguments:
-            parent (dict): Project or asset dict
+            project (dict): Project dict including _id
+            bin (str): Optional bin filter
             asset_type (str): Optional asset_type filter
+            group (str): Optional group filter
 
         Returns:
             Generator or cursor yielding assets
         '''
 
-        return self.fsfs.get_assets(parent, asset_type)
+        return self.fsfs.get_assets(project, bin, asset_type, group)
 
-    def get_asset(self, name, parent):
+    def get_asset(self, project, name):
         '''Get one asset that matches the given name.
 
         Arguments:
+            project (dict): Project dict including _id
             name (str): Partial name of asset.
-            parent (dict): Project or Asset dict
 
         Returns:
             Asset dict or None
         '''
 
-        return self.fsfs.get_asset(name, parent)
+        return self.fsfs.get_asset(project, name)
 
-    def new_asset(self, name, asset_type, parent, data=None):
-        '''Create a new asset in the specified parent.
+    def new_asset(self, project, name, bin, asset_type, data=None):
+        '''Create a new asset in the specified project.
 
         Events:
             before_new_asset: Sent with api and asset data
             after_new_asset: Sent with api and result asset data
 
         Arguments:
+            project (dict): Project dict including _id
             name (str): Full name of new asset.
+            bin (str): Name of project bin
             asset_type (str): Type of asset (asset, shot, etc.)
-            parent (dict): Project or asset dict.
 
         Returns:
             New asset dict.
         '''
 
-        # TODO: Use a better error here.
-        assert parent['_type'] in ['project', 'folder'], 'Parent must be a project or folder.'
+        assert '_id' in project, 'project dict must include _id'
+        assert project['_type'] == 'project', 'project _type must be "project"'
+
+        # Retrieve existing assets
+        project = self.get_project_by_id(project['_id'])
+        assets = project.get('assets', {})
+
+        if name in assets:
+            raise OSError('Asset already exists: %s' % name)
 
         # Prepare data
         data = data or {}
-        data.setdefault('name', name)
-        data.setdefault('asset_type', asset_type)
-        data.setdefault('parent_id', parent['_id'])
-        if parent['_type'] == 'project':
-            data['project_id'] = parent['_id']
-        else:
-            data['project_id'] = parent['project_id']
+        data['name'] = name
+        data['bin'] = bin
+        data['asset_type'] = asset_type
+        data['project_id'] = project['_id']
 
         self.api.send('before_new_asset', self.api, data)
 
