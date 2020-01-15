@@ -134,8 +134,8 @@ task_types:
             short: rig
             icon: rig.svg
             order: 4
-        animation:
-            name: animation
+        animate:
+            name: animate
             short: anim
             icon: anim.svg
             order: 5
@@ -144,13 +144,13 @@ task_types:
             short: fx
             icon: fx.svg
             order: 6
-        lighting:
-            name: lighting
+        light:
+            name: light
             short: lgt
             icon: light.svg
             order: 7
-        compositing:
-            name: compositing
+        composite:
+            name: composite
             short: comp
             icon: comp.svg
             order: 8
@@ -182,6 +182,7 @@ bins:
 assets:
     type: dict
     allow_unknown: True
+    default_setter: empty_dict
     valuesrules:
         type: dict
         require_all: True

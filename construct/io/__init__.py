@@ -273,14 +273,21 @@ class IO(object):
                 errors=v.errors
             )
 
-        # Create our new project
-        result = self.fsfs.new_asset(name, parent, data)
+        # Create our new asset
+        result = self.fsfs.new_asset(project, data)
 
         self.api.send('after_new_asset', self.api, result)
+
+        assets[result['name']] = {
+            k: result[k]
+            for k in ['_id', 'name', 'bin', 'asset_type', 'group']
+        }
+        self.update_project(project, {'assets': assets})
+
         return result
 
     def update_asset(self, asset, data):
-        '''Update a asset's data.
+        '''Update an asset's data.
 
         Events:
             before_update_asset: Sent with api, asset, and update
@@ -296,7 +303,7 @@ class IO(object):
 
         self.api.send('before_update_asset', self.api, asset, data)
 
-        #Update and validate data
+        # Update and validate data
         updated = deepcopy(asset)
         updated.update(data)
 
@@ -314,7 +321,7 @@ class IO(object):
         return result
 
     def delete_asset(self, asset):
-        '''Delete a asset.
+        '''Delete an asset.
 
         .. warning:: This does not delete your asset data on the file system.
         It simply removes metadata. You are in charge of deleting on your
@@ -323,142 +330,165 @@ class IO(object):
 
         return self.fsfs.delete_asset(asset)
 
-    def get_tasks(self, parent):
-        '''Get all the tasks in the specified asset.
+    def get_bins(self, project):
+        if 'bins' not in project:
+            project = self.get_project_by_id(project['_id'])
 
-        Arguments:
-            parent (dict): Asset dict
+        return project.get('bins', {})
 
-        Returns:
-            Generator or cursor yielding tasks
-        '''
+    def get_bin(self, project, name):
+        if 'bins' not in project:
+            project = self.get_project_by_id(project['_id'])
 
-        return self.fsfs.get_tasks(parent)
+        return project['bins'][name]
 
-    def get_task(self, name, parent):
-        '''Get one task that matches the given name.
+    def new_bin(self, project, name, data=None):
 
-        Arguments:
-            name (str): Partial name of task.
-            parent (dict): Asset dict
-
-        Returns:
-            Task dict or None
-        '''
-
-        return self.fsfs.get_task(name, parent)
-
-    def new_task(self, name, parent, data=None):
-        '''Create a new task in the specified parent.
-
-        Events:
-            before_new_task: Sent with api and task data
-            after_new_task: Sent with api and result task data
-
-        Arguments:
-            name (str): Full name of new task.
-            parent (dict): Asset dict
-
-        Returns:
-            New task dict.
-        '''
-
-        # TODO: Use a better error here.
-        assert parent['_type'] == 'asset', 'Parent must be an Asset.'
+        # Retrieve existing project bins
+        project = self.get_project_by_id(project['_id'])
+        bins = project.get('bins', {})
 
         # Prepare data
         data = data or {}
-        data.setdefault('name', name)
-        data.setdefault('parent_id', parent['_id'])
-        if parent['_type'] == 'project':
-            data['project_id'] = parent['_id']
-        else:
-            data['project_id'] = parent['project_id']
+        data['name'] = name
+        data.setdefault('order', len(bins))
+        data.setdefault('icon', '')
 
-        self.api.send('before_new_task', self.api, data)
+        # Update project with new bin
+        bins[name] = data
+        updated = self.update_project(project, {'bins': bins})
 
-        # Validate data
-        v = self.api.schemas.get_validator('task', allow_unknown=True)
-        data = v.validated(data)
-        if not data:
-            raise ValidationError(
-                'Invalid task data: %s' % v.errors,
-                errors=v.errors
-            )
+        return updated['bins'][name]
 
-        # Create our new project
-        result = self.fsfs.new_task(name, parent, data)
+    def update_bin(self, project, name, data):
 
-        self.api.send('after_new_task', self.api, result)
-        return result
+        # Retrieve existing project bins
+        project = self.get_project_by_id(project['_id'])
+        bins = project.get('bins', {})
 
-    def update_task(self, task, data):
-        '''Update a task's data.
+        new_data = bins.pop(name)
+        new_data.update(data)
 
-        Events:
-            before_update_task: Sent with api, task, and update
-            after_update_task: Sent with api, updated task
+        # Update project with new bins
+        bins[new_data['name']] = new_data
+        updated = self.update_project(project, {'bins': bins})
 
-        Arguments:
-            task (dict): task data containing at least a name
-            data (dict): Data to update
+        return updated['bins'][new_data['name']]
 
-        Returns:
-            Updated task data.
-        '''
+    def delete_bin(self, project, name):
 
-        self.api.send('before_update_task', self.api, task, data)
+        # Retrieve existing project bins
+        project = self.get_project_by_id(project['_id'])
+        bins = project.get('bins', {})
 
-        #Update and validate data
-        updated = deepcopy(task)
-        updated.update(data)
+        self.update_project(project, {'bins': bins})
 
-        v = self.api.schemas.get_validator('task', allow_unknown=True)
-        updated = v.validated(updated, update=True)
-        if not updated:
-            raise ValidationError(
-                'Invalid task data: %s' % v.errors,
-                errors=v.errors
-            )
+    def get_asset_types(self, project):
+        if 'asset_types' not in project:
+            project = self.get_project_by_id(project['_id'])
 
-        # Update our project
-        result = self.fsfs.update_task(task, updated)
-        self.api.send('after_update_task', self.api, result)
-        return result
+        return project.get('asset_types', {})
 
-    def delete_task(self, task):
-        '''Delete a task.
+    def get_asset_type(self, project, name):
+        if 'asset_types' not in project:
+            project = self.get_project_by_id(project['_id'])
 
-        .. warning:: This does not delete your task data on the file system.
-        It simply removes metadata. You are in charge of deleting on your
-        file system.
-        '''
+        return project['asset_types'][name]
 
-        return self.fsfs.delete_task(task)
+    def new_asset_type(self, project, name, data=None):
 
-    def get_parent(self, entity):
-        '''Get the parent of an entity.
+        # Retrieve existing project asset_types
+        project = self.get_project_by_id(project['_id'])
+        asset_types = project.get('asset_types', {})
 
-        Arguments:
-            entity (dict): Data dict including (_type, _id, name, etc.)
+        # Prepare data
+        data = data or {}
+        data['name'] = name
+        data.setdefault('order', len(asset_types))
+        data.setdefault('icon', '')
 
-        Returns:
-            dict: Parent entity
-        '''
+        # Update project with new asset_type
+        asset_types[name] = data
+        updated = self.update_project(project, {'asset_types': asset_types})
 
-        return self.fsfs.get_parent(entity)
+        return updated['asset_types'][name]
 
-    def get_children(self, entity):
-        '''Get the children of an entity.
+    def update_asset_type(self, project, name, data):
 
-        Arguments:
-            entity (dict): Data dict including (_type, _id, name, etc.)
+        # Retrieve existing project asset_types
+        project = self.get_project_by_id(project['_id'])
+        asset_types = project.get('asset_types', {})
 
-        Returns:
-            dict containing children by type
-        '''
+        new_data = asset_types.pop(name)
+        new_data.update(data)
 
-        return self.fsfs.get_children(entity)
+        # Update project with new asset_types
+        asset_types[new_data['name']] = new_data
+        updated = self.update_project(project, {'asset_types': asset_types})
+
+        return updated['asset_types'][new_data['name']]
+
+    def delete_asset_type(self, project, name):
+
+        # Retrieve existing project asset_types
+        project = self.get_project_by_id(project['_id'])
+        asset_types = project.get('asset_types', {})
+
+        self.update_project(project, {'asset_types': asset_types})
+
+    def get_task_types(self, project):
+        if 'task_types' not in project:
+            project = self.get_project_by_id(project['_id'])
+
+        return project.get('task_types', {})
+
+    def get_task_type(self, project, name):
+        if 'task_types' not in project:
+            project = self.get_project_by_id(project['_id'])
+
+        return project['task_types'][name]
+
+    def new_task_type(self, project, name, short, data=None):
+
+        # Retrieve existing project task_types
+        project = self.get_project_by_id(project['_id'])
+        task_types = project.get('task_types', {})
+
+        # Prepare data
+        data = data or {}
+        data['name'] = name
+        data['short'] = short
+        data.setdefault('order', len(task_types))
+        data.setdefault('icon', '')
+
+        # Update project with new task_type
+        task_types[name] = data
+        updated = self.update_project(project, {'task_types': task_types})
+
+        return updated['task_types'][name]
+
+    def update_task_type(self, project, name, data):
+
+        # Retrieve existing project task_types
+        project = self.get_project_by_id(project['_id'])
+        task_types = project.get('task_types', {})
+
+        new_data = task_types.pop(name)
+        new_data.update(data)
+
+        # Update project with new task_types
+        task_types[new_data['name']] = new_data
+        updated = self.update_project(project, {'task_types': task_types})
+
+        return updated['task_types'][new_data['name']]
+
+    def delete_task_type(self, project, name):
+
+        # Retrieve existing project task_types
+        project = self.get_project_by_id(project['_id'])
+        task_types = project.get('task_types', {})
+
+        self.update_project(project, {'task_types': task_types})
 
     def get_path_to(self, entity):
         '''Get a file system path to the provided entity.
