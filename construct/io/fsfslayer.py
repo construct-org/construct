@@ -5,82 +5,16 @@ from __future__ import absolute_import
 # Standard library imports
 import logging
 
-# Third party imports
-import fsfs
-
 # Local imports
 from ..compat import Path
+from . import fsfs
+from .layer import IOLayer
 
 
 _log = logging.getLogger(__name__)
 
 
-def _quick_search_by_id(path, _id, max_depth=10, return_typ=None):
-    '''Search by id using recursive globbing'''
-
-    roots = [Path(path)]
-    entry_pattern = '*/.data/uuid_*'
-    entry_id = 'uuid_' + _id
-    level = 0
-
-    while roots and level < max_depth:
-        next_roots = []
-        for root in roots:
-            for entry in root.glob(entry_pattern):
-                if entry.name == entry_id:
-                    result = entry.parent.parent
-                    if return_typ:
-                        result = return_typ(result.as_posix())
-                    return result
-                else:
-                    next_roots.append(entry.parent.parent)
-        level += 1
-        roots = next_roots
-
-
-def _quick_search_by_name(path, name, max_depth=10, return_typ=None):
-    '''Search by name using recursive globbing'''
-
-    roots = [Path(path)]
-    entry_pattern = '*/.data/uuid_*'
-    entry_name = name
-    level = 0
-    potential_entries = []
-
-    while roots and level < max_depth:
-        next_roots = []
-        for root in roots:
-            for entry in root.glob(entry_pattern):
-                entry = entry.parent.parent
-                if entry_name in entry.name:
-                    potential_entries.append(entry)
-                if entry.name == entry_name:
-                    if return_typ:
-                        entry = return_typ(entry.as_posix())
-                    return entry
-                else:
-                    next_roots.append(entry)
-        level += 1
-        roots = next_roots
-
-    if potential_entries:
-        # In almost all cases the best match will be the shortest path
-        # with the least parts.
-        best = min(
-            potential_entries,
-            key=lambda x: (len(x.parts), len(str(x)))
-        )
-        if return_typ:
-            best = return_typ(best.as_posix())
-        return best
-
-
-class FsfsLayer(object):
-
-    # This maintains backwards compatability with construct 0.1.0
-    # These tags should all be converted to folder when we make the switch
-    _folder_tags = ['folder', 'collection', 'sequence', 'asset_type']
-    _asset_tags = ['asset', 'shot']
+class FsfsLayer(IOLayer):
 
     def __init__(self, api):
         self.api = api
@@ -88,206 +22,116 @@ class FsfsLayer(object):
 
     def _get_projects(self, location, mount=None):
         if mount:
-            root = self.api.get_mount(location, mount).as_posix()
-            for entry in fsfs.search(root, levels=1).tags('project'):
+            root = self.api.get_mount(location, mount)
+            for entry in fsfs.search(root, max_depth=1):
                 yield entry
+            return
 
         for mount in self.settings['locations'][location].keys():
-            root = self.api.get_mount(location, mount).as_posix()
-            results = fsfs.search(root, levels=1).tags('project')
-            for entry in results:
+            root = self.api.get_mount(location, mount)
+            for entry in fsfs.search(root, max_depth=1):
                 yield entry
 
     def get_projects(self, location, mount=None):
         for entry in self._get_projects(location, mount):
-            yield entry.read()
+            yield fsfs.read(entry)
 
     def get_project_by_id(self, _id, location=None, mount=None):
 
-        first_location = location or self.settings['my_location']
-        locations = sorted(
-            self.settings['locations'].keys(),
-            key=lambda location: int(location == first_location),
-            reverse=True
-        )
-        for location in locations:
-            for project in self._get_projects(location):
-                if project.uuid == _id:
-                    return project.read()
+        location = self.api.context.location
+
+        for project in self._get_projects(location, mount):
+            if fsfs.get_id(project) == _id:
+                return fsfs.read(project)
 
     def get_project(self, name, location, mount=None):
         if mount:
-            root = self.api.get_mount(location, mount).as_posix()
-            entry = fsfs.search(root, levels=1).name(name).one()
-            if entry:
-                return entry.read()
+            root = self.api.get_mount(location, mount)
+            for entry in fsfs.search(root, max_depth=1):
+                if entry.name == name:
+                    return fsfs.read(entry)
             return
 
         for mount in self.settings['locations'][location].keys():
-            root = self.api.get_mount(location, mount).as_posix()
-            entry = fsfs.search(root, levels=1).name(name).one()
-            if entry:
-                return entry.read()
+            root = self.api.get_mount(location, mount)
+            for entry in fsfs.search(root, max_depth=1):
+                if entry.name == name:
+                    return fsfs.read(entry)
 
     def new_project(self, name, location, mount, data):
         path = self.api.get_mount(location, mount) / name
-        entry = fsfs.get_entry(path.as_posix())
 
-        if entry.exists:
+        if fsfs.exists(path):
             raise OSError('Project already exists.')
 
-        entry.tag('project')
-        entry.write(**data)
-        entry.uuid = data['_id']
-        return entry.read()
+        fsfs.init(path, data['_id'])
+        fsfs.tag(path, 'project')
+        fsfs.write(path, **data)
+
+        return fsfs.read(path)
 
     def update_project(self, project, data):
 
         path = self.get_path_to(project)
-        entry = fsfs.get_entry(path.as_posix())
 
-        if not entry.exists:
+        if not path.exists():
             raise OSError('Project does not exist.')
 
-        entry.write(**data)
-        entry.uuid = data['_id']
-        return entry.read()
+        fsfs.write(path, replace=True, **data)
+        fsfs.set_id(path, data['_id'])
+        return fsfs.read(path)
 
     def delete_project(self, project):
 
         path = self.get_path_to(project)
-        entry = fsfs.get_entry(path.as_posix())
-        entry.delete()
+        fsfs.delete(path)
 
-    def get_folders(self, parent):
-        parent_path = self._get_parent_path(parent).as_posix()
-        levels = 10 if parent['_type'] == 'project' else 1
-        entries = fsfs.search(parent_path, levels=levels, skip_root=True)
-        for entry in entries:
-            if set(entry.tags).intersection(set(self._folder_tags)):
-                yield entry.read()
+    def get_assets(self, project, bin=None, asset_type=None, group=None):
+        my_location = self.api.context.location
+        project = self.get_project_by_id(project['_id'], my_location)
+        assets = project['assets']
 
-    def get_folder(self, name, parent):
-        prospect = None
-        for folder in self.get_folders(parent):
-            if name in folder['name']:
-                prospect = folder
-            if name == folder['name']:
-                return folder
-        return prospect
+        for asset in assets.values():
+            asset['project_id'] = project['_id']
+            asset_path = self.get_path_to(asset)
+            asset = fsfs.read(asset_path)
+            if bin and asset['bin'] != bin:
+                continue
+            if asset_type and asset['asset_type'] != asset_type:
+                continue
+            if group and asset['group'] != group:
+                continue
+            yield asset
 
-    def new_folder(self, name, parent, data):
-        parent_path = self._get_parent_path(parent)
-        folder_path = parent_path / name
-
-        entry = fsfs.get_entry(folder_path.as_posix())
-        entry.tag('folder')
-        entry.write(**data)
-        entry.uuid = data['_id']
-        return entry.read()
-
-    def update_folder(self, folder, data):
-
-        path = self.get_path_to(folder)
-        entry = fsfs.get_entry(path.as_posix())
-
-        if not entry.exists:
-            raise OSError('Folder does not exist.')
-
-        entry.write(**data)
-        entry.uuid = data['_id']
-        return entry.read()
-
-    def delete_folder(self, folder):
-
-        path = self.get_path_to(folder)
-        entry = fsfs.get_entry(path.as_posix())
-        entry.delete()
-
-    def get_assets(self, parent, asset_type=None):
-        parent_path = self._get_parent_path(parent).as_posix()
-        levels = 10 if parent['_type'] == 'project' else 1
-        entries = fsfs.search(parent_path, levels=levels, skip_root=True)
-        for entry in entries:
-            if set(entry.tags).intersection(set(self._asset_tags)):
-                if not asset_type or entry.read('asset_type') == asset_type:
-                    yield entry.read()
-
-    def get_asset(self, name, parent):
-        prospect = None
-        for asset in self.get_assets(parent):
+    def get_asset(self, project, name):
+        potential_names = []
+        for asset in self.get_assets(project):
             if name in asset['name']:
-                prospect = asset
-            if name == asset['name']:
+                potential_names.append(name)
+            if asset['name'] == name:
                 return asset
-        return prospect
 
-    def new_asset(self, name, parent, data):
-        parent_path = self._get_parent_path(parent)
-        asset_path = parent_path / name
+        if potential_names:
+            return min(potential_names, key=len)
 
-        entry = fsfs.get_entry(asset_path.as_posix())
-        entry.tag('asset')
-        entry.write(**data)
-        entry.uuid = data['_id']
-        return entry.read()
+    def new_asset(self, project, data):
+        path = self.get_path_to(data)
+
+        fsfs.init(path, data['_id'])
+        fsfs.tag(path, 'asset')
+        fsfs.write(path, **data)
+
+        return fsfs.read(path)
 
     def update_asset(self, asset, data):
         path = self.get_path_to(asset)
-        entry = fsfs.get_entry(path.as_posix())
 
-        if not entry.exists:
-            raise OSError('Asset does not exist.')
-
-        entry.write(**data)
-        entry.uuid = data['_id']
-        return entry.read()
+        fsfs.write(path, replace=True, **data)
+        return fsfs.read(path)
 
     def delete_asset(self, asset):
         path = self.get_path_to(asset)
-        entry = fsfs.get_entry(path.as_posix())
-        entry.delete()
-
-    def get_tasks(self, asset):
-        parent_path = self.get_path_to(asset).as_posix()
-        entries = fsfs.search(parent_path, levels=1).tags('task')
-        for entry in entries:
-            yield entry.read()
-
-    def get_task(self, name, asset):
-        prospect = None
-        for task in self.get_tasks(asset):
-            if name in task['name']:
-                prospect = task
-            if name == task['name']:
-                return asset
-        return prospect
-
-    def new_task(self, name, asset, data):
-        parent_path = self.get_path_to(asset)
-        task_path = parent_path / name
-
-        entry = fsfs.get_entry(task_path.as_posix())
-        entry.tag('task')
-        entry.write(**data)
-        entry.uuid = data['_id']
-        return entry.read()
-
-    def update_task(self, task, data):
-        path = self.get_path_to(task)
-        entry = fsfs.get_entry(path.as_posix())
-
-        if not entry.exists:
-            raise OSError('Task does not exist.')
-
-        entry.write(**data)
-        entry.uuid = data['_id']
-        return entry.read()
-
-    def delete_task(self, task):
-        path = self.get_path_to(task)
-        entry = fsfs.get_entry(path.as_posix())
-        entry.delete()
+        fsfs.delete(path)
 
     def get_workfiles(self, asset):
         return NotImplemented
@@ -313,73 +157,50 @@ class FsfsLayer(object):
     def new_publish(self, asset, name, identifier, task, file_type, data):
         return NotImplemented
 
-    def get_parent(self, entity):
-        project_id = entity.get('project_id', None)
-        parent_id = entity.get('parent_id')
-
-        if project_id:
-            project = self.get_project_by_id(entity['project_id'])
-            if project_id == parent_id:
-                return project
-
-            project_root = self.get_path_to(project)
-            match = _quick_search_by_id(
-                project_root,
-                entity['parent_id'],
-                return_typ=fsfs.get_entry
-            )
-            if match:
-                return match.read()
-
-    def get_children(self, entity):
-        if entity['_type'] == 'project':
-            return dict(folders=list(self.get_folders(entity)))
-
-        if entity['_type'] == 'folder':
-            return dict(
-                folders=list(self.get_folders(entity)),
-                assets=list(self.get_assets(entity))
-            )
-
-        if entity['_type'] == 'asset':
-            return dict(
-                tasks=list(self.get_tasks(entity))
-            )
-
-        if entity['_type'] == 'task':
-            return dict(
-                workfiles=list(self.get_workfiles(entity))
-            )
-
-    def _get_parent_path(self, parent):
-        '''Get the path to a parent for creating new entities.'''
-
-        parent_path = self.get_path_to(parent)
-        if parent['_type'] == 'project':
-            parent_path = parent_path / parent['tree']['folders']
-
-        return parent_path
-
     def get_path_to(self, entity):
         '''Get a file system path to the provided entity.'''
 
-        my_location = self.settings['my_location']
+        my_location = self.api.context.location
 
         if entity['_type'] == 'project':
-            if my_location in entity['locations']:
-                location = my_location
-                mount = entity['locations'][location]
-            else:
-                location, mount = entity['locations'].items()[0]
-            root = self.api.get_mount(location, mount)
-            return root / entity['name']
 
-        if 'project_id' in entity:
-            project = self.get_project_by_id(entity['project_id'])
-            project_path = self.get_path_to(project)
-            folders_path = project_path / project['tree']['folders']
-            match = _quick_search_by_id(folders_path, entity['_id'])
-            if match:
-                return match
+            entity_locations = entity.get('locations', {})
+
+            if not entity_locations:
+                for entry in self._get_projects(my_location):
+                    if fsfs.get_id(entry) == entity['_id']:
+                        return entry
+            else:
+                if my_location in entity_locations:
+                    location = my_location
+                    mount = entity['locations'][location]
+                else:
+                    location, mount = entity['locations'].items()[0]
+
+                root = self.api.get_mount(location, mount)
+                return root / entity['name']
+
+        if entity['_type'] == 'asset':
+
+            for project in self._get_projects(my_location):
+                if fsfs.get_id(project) == entity['project_id']:
+                    project_path = project
+                    break
+
+            location, mount = self.api.get_mount_from_path(project_path)
+            mount = self.api.get_mount(location, mount)
+
+            project = fsfs.read(project_path)
+
+            asset_tmpl = project['tree']['asset']
+            asset_path = Path(asset_tmpl.format(
+                mount=mount,
+                project=project['name'],
+                bin=entity['bin'],
+                asset_type=entity['asset_type'],
+                group=entity['group'],
+                asset=entity['name'],
+            ))
+            return asset_path
 
         raise OSError('Could not find ' + entity['name'])

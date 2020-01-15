@@ -14,7 +14,7 @@ import shutil
 from bson.objectid import ObjectId
 
 # Local imports
-from ..compat import Path
+from ..compat import Path, basestring
 from ..utils import update_dict, yaml_dump, yaml_load
 
 
@@ -25,46 +25,34 @@ data_file = 'data'
 
 
 def search_by_id(path, _id, max_depth=10):
-    '''Search by id using recursive globbing'''
+    '''Search by id'''
 
-    roots = [Path(path)]
-    entry_id = 'uuid_' + _id
-    level = 0
+    for entry in search(path, max_depth):
+        if get_id(entry) == _id:
+            return entry
 
-    while roots and level < max_depth:
-        next_roots = []
-        for root in roots:
-            for entry in root.glob(search_pattern):
-                if entry.name == entry_id:
-                    result = entry.parent.parent
-                    return result
-                else:
-                    next_roots.append(entry.parent.parent)
-        level += 1
-        roots = next_roots
+
+def search_by_tag(path, tags, max_depth=10):
+    '''Search by tag'''
+
+    if isinstance(tags, basestring):
+        tags = [tags]
+
+    for entry in search(path, max_depth):
+        if tags.issubset(set(get_tags(entry))):
+            yield entry
 
 
 def search_by_name(path, name, max_depth=10):
-    '''Search by name using recursive globbing'''
+    '''Search by name'''
 
-    roots = [Path(path)]
-    entry_name = name
-    level = 0
     potential_entries = []
 
-    while roots and level < max_depth:
-        next_roots = []
-        for root in roots:
-            for entry in root.glob(search_pattern):
-                entry = entry.parent.parent
-                if entry_name in entry.name:
-                    potential_entries.append(entry)
-                if entry.name == entry_name:
-                    return entry
-                else:
-                    next_roots.append(entry)
-        level += 1
-        roots = next_roots
+    for entry in search(path, max_depth):
+        if entry.name == name:
+            return entry
+        if entry.name in name:
+            potential_entries.append(entry)
 
     if potential_entries:
         # In almost all cases the best match will be the shortest path
@@ -76,11 +64,37 @@ def search_by_name(path, name, max_depth=10):
         return best
 
 
+def search(path, max_depth=10):
+    '''Yields directories with metadata.'''
+
+    roots = list(path.iterdir())
+    level = 0
+
+    while roots and level < max_depth:
+
+        next_roots = []
+
+        for root in roots:
+
+            if root.is_file() or root.name == '.data':
+                continue
+
+            if exists(root):
+                yield root
+
+            next_roots.extend(list(path.iterdir()))
+
+        level += 1
+        roots = next_roots
+
+
 def exists(path):
     '''Check if a path is already initialized.'''
 
-    paths = [path / data_dir, path / data_dir / data_file]
-    return all([p.exists() for p in paths])
+    return (
+        (path / data_dir).exists() and
+        (path / data_dir / data_file).exists()
+    )
 
 
 def init(path, _id=None):
@@ -240,7 +254,7 @@ def get_tags(path):
 
     return [
         f.name.split('tag_')[-1]
-        for f in path.glob('tag_*')
+        for f in (path / data_dir).glob('tag_*')
     ]
 
 
@@ -259,7 +273,7 @@ def tag(path, *tags):
     init(path)
 
     for tag in tags:
-        tag_file = path / ('tag_' + tag)
+        tag_file = path / data_dir / ('tag_' + tag)
         tag_file.touch(exist_ok=True)
 
 
@@ -279,6 +293,6 @@ def untag(path, *tags):
         return
 
     for tag in tags:
-        tag_file = path / ('tag_' + tag)
+        tag_file = path / data_dir / ('tag_' + tag)
         if tag_file.exists():
             tag_file.unlink()
