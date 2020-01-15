@@ -125,7 +125,7 @@ class Context(dict):
             if value:
                 try:
                     self[key] = decode(value)
-                except json.JSONDecodeError:
+                except ValueError:
                     self[key] = value
 
     def unload(self):
