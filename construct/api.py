@@ -278,9 +278,11 @@ class API(object):
     def get_mount_from_path(self, path):
         '''Get the location and mount from a file path'''
 
+        path = unipath(path)
+
         for location, mounts in self.settings['locations'].items():
             for mount, mount_path in mounts.items():
-                if str(path).startswith(str(mount_path)):
+                if unipath(mount_path) in path.parents:
                     return location, mount
 
     def get_locations(self):
