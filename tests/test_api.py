@@ -4,10 +4,8 @@ from __future__ import absolute_import
 
 # Standard library imports
 import shutil
-import sys
 
 # Local imports
-import construct
 from construct.settings import restore_default_settings
 
 # Local imports

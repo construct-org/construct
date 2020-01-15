@@ -20,46 +20,19 @@ class IOLayer(object):
     def delete_project(self, project):
         return NotImplemented
 
-    def get_folders(self, parent):
+    def get_assets(self, project, bin=None, asset_type=None, group=None):
         return NotImplemented
 
-    def get_folder(self, name, parent):
+    def get_asset(self, project, name):
         return NotImplemented
 
-    def new_folder(self, name, parent, data):
-        return NotImplemented
-
-    def update_folder(self, group, data):
-        return NotImplemented
-
-    def delete_folder(self, group):
-        return NotImplemented
-
-    def get_assets(self, parent):
-        return NotImplemented
-
-    def get_asset(self, name, parent):
-        return NotImplemented
-
-    def new_asset(self, name, parent, data):
+    def new_asset(self, project, data):
         return NotImplemented
 
     def update_asset(self, asset, data):
         return NotImplemented
 
     def delete_asset(self, asset):
-        return NotImplemented
-
-    def get_tasks(self, asset):
-        return NotImplemented
-
-    def get_task(self, name, asset):
-        return NotImplemented
-
-    def new_task(self, name, asset):
-        return NotImplemented
-
-    def delete_task(self, task):
         return NotImplemented
 
     def get_workfiles(self, asset):
@@ -84,4 +57,7 @@ class IOLayer(object):
         return NotImplemented
 
     def new_publish(self, asset, name, identifier, task, file_type, data):
+        return NotImplemented
+
+    def get_path_to(self, entity):
         return NotImplemented

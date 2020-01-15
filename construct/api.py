@@ -14,6 +14,7 @@ from . import schemas
 from .compat import Mapping, basestring
 from .constants import DEFAULT_LOGGING
 from .context import Context
+from .errors import ContextError
 from .events import EventManager
 from .extensions import ExtensionManager
 from .io import IO
@@ -129,7 +130,10 @@ class API(object):
         self.extensions.load()
 
         _log.debug('Loading context...')
-        self.context.load()
+        self.context.load(
+            location=self.settings['my_location'],
+            mount=self.settings['my_mount'],
+        )
 
         self.initialized = True
         _log.debug('Done initializing.')
@@ -172,6 +176,126 @@ class API(object):
         _log.debug('Done uninitializing.')
         _log.debug('Goodbye!')
 
+    def get_context(self):
+        '''Get a copy of the current context.
+
+        .. seealso:: :class:`construct.context.Context`
+        '''
+
+        return self.context.copy()
+
+    def set_context(self, ctx):
+        '''Set the current context.
+
+        Examples:
+            Set the active context permanently::
+
+                >>> new_ctx = api.get_context()
+                >>> new_ctx.project = 'A_PROJECT'
+                >>> api.set_context(new_context)
+
+            Temporarily set context::
+
+                >>> with api.set_context(new_ctx):
+                ...     # Do something while ctx is new_ctx
+
+        Arguments:
+            ctx (Context) - Sets api.
+        '''
+
+        _api = self
+        _ctx = self.context
+        self.context = ctx
+
+        class _AsContextManager(object):
+
+            def __enter__(self):
+                pass
+
+            def __exit__(self, *args):
+                _api.context = _ctx
+
+        return _AsContextManager()
+
+    def update_context(self, **data):
+        '''Update the current context.
+
+        Arguments:
+            **data - Context keys and values.
+        '''
+
+        self.context.update(data)
+
+    def set_context_from_path(self, path):
+        '''Set the current api context using a file or directory path.'''
+
+        self.context = self.context_from_path(path)
+
+    def context_from_path(self, path):
+
+        ctx = Context(host=self.context.host)
+
+        path = unipath(path)
+        if path.is_file():
+            ctx.file = path.as_posix()
+
+        location_mount = self.get_mount_from_path(path)
+        if location_mount:
+            ctx.update(location=location_mount[0], mount=location_mount[1])
+        else:
+            raise ContextError(
+                'Failed to extract context from path. '
+                'Path does not appear to match your configured locations.'
+            )
+
+        # TODO: Extract remaining context from path
+
+        return ctx
+
+    def set_mount(self, location, mount):
+        self.update_context(location=location, mount=mount)
+
+    def get_mount(self, location=None, mount=None):
+        '''Get a file system path to a mount. Uses the current context location
+        and mount if they are not provided.
+
+        Arguments:
+            location (str): Name of location or context['location']
+            mount (str): Name of mount or context['mount']
+        '''
+
+        location = location or self.context.location
+        mount = mount or self.context.mount
+        path = self.settings['locations'][location][mount]
+        if isinstance(path, dict):
+            path = path[self.context.platform]
+            ensure_exists(path)
+            return unipath(path)
+        else:
+            ensure_exists(path)
+            return unipath(path)
+
+    def get_mount_from_path(self, path):
+        '''Get the location and mount from a file path'''
+
+        path = unipath(path)
+
+        for location, mounts in self.settings['locations'].items():
+            for mount, mount_path in mounts.items():
+                if unipath(mount_path) in path.parents:
+                    return location, mount
+
+    def get_locations(self):
+        '''Get locations from settings.'''
+
+        return self.settings['locations']
+
+    @property
+    def host(self):
+        '''Get the active Host Extension.'''
+
+        return self.extensions.get(self.context.host, None)
+
     def define(self, event, doc):
         '''Define a new event
 
@@ -191,7 +315,7 @@ class API(object):
 
         self.events.undefine(event)
 
-    def on(self, *args, **kwargs):
+    def on(self, *args):
         '''Adds a handler to the specified event. Can be used as a decorator.
 
         Examples:
@@ -270,39 +394,6 @@ class API(object):
             self.__dict__.pop(name, None)
         else:
             _log.debug(name + ' was not registered with api.extend.')
-
-    @property
-    def host(self):
-        '''Get the active Host Extension.'''
-
-        return self.extensions.get(self.context.host, None)
-
-    def get_mount(self, location=None, mount=None):
-        '''Get a file system path to a mount.
-
-        Arguments:
-            location (str): Name of location. Defaults to 'my_location' setting
-            mount (str): Name of mount. Defaults to 'my_mount' setting
-        '''
-
-        location = location or self.settings['my_location']
-        mount = mount or self.settings['my_mount']
-        path = self.settings['locations'][location][mount]
-        if isinstance(path, dict):
-            path = path[self.context.platform]
-            ensure_exists(path)
-            return unipath(path)
-        else:
-            ensure_exists(path)
-            return unipath(path)
-
-    def get_mount_from_path(self, path):
-        '''Get the location and mount from a file path'''
-
-        for location, mounts in self.settings['locations'].items():
-            for mount, mount_path in mounts.items():
-                if str(path).startswith(str(mount_path)):
-                    return location, mount
 
     def show(self, data):
         '''Pretty print a dict or list of dicts.'''

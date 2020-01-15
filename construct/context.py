@@ -39,27 +39,31 @@ class Context(dict):
     Context objects can be loaded from and stored in environment variables
     prefixed with **CONSTRUCT_**.
 
-    +----------+------------------------------------------------------+
-    |   key    |                     description                      |
-    +==========+======================================================+
-    | user     | usually the same as the logged in user               |
-    +----------+------------------------------------------------------+
-    | platform | Current platform [win, linux, mac]                   |
-    +----------+------------------------------------------------------+
-    | host     | Host application like maya, nuke, standalone, etc... |
-    +----------+------------------------------------------------------+
-    | project  | Project entity                                       |
-    +----------+------------------------------------------------------+
-    | folder   | Folder entity                                        |
-    +----------+------------------------------------------------------+
-    | asset    | Asset entity                                         |
-    +----------+------------------------------------------------------+
-    | task     | Task entity                                          |
-    +----------+------------------------------------------------------+
-    | version  | Version entity                                       |
-    +----------+------------------------------------------------------+
-    | file     | Path to a file                                       |
-    +----------+------------------------------------------------------+
+    +-----------+------------------------------------------------------+
+    |   key     |                     description                      |
+    +===========+======================================================+
+    | user      | usually the same as the logged in user               |
+    +-----------+------------------------------------------------------+
+    | platform  | Current platform [win, linux, mac]                   |
+    +-----------+------------------------------------------------------+
+    | host      | Host application like maya, nuke, standalone, etc... |
+    +-----------+------------------------------------------------------+
+    | location  | Location name                                        |
+    +-----------+------------------------------------------------------+
+    | mount     | Mount name                                           |
+    +-----------+------------------------------------------------------+
+    | project   | Project name                                         |
+    +-----------+------------------------------------------------------+
+    | bin       | Bin name                                             |
+    +-----------+------------------------------------------------------+
+    | asset     | Asset name                                           |
+    +-----------+------------------------------------------------------+
+    | task      | Task name                                            |
+    +-----------+------------------------------------------------------+
+    | workspace | Directory of current workspace                       |
+    +-----------+------------------------------------------------------+
+    | file      | Path to current working file                         |
+    +-----------+------------------------------------------------------+
 
     The above keys default to None so when checking context it can be
     convenient to use attribute access.
@@ -73,11 +77,13 @@ class Context(dict):
         'platform',
         'user',
         'host',
+        'location',
+        'mount',
         'project',
-        'folder',
+        'bin',
         'asset',
         'task',
-        'version',
+        'workspace',
         'file',
     ]
     _defaults = {k: None for k in _keys}
@@ -98,7 +104,12 @@ class Context(dict):
     def __setattr__(self, name, value):
         self[name] = value
 
-    def load(self, env=None):
+    def copy(self):
+        '''Copy this context'''
+
+        return self.__class__(**copy.deepcopy(self))
+
+    def load(self, env=None, **kwargs):
         '''Update ctx with values stored in environment variables. You can
         optionally pass a dictionary to load from. This is different than using
         update because it only updates standard context keys rather than
@@ -106,12 +117,15 @@ class Context(dict):
         '''
 
         env = env or os.environ
+        self.update(**kwargs)
+
         for key in self._keys:
-            value = env.get(('construct_' + key).upper(), None)
+            env_key = ('construct_' + key).upper()
+            value = env.get(env_key, None)
             if value:
                 try:
                     self[key] = decode(value)
-                except:
+                except ValueError:
                     self[key] = value
 
     def unload(self):
@@ -124,9 +138,9 @@ class Context(dict):
         '''Store this Context in os.environ. You may also pass a dict.'''
 
         env = env or os.environ
-        env.update(self.to_envvars())
+        env.update(self._to_env())
 
-    def to_envvars(self):
+    def _to_env(self):
         '''Serialize ctx to strings storable as environment values.'''
 
         env = {}
@@ -140,14 +154,9 @@ class Context(dict):
                     env[env_key] = encode(value)
         return env
 
-    def clear_envvars(self):
-        '''Clear context stored in environment variables.'''
-
-        for key in self._keys:
+    @classmethod
+    def clear_env(cls, env=None):
+        env = env or os.environ
+        for key in cls._keys:
             env_key = ('construct_' + key).upper()
             os.environ.pop(env_key, None)
-
-    def copy(self):
-        '''Copy this context'''
-
-        return self.__class__(**copy.deepcopy(self))

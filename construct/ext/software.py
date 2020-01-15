@@ -60,7 +60,8 @@ class Software(Extension):
         return key in self.software_settings
 
     def _get_project_software(self, project):
-        project = self.api.io.get_project_by_id(project['_id'])
+        if 'software' not in project:
+            project = self.api.io.get_project_by_id(project['_id'])
         return project.get('software', {})
 
     def _available_software(self, software, ext=None):
@@ -96,6 +97,8 @@ class Software(Extension):
             ext = os.path.splitext(file)[-1]
 
         if project:
+            if isinstance(project, basestring):
+                project = self.api.io.get_project(name=project)
             software = self._get_project_software(project)
             return self._available_software(software, ext)
 
