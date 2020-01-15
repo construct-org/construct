@@ -9,7 +9,7 @@ import sys
 
 # Local imports
 from construct.constants import DEFAULT_SETTINGS
-from construct.errors import InvalidSettings, ValidationError
+from construct.errors import ValidationError
 from construct.settings import Settings, restore_default_settings
 
 # Local imports

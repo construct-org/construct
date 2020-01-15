@@ -4,10 +4,8 @@ from __future__ import absolute_import, print_function
 
 # Standard library imports
 import os
-import sys
 
 # Local imports
-from construct.compat import Path
 from construct.constants import PLATFORM
 from construct.utils import unipath, update_dict, update_env
 

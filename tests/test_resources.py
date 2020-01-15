@@ -18,11 +18,11 @@ try:
     from unittest import mock
 except:
     import mock
+
 sys.modules['Qt'] = mock.MagicMock()
 sys.modules['Qt.QtCore'] = mock.MagicMock()
 sys.modules['Qt.QtGui'] = mock.MagicMock()
 sys.modules['Qt.QtWidgets'] = mock.MagicMock()
-
 
 
 def setup_module():

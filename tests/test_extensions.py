@@ -2,17 +2,12 @@
 
 from __future__ import absolute_import
 
-# Standard library imports
-import os
-import shutil
-import sys
-
 # Local imports
 import construct
 from construct.extensions import Extension
 
 # Local imports
-from . import data_dir, setup_api, teardown_api
+from . import setup_api, teardown_api
 
 
 def setup_module():
