@@ -12,7 +12,8 @@ import qtsass
 # Local imports
 from ..compat import basestring
 from ..types import WeakSet
-from . import resources, scale
+from . import resources
+from .scale import pt, px
 
 
 _log = logging.getLogger(__name__)
@@ -131,21 +132,6 @@ class Theme(object):
 
     defaults = dict(
         name='default',
-        font_stack='Roboto',
-        font_size='12pt',
-        font_weight='400',
-        primary='#FF5862',
-        primary_variant='#D72F57',
-        on_primary='#FFFFFF',
-        alert='#FACE49',
-        error='#F15555',
-        success='#7EDC9E',
-        info='#87CDEB',
-        on_secondary='#000000',
-        background='#33333D',
-        on_background='#F1F1F3',
-        surface='#4F4F59',
-        on_surface='#F1F1F3',
     )
     color_variables = [
         'primary',
@@ -383,17 +369,17 @@ def sass_scale_pt(theme):
     '''
     def scale_pt(value):
         if isinstance(value, float):
-            return str(scale.pt(value))
+            return str(pt(value))
 
         # Handle sass types
         import sass
         if isinstance(value, sass.SassNumber):
-            return str(scale.pt(value.value))
+            return str(pt(value.value))
 
         if isinstance(value, sass.SassList):
             result = []
             for item in value.items:
-                result.append(str(scale.pt(item.value)))
+                result.append(str(pt(item.value)))
             return ' '.join(result)
     return scale_pt
 
@@ -408,17 +394,17 @@ def sass_scale_px(theme):
 
     def scale_px(value):
         if isinstance(value, float):
-            return str(scale.px(value))
+            return str(px(value))
 
         # Handle sass types
         import sass
         if isinstance(value, sass.SassNumber):
-            return str(scale.px(value.value))
+            return str(px(value.value))
 
         if isinstance(value, sass.SassList):
             result = []
             for item in value.items:
-                result.append(str(scale.px(item.value)))
+                result.append(str(px(item.value)))
             return ' '.join(result)
     return scale_px
 
