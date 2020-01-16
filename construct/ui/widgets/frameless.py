@@ -3,7 +3,7 @@
 from __future__ import absolute_import
 
 # Third party imports
-from Qt import QtCore
+from Qt import QtCore, QtWidgets
 
 # Local imports
 from ..scale import pt
@@ -70,6 +70,7 @@ class Frameless(Widget):
         )
         self.setWindowTitle('construct')
         self.setWindowIcon(theme.icon('brand/construct_icon-white.png'))
+
         theme.apply(self)
 
     @property
