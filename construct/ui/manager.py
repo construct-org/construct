@@ -33,6 +33,17 @@ class UIManager(object):
         self.api.unextend('ask')
 
     @requires_event_loop
+    def launcher(self, uri=None):
+        '''Shows the Launcher application.
+
+        Arguments:
+            uri (str): Location where Launcher should start
+        '''
+
+        from .launcher import App
+        return App(uri)
+
+    @requires_event_loop
     def alert(self, message, title=None, short=None):
         '''Create an alert dialog.
 
