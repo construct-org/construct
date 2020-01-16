@@ -11,6 +11,11 @@ from ..theme import theme
 from . import Widget
 
 
+__all__ = [
+    'Frameless',
+]
+
+
 class Frameless(Widget):
     '''Mixin class for frameless resizeable widgets.
 

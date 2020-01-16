@@ -6,6 +6,14 @@ from Qt.QtGui import QColor, QIcon, QIconEngine, QImage, QPainter, QPixmap
 from Qt.QtSvg import QSvgRenderer
 
 
+__all__ = [
+    'SvgIconEngine',
+    'SvgIcon',
+    'FontIconEngine',
+    'FontIcon',
+]
+
+
 class SvgIconEngine(QIconEngine):
     '''Handles painting of SVG icons.'''
 

@@ -5,7 +5,13 @@ from Qt import QtCore, QtWidgets
 
 # Local imports
 from ..layouts import HBarLayout
-from . import H3, Glyph, IconButton, Widget
+from ..scale import px
+from . import H2, Glyph, IconButton, Widget
+
+
+__all__ = [
+    'Header',
+]
 
 
 class Header(Widget, QtWidgets.QWidget):

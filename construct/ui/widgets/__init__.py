@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
+'''
+isort:skip_file
+'''
 
 # Local imports
-from .buttons import Button, Glyph, IconButton, ToolButton
-from .frameless import Frameless
-from .header import Header
-from .icons import FontIcon, FontIconEngine, SvgIcon, SvgIconEngine
-from .labels import H1, H2, H3, H4, H5, P
-from .widget import Widget
+from .widget import *
+from .frameless import *
+from .lines import *
+from .icons import *
+from .labels import *
+from .buttons import *
+from .header import *
+from .navigation import *

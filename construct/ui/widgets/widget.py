@@ -4,6 +4,11 @@
 from Qt import QtCore
 
 
+__all__ = [
+    'Widget',
+]
+
+
 class Widget(object):
     '''Mixin class for all themable widgets.
 

@@ -9,6 +9,17 @@ from Qt import QtWidgets
 from . import Widget
 
 
+__all__ = [
+    'BaseLabel',
+    'H1',
+    'H2',
+    'H3',
+    'H4',
+    'H5',
+    'P',
+]
+
+
 class BaseLabel(Widget, QtWidgets.QLabel):
 
     def __init__(self, *args, **kwargs):
