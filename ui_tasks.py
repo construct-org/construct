@@ -47,7 +47,7 @@ def dialogs(ctx):
     notification(ctx, 'error')
     notification(ctx, 'success')
     notification(ctx, 'info')
-    ask(ctx, )
+    ask(ctx)
 
 
 @task(watch)
