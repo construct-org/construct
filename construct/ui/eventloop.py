@@ -56,8 +56,6 @@ def requires_event_loop(fn):
 
     @wraps(fn)
     def start_then_call(*args, **kwargs):
-        from Qt.QtCore import QTimer
-
         event_loop = get_event_loop()
         result = fn(*args, **kwargs)
         return result
