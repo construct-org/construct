@@ -321,7 +321,7 @@ class Theme(object):
         '''
 
         from Qt.QtGui import QPixmap, QIcon
-        from .icons import FontIcon
+        from .widgets import FontIcon
 
         path = self.resources.get(resource, None)
         if path:
@@ -346,7 +346,7 @@ class Theme(object):
         '''
 
         from Qt.QtGui import QIcon
-        from .icons import SvgIcon, FontIcon
+        from .widgets import SvgIcon, FontIcon
 
         path = self.resources.get(resource, None)
         if path:
