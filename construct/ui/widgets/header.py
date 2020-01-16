@@ -24,16 +24,27 @@ class Header(Widget, QtWidgets.QWidget):
     def __init__(self, label, *args, **kwargs):
         super(Header, self).__init__(*args, **kwargs)
 
-        for prop, value in self.css_properties.items():
-            self.setProperty(prop, value)
+        self.setFixedHeight(px(36))
 
-        self.glyph = Glyph('construct')
-        self.title = H3(label)
-        self.title.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.close_button = IconButton(icon='close')
+        self.glyph = Glyph(
+            'construct',
+            icon_size=(24, 24),
+            parent=self,
+        )
+        self.title = H2(
+            label,
+            parent=self,
+        )
+        self.close_button = IconButton(
+            icon='close',
+            icon_size=(24, 24),
+            parent=self,
+        )
+        self.close_button.setFocusPolicy(QtCore.Qt.NoFocus)
 
         self.layout = HBarLayout()
-        self.layout.left.addWidget(self.glyph, stretch=1)
-        self.layout.center.addWidget(self.title)
+        self.layout.setContentsMargins(*px(16, 0, 16, 0))
+        self.layout.left.addWidget(self.glyph)
+        self.layout.center.addWidget(self.title, stretch=1)
         self.layout.right.addWidget(self.close_button)
         self.setLayout(self.layout)
