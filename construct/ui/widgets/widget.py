@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+# Third party imports
+from Qt import QtCore
+
 
 class Widget(object):
     '''Mixin class for all themable widgets.
@@ -15,7 +18,6 @@ class Widget(object):
             css_properties = {
                 'error': False,
             }
-
     '''
 
     css_id = ''
@@ -24,10 +26,10 @@ class Widget(object):
     def __init__(self, *args, **kwargs):
         super(Widget, self).__init__(*args, **kwargs)
 
-        print(self.css_id)
-        print(self.css_properties)
         for prop, value in self.css_properties.items():
             self.setProperty(prop, value)
 
         if self.css_id:
             self.setObjectName(self.css_id)
+
+        self.setAttribute(QtCore.Qt.WA_StyledBackground)

@@ -1,26 +1,33 @@
 # -*- coding: utf-8 -*-
 
 # Third party imports
-from Qt import QtWidgets
+from Qt import QtCore, QtWidgets
 
 # Local imports
-from . import Widget
 from ..layouts import HBarLayout
+from . import H3, Glyph, IconButton, Widget
 
 
 class Header(Widget, QtWidgets.QWidget):
 
-    css_id = 'header'
+    css_id = 'background'
     css_properties = {
         'theme': 'background',
     }
 
-    def __init__(self, label, icon, close_icon, parent=None):
-        super(Header, self).__init__(parent=parent)
+    def __init__(self, label, *args, **kwargs):
+        super(Header, self).__init__(*args, **kwargs)
 
-        self.setObjectName(self.css_id)
         for prop, value in self.css_properties.items():
             self.setProperty(prop, value)
 
-        layout = HBarLayout()
-        self.setLayout(layout)
+        self.glyph = Glyph('construct')
+        self.title = H3(label)
+        self.title.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.close_button = IconButton(icon='close')
+
+        self.layout = HBarLayout()
+        self.layout.left.addWidget(self.glyph, stretch=1)
+        self.layout.center.addWidget(self.title)
+        self.layout.right.addWidget(self.close_button)
+        self.setLayout(self.layout)

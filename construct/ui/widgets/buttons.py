@@ -6,21 +6,39 @@ from __future__ import absolute_import
 from Qt import QtCore, QtWidgets
 
 # Local imports
-from . import P, Widget
 from ..scale import pt
 from ..theme import theme
+from . import P, Widget
 
 
 class Button(Widget, QtWidgets.QPushButton):
 
     css_id = 'text-button'
 
-    def __init__(self, text, icon=None, icon_size=None, **kwargs):
+    def __init__(self, text=None, icon=None, icon_size=None, **kwargs):
         super(Button, self).__init__(**kwargs)
         self.setFlat(True)
-        self.setText(text)
+
+        if text:
+            self.setText(text)
+
         if icon:
             self.setIcon(theme.icon(icon))
+
+        if icon_size:
+            self.setIconSize(QtCore.QSize(pt(icon_size[0]), pt(icon_size[1])))
+
+
+class IconButton(Widget, QtWidgets.QPushButton):
+
+    css_id = 'icon'
+
+    def __init__(self, icon, icon_size=None, **kwargs):
+        super(IconButton, self).__init__(**kwargs)
+        self.setFlat(True)
+
+        self.setIcon(theme.icon(icon))
+
         if icon_size:
             self.setIconSize(QtCore.QSize(pt(icon_size[0]), pt(icon_size[1])))
 
@@ -62,7 +80,7 @@ class Glyph(Widget, QtWidgets.QLabel):
 
     css_id = 'icon'
 
-    def __init__(self, icon, icon_size, parent=None):
+    def __init__(self, icon, icon_size=None, parent=None):
         super(Glyph, self).__init__(parent=parent)
 
         self.icon = theme.icon(icon, parent=parent)
