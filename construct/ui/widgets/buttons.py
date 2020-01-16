@@ -6,71 +6,18 @@ from __future__ import absolute_import
 from Qt import QtCore, QtWidgets
 
 # Local imports
-from .scale import pt
-from .theme import theme
+from . import P, Widget
+from ..scale import pt
+from ..theme import theme
 
 
-__all__ = [
-    'H1',
-    'H2',
-    'H3',
-    'H4',
-    'H5',
-    'Header',
-    'P',
-]
-
-
-class BaseLabel(QtWidgets.QLabel):
-
-    css_id = ''
-
-    def __init__(self, *args, **kwargs):
-        super(BaseLabel, self).__init__(*args, **kwargs)
-        self.setObjectName(self.css_id)
-
-
-class H1(BaseLabel):
-
-    css_id = 'h1'
-
-
-class H2(BaseLabel):
-
-    css_id = 'h2'
-
-
-class H3(BaseLabel):
-
-    css_id = 'h3'
-
-
-class H4(BaseLabel):
-
-    css_id = 'h2'
-
-
-class H5(BaseLabel):
-
-    css_id = 'h3'
-
-
-class P(BaseLabel):
-
-    css_id = 'p'
-
-    def __init__(self, *args, **kwargs):
-        super(P, self).__init__(*args, **kwargs)
-        self.setWordWrap(True)
-
-
-class Button(QtWidgets.QPushButton):
+class Button(Widget, QtWidgets.QPushButton):
 
     css_id = 'text-button'
 
     def __init__(self, text, icon=None, icon_size=None, **kwargs):
         super(Button, self).__init__(**kwargs)
-        self.setObjectName(self.css_id)
+        self.setFlat(True)
         self.setText(text)
         if icon:
             self.setIcon(theme.icon(icon))
@@ -78,13 +25,12 @@ class Button(QtWidgets.QPushButton):
             self.setIconSize(QtCore.QSize(pt(icon_size[0]), pt(icon_size[1])))
 
 
-class ToolButton(QtWidgets.QPushButton):
+class ToolButton(Widget, QtWidgets.QPushButton):
 
     css_id = 'tool-button'
 
     def __init__(self, text, icon=None, icon_size=None, **kwargs):
         super(ToolButton, self).__init__(**kwargs)
-        self.setObjectName(self.css_id)
 
         self.label = P(text, parent=self)
         self.label.setWordWrap(True)
@@ -112,7 +58,7 @@ class ToolButton(QtWidgets.QPushButton):
         )
 
 
-class Glyph(QtWidgets.QLabel):
+class Glyph(Widget, QtWidgets.QLabel):
 
     css_id = 'icon'
 

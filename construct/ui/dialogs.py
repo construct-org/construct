@@ -9,7 +9,7 @@ from Qt import QtCore, QtGui, QtWidgets
 from .layouts import HBarLayout
 from .scale import pt
 from .theme import theme
-from .widgets import H3, P
+from .widgets import H3, P, Button
 
 
 class FramelessDialog(QtWidgets.QDialog):
@@ -284,14 +284,10 @@ class Ask(FramelessDialog):
         self.icon_widget.setDisabled(True)
         self.set_icon(icon)
 
-        self.yes_button = QtWidgets.QPushButton(yes_label, parent=self)
-        self.yes_button.setObjectName('text-button')
-        self.yes_button.setFlat(True)
+        self.yes_button = Button(yes_label, parent=self)
         self.yes_button.clicked.connect(self.accept)
 
-        self.no_button = QtWidgets.QPushButton(no_label, parent=self)
-        self.no_button.setObjectName('text-button')
-        self.no_button.setFlat(True)
+        self.no_button = Button(no_label, parent=self)
         self.no_button.clicked.connect(self.reject)
 
         self.header_layout.left.addWidget(self.icon_widget)
