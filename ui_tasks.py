@@ -28,6 +28,14 @@ def watch(ctx):
 
 
 @task(watch)
+def launcher(ctx):
+    '''Show the Launcher App.'''
+
+    from construct.ui.launcher import main
+    main()
+
+
+@task(watch)
 def dialogs(ctx):
     '''Show a series of dialogs.'''
 
