@@ -15,6 +15,9 @@ class EventLoop(object):
         self.standalone = standalone
         self.running = not self.standalone
 
+    def quit(self):
+        self.event_loop.quit()
+
     def start(self):
         if self.running:
             return
