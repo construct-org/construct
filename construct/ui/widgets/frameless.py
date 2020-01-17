@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from Qt import QtCore, QtWidgets
 
 # Local imports
-from ..scale import pt
+from ..scale import px
 from ..theme import theme
 from . import Widget
 
@@ -14,6 +14,7 @@ from . import Widget
 __all__ = [
     'Frameless',
 ]
+missing = object()
 
 
 class Frameless(Widget):
@@ -61,7 +62,7 @@ class Frameless(Widget):
         self._mouse_pressed = False
         self._mouse_position = None
         self._resize_area = None
-        self.resize_area_size = pt(5)
+        self.resize_area_size = px(5)
         self.setMouseTracking(True)
         self.setWindowFlags(
             QtCore.Qt.Window |
@@ -70,6 +71,8 @@ class Frameless(Widget):
         )
         self.setWindowTitle('construct')
         self.setWindowIcon(theme.icon('brand/construct_icon-white.png'))
+        self.setAttribute(QtCore.Qt.WA_Hover)
+        self.installEventFilter(self)
 
         theme.apply(self)
 
@@ -78,30 +81,45 @@ class Frameless(Widget):
         return bool(self._resize_area)
 
     def _check_resize_area(self, pos):
-
         x, y = pos.x(), pos.y()
-        self._resize_area = self._resize_area_map[(
+        return self._resize_area_map[(
             x < self.resize_area_size,
             y < self.resize_area_size,
             x > self.width() - self.resize_area_size,
             y > self.height() - self.resize_area_size,
         )]
 
-    def mousePressEvent(self, event):
+    def _update_resize_area(self, pos):
+        self._resize_area = self._check_resize_area(pos)
 
+    def _update_cursor(self, cursor=missing):
+        if cursor is not missing:
+            self.setCursor(self._cursor_map[cursor])
+        else:
+            self.setCursor(self._cursor_map.get(self._resize_area, None))
+
+    def eventFilter(self, obj, event):
+        if event.type() == QtCore.QEvent.HoverMove:
+            self._update_cursor(self._check_resize_area(event.pos()))
+            return True
+
+        if event.type() == QtCore.QEvent.Leave:
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            return True
+
+        return super(Frameless, self).eventFilter(obj, event)
+
+    def mousePressEvent(self, event):
         if event.buttons() & QtCore.Qt.LeftButton:
             pos = event.pos()
-            self._check_resize_area(pos)
+            self._update_resize_area(pos)
             self._mouse_pressed = True
             self._mouse_position = pos
 
     def mouseMoveEvent(self, event):
-
         if not self._mouse_pressed:
             pos = event.pos()
-            self._check_resize_area(pos)
-            cursor = self._cursor_map.get(self._resize_area)
-            self.setCursor(cursor)
+            self._update_resize_area(pos)
 
         if self._mouse_pressed:
             vector = event.pos() - self._mouse_position
