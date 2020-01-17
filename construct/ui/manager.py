@@ -41,7 +41,7 @@ class UIManager(object):
         '''
 
         from .launcher import App
-        return App(uri)
+        return App(self.api, uri)
 
     @requires_event_loop
     def alert(self, message, title=None, short=None):

@@ -20,9 +20,10 @@ class App(Frameless, QtWidgets.QDialog):
         'border': True
     }
 
-    def __init__(self, uri=None, **kwargs):
+    def __init__(self, api, uri=None, **kwargs):
         super(App, self).__init__(**kwargs)
 
+        self.api = api
         self.uri = uri
 
         self.setWindowFlags(
