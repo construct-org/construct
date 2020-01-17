@@ -63,7 +63,7 @@ class BarLayout(QBoxLayout):
             self.end.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
         elif direction in (self.TopToBottom, self.BottomToTop):
             self.start.setAlignment(QtCore.Qt.AlignTop|QtCore.Qt.AlignHCenter)
-            self.middle.setAlignment(QtCore.Qt.AlignCenter)
+            self.middle.setAlignment(QtCore.Qt.AlignTop|QtCore.Qt.AlignHCenter)
             self.end.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignHCenter)
         else:
             raise ValueError(

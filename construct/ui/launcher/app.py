@@ -39,12 +39,12 @@ class App(Frameless, QtWidgets.QDialog):
 
         # Create widgets
         self.header = Header('Launcher', parent=self)
-        self.header.close_button.clicked.connect(self.close)
+        self.header.close_button.clicked.connect(self.hide)
 
         self.navigation = Navigation(parent=self)
 
         # Layout widgets
-        self.layout = VBarLayout()
+        self.layout = VBarLayout(parent=self)
         self.layout.setContentsMargins(*px(1, 1, 1, 1))
         self.layout.setSpacing(0)
         self.layout.top.setSpacing(0)

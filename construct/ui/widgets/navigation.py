@@ -106,7 +106,9 @@ class Navigation(Widget, QtWidgets.QWidget):
 
     def mousePressEvent(self, event):
         if event.buttons() & QtCore.Qt.LeftButton:
-            self.edit_crumbs()
+            child = self.childAt(event.pos())
+            if child and isinstance(child, Crumbs):
+                self.edit_crumbs()
 
 
 class CrumbsEditor(Widget, QtWidgets.QLineEdit):
