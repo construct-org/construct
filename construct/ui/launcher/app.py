@@ -17,26 +17,33 @@ class App(Frameless, QtWidgets.QDialog):
     css_id = ''
     css_properties = {
         'theme': 'surface',
-        'border': True
+        'border': True,
+        'windowTitle': 'Construct Launcher',
+        'windowIcon': theme.resources.get('icons/construct.svg'),
     }
 
     def __init__(self, api, uri=None, **kwargs):
         super(App, self).__init__(**kwargs)
 
+        # Set App attributes
         self.api = api
         self.uri = uri
 
+        # Window Attributes
         self.setWindowFlags(
-            QtCore.Qt.Dialog |
-            QtCore.Qt.WindowStaysOnTopHint |
-            QtCore.Qt.FramelessWindowHint
+            self.windowFlags() |
+            QtCore.Qt.Window
         )
+        self.setMinimumWidth(600)
+        self.setMinimumHeight(700)
 
+        # Create widgets
         self.header = Header('Launcher', parent=self)
-        self.header.close_button.clicked.connect(self.accept)
+        self.header.close_button.clicked.connect(self.close)
 
         self.navigation = Navigation(parent=self)
 
+        # Layout widgets
         self.layout = VBarLayout()
         self.layout.setContentsMargins(*px(1, 1, 1, 1))
         self.layout.setSpacing(0)
@@ -46,10 +53,6 @@ class App(Frameless, QtWidgets.QDialog):
         self.layout.top.addWidget(HLine(parent=self))
         self.setLayout(self.layout)
 
-        theme.apply(self)
-
-        # Focus on the dialog itself
+        # Apply theme
         self.setFocus()
-
-        self.setMinimumWidth(600)
-        self.setMinimumHeight(700)
+        theme.apply(self)
