@@ -93,6 +93,7 @@ class FsfsLayer(IOLayer):
 
         for asset in assets.values():
             asset['project_id'] = project['_id']
+            asset['_type'] = 'asset'
             asset_path = self.get_path_to(asset)
             asset = fsfs.read(asset_path)
             if bin and asset['bin'] != bin:

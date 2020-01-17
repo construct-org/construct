@@ -395,10 +395,12 @@ class API(object):
         else:
             _log.debug(name + ' was not registered with api.extend.')
 
-    def show(self, data):
+    def show(self, data, *include_keys):
         '''Pretty print a dict or list of dicts.'''
 
         if isinstance(data, Mapping):
+            if include_keys:
+                data = {k: data[k] for k in include_keys if k in data}
             print(yaml_dump(dict(data)).decode('utf-8'))
             return
         elif isinstance(data, basestring):
@@ -407,8 +409,8 @@ class API(object):
 
         try:
             for obj in data:
+                self.show(obj, *include_keys)
                 print('')
-                print(yaml_dump(obj).decode('utf-8'))
         except:
             print('Can not format: %s' % data)
 
