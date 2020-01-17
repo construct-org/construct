@@ -1,0 +1,15 @@
+<RCC>
+	<qresource>
+		<file>construct_icon-black.png</file>
+		<file>construct_icon-white.png</file>
+		<file>construct_icon-white-on-black.png</file>
+		<file>houdini.png</file>
+		<file>maya.png</file>
+		<file>nuke.png</file>
+		<file>subproject.png</file>
+		<file>level01.png</file>
+		<file>level02.png</file>
+		<file>level03.png</file>
+	</qresource>
+</RCC>
+
