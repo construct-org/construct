@@ -1,0 +1,205 @@
+// Base theme
+// A Mixin used to generate subthemes
+@mixin base(
+    $primary: #CC4455,
+    $on_primary: #000000,
+    $surface: #FFFFFF,
+    $on_surface: #000000,
+    $bg: $background,
+    $on_bg: $on_background
+) {
+
+
+    // Base Style //
+
+
+    background: $surface;
+
+    * {
+        color: $on_surface;
+    }
+
+    QFrame#line {
+        color: $bg;
+    }
+
+    // Menu Style //
+
+    QMenu {
+        background-color: $surface;
+        border: $border-style $bg;
+    }
+
+    QMenu::icon {
+        padding: 8 8 8 8;
+    }
+
+    QMenu::item {
+        padding: 8 8 8 8;
+        background-color: $transparent;
+        min-width: 144;
+    }
+
+    QMenu::item:selected {
+        background-color: fade-out($primary, 0.55);
+        border: $border-style fade-out($primary, 0.55);
+    }
+
+    QMenu::item:pressed {
+        color: $on_primary;
+        background-color: $primary;
+    }
+
+    // Icons and Button Styles //
+
+    #icon {
+        outline: none;
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    QPushButton[type="text"] {
+        padding: 8px 16px 8px 16px;
+        border: $border-style vary($surface, 10%);
+        border-radius: $border-radius;
+    }
+    QPushButton[type="text"]:disabled {
+        color: vary($surface, 15%);
+    }
+    QPushButton[type="text"]:hover {
+        color: $on_primary;
+        background-color: fade-out($primary, 0.55);
+        border: $border-style fade-out($primary, 0.55);
+    }
+    QPushButton[type="text"]:focus {
+        outline: none;
+        border: $border-style fade-out($primary, 0.25);
+    }
+    QPushButton[type="text"]:pressed {
+        color: $on_primary;
+        background-color: $primary;
+    }
+
+    QPushButton[type="icon"] {
+        outline: none;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        border-radius: $border-radius;
+    }
+    QPushButton[type="icon"]:disabled {
+        color: vary($surface, 15%);
+    }
+    QPushButton[type="icon"]:hover {
+        color: $on_primary;
+        background-color: set_alpha($primary, 0.45);
+        border: $border-style $primary;
+    }
+    QPushButton[type="icon"]:focus {
+        outline: none;
+        border: $border-style $primary;
+    }
+    QPushButton[type="icon"]:pressed {
+        color: $on_primary;
+        background-color: $primary;
+        border: $border-style $primary;
+    }
+
+    // Controls //
+
+    QLineEdit {
+        border: $border-style $background;
+        border-radius: 1px;
+        background: $surface;
+        color: $on_surface;
+    }
+
+    QLineEdit:focus {
+        border: $border-style $primary;
+        border-radius: $border-radius;
+        background: $surface;
+        color: $on_surface;
+    }
+
+
+    // Navigation crumbs //
+
+
+    #crumbs {
+        margin: 0;
+        padding: 0;
+    }
+
+    #crumb {
+        margin: 0;
+        padding: 0;
+        border-radius: 1;
+
+        &:hover {
+            color: $on_primary;
+            background-color: fade-out($primary, 0.55);
+        }
+
+        QPushButton {
+            margin: 0;
+            padding: 0px 8px 0px 8px;
+            border-radius: 1;
+
+            &:disabled {
+                color: vary($surface, 15%);
+            }
+            &:hover {
+                color: $on_primary;
+                border: $border-style fade-out($primary, 0.55);
+            }
+            &:focus {
+                outline: none;
+                border: $border-style fade-out($primary, 0.25);
+            }
+            &:pressed {
+                color: $on_primary;
+                background-color: $primary;
+            }
+            &::menu-indicator {
+                image: resource("icons/arrow_right_solid.svg");
+                width: 12px;
+                height: 12px;
+                subcontrol-origin: padding;
+                subcontrol-position: center;
+            }
+
+            &::menu-indicator:pressed,
+            &::menu-indicator:open {
+                image: resource("icons/arrow_down_solid.svg");
+                width: 12px;
+                height: 12px;
+                subcontrol-origin: padding;
+                subcontrol-position: center;
+            }
+        }
+
+        QMenu {
+            background-color: $surface;
+            border: $border-style $bg;
+        }
+
+        QMenu::item {
+            margin-left: 16px;
+            padding: 8px 8px 8px 8px;
+            background-color: $transparent;
+            min-width: 144px;
+        }
+
+        QMenu::item:selected {
+            background-color: fade-out($primary, 0.55);
+            border: $border-style fade-out($primary, 0.55);
+        }
+
+        QMenu::item:pressed {
+            color: $on_primary;
+            background-color: $primary;
+        }
+    }
+
+}

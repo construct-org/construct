@@ -9,7 +9,7 @@ from Qt import QtCore, QtWidgets
 from ..layouts import VBarLayout
 from ..scale import px
 from ..theme import theme
-from ..widgets import Frameless, Header, Navigation, HLine
+from ..widgets import Frameless, Header, HLine, Navigation
 
 
 class App(Frameless, QtWidgets.QDialog):
@@ -34,8 +34,7 @@ class App(Frameless, QtWidgets.QDialog):
             self.windowFlags() |
             QtCore.Qt.Window
         )
-        self.setMinimumWidth(600)
-        self.setMinimumHeight(700)
+        self.setMinimumSize(*px(600, 700))
 
         # Create widgets
         self.header = Header('Launcher', parent=self)

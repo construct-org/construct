@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 # Standard library imports
 import logging
+import re
 from functools import wraps
 
 # Third party imports
@@ -229,11 +230,17 @@ class Theme(object):
                 str(self.resources.path / 'styles'),
             ],
             custom_functions={
-                'res_url': sass_res_url(self),
-                'scale_pt': sass_scale_pt(self),
-                'scale_px': sass_scale_px(self),
+                'resource': sass_resource(self),
             },
         )
+
+        # Scale pixel values
+        def dpiaware_scale(value):
+            value, unit = int(value.group(1)), value.group(2)
+            return str(px(value)) + unit
+
+        css = re.sub(r'(\d+)(px)', dpiaware_scale, css)
+
         return css
 
     def refresh_stylesheet(self):
@@ -349,15 +356,15 @@ class Theme(object):
 
 # Sass functions
 
-def sass_res_url(theme):
+def sass_resource(theme):
     '''Get an url for a construct resource.
 
     Usage:
-        QPushButton {qproperty-icon: res_url(icons/plus.svg);}
+        QPushButton {qproperty-icon: resource(icons/plus.svg);}
     '''
-    def res_url(resource):
+    def resolve_resource(resource):
         return 'url("%s")' % theme.resources.get(resource).as_posix()
-    return res_url
+    return resolve_resource
 
 
 def sass_scale_pt(theme):
@@ -374,12 +381,12 @@ def sass_scale_pt(theme):
         # Handle sass types
         import sass
         if isinstance(value, sass.SassNumber):
-            return str(pt(value.value))
+            return str(pt(value.value)) + value.unit
 
         if isinstance(value, sass.SassList):
             result = []
             for item in value.items:
-                result.append(str(pt(item.value)))
+                result.append(str(pt(item.value)) + item.unit)
             return ' '.join(result)
     return scale_pt
 
@@ -399,12 +406,12 @@ def sass_scale_px(theme):
         # Handle sass types
         import sass
         if isinstance(value, sass.SassNumber):
-            return str(px(value.value))
+            return str(px(value.value)) + value.unit
 
         if isinstance(value, sass.SassList):
             result = []
             for item in value.items:
-                result.append(str(px(item.value)))
+                result.append(str(px(item.value)) + item.unit)
             return ' '.join(result)
     return scale_px
 

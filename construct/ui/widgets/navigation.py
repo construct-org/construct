@@ -6,7 +6,7 @@ from Qt import QtCore, QtWidgets
 # Local imports
 from ..layouts import HBarLayout
 from ..scale import px
-from . import P, H2, Glyph, Button, IconButton, Widget
+from . import H2, Button, Glyph, IconButton, P, Widget
 
 
 __all__ = [
@@ -20,7 +20,6 @@ class Navigation(Widget, QtWidgets.QWidget):
     css_properties = {
         'theme': 'surface',
     }
-
 
     def __init__(self, *args, **kwargs):
         super(Navigation, self).__init__(*args, **kwargs)
@@ -192,7 +191,7 @@ class Crumb(Widget, QtWidgets.QWidget):
 
         self.arrow = QtWidgets.QPushButton(parent=self)
         self.arrow.setFlat(True)
-        self.arrow.setFixedWidth(16)
+        self.arrow.setFixedWidth(px(16))
         self.arrow.setMenu(self.menu)
         self.arrow.setSizePolicy(
             QtWidgets.QSizePolicy.Minimum,
