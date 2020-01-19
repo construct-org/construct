@@ -20,6 +20,7 @@ class Navigation(Widget, QtWidgets.QWidget):
     css_properties = {
         'theme': 'surface',
     }
+    crumbs_changed = QtCore.Signal(str)
 
     def __init__(self, *args, **kwargs):
         super(Navigation, self).__init__(*args, **kwargs)
@@ -70,11 +71,6 @@ class Navigation(Widget, QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_Hover)
         self.installEventFilter(self)
 
-    def done_edit_crumbs(self):
-        self.crumbs.show()
-        self.crumbs_editor.hide()
-        self.parent().setFocus()
-
     def edit_crumbs(self):
         self.crumbs.hide()
         self.crumbs_editor.show()
@@ -83,8 +79,14 @@ class Navigation(Widget, QtWidgets.QWidget):
         )
         self.crumbs_editor.setFocus()
 
+    def done_edit_crumbs(self):
+        self.crumbs.show()
+        self.crumbs_editor.hide()
+        self.parent().setFocus()
+
     def commit_edit_crumbs(self):
         self.done_edit_crumbs()
+        self.crumbs_changed.emit(self.crumbs_editor.text())
 
     def eventFilter(self, obj, event):
         '''Sets appropriate cursor when hovering over Navigation.'''

@@ -88,32 +88,43 @@ class FsfsLayer(IOLayer):
 
     def get_assets(self, project, bin=None, asset_type=None, group=None):
         my_location = self.api.context.location
-        project = self.get_project_by_id(project['_id'], my_location)
+
+        for path in self._get_projects(my_location):
+            if fsfs.get_id(path) == project['_id']:
+                project_path = path
+
+        project = fsfs.read(project_path)
         assets = project['assets']
 
         for asset in assets.values():
             asset['project_id'] = project['_id']
             asset['_type'] = 'asset'
-            asset_path = self.get_path_to(asset)
-            asset = fsfs.read(asset_path)
+
             if bin and asset['bin'] != bin:
                 continue
             if asset_type and asset['asset_type'] != asset_type:
                 continue
             if group and asset['group'] != group:
                 continue
+
+            asset_path = self.get_path_to(asset, project_path)
+            asset = fsfs.read(asset_path)
             yield asset
 
     def get_asset(self, project, name):
-        potential_names = []
-        for asset in self.get_assets(project):
-            if name in asset['name']:
-                potential_names.append(name)
-            if asset['name'] == name:
-                return asset
+        my_location = self.api.context.location
 
-        if potential_names:
-            return min(potential_names, key=len)
+        for path in self._get_projects(my_location):
+            if fsfs.get_id(path) == project['_id']:
+                project_path = path
+
+        project = fsfs.read(project_path)
+
+        asset = project['assets'][name]
+        asset['project_id'] = project['_id']
+        asset['_type'] = 'asset'
+        asset_path = self.get_path_to(asset, project_path)
+        return fsfs.read(asset_path)
 
     def new_asset(self, project, data):
         path = self.get_path_to(data)
@@ -158,7 +169,7 @@ class FsfsLayer(IOLayer):
     def new_publish(self, asset, name, identifier, task, file_type, data):
         return NotImplemented
 
-    def get_path_to(self, entity):
+    def get_path_to(self, entity, project_path=None):
         '''Get a file system path to the provided entity.'''
 
         my_location = self.api.context.location
@@ -183,10 +194,11 @@ class FsfsLayer(IOLayer):
 
         if entity['_type'] == 'asset':
 
-            for project in self._get_projects(my_location):
-                if fsfs.get_id(project) == entity['project_id']:
-                    project_path = project
-                    break
+            if project_path is None:
+                for project in self._get_projects(my_location):
+                    if fsfs.get_id(project) == entity['project_id']:
+                        project_path = project
+                        break
 
             location, mount = self.api.get_mount_from_path(project_path)
             mount = self.api.get_mount(location, mount)
