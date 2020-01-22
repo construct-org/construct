@@ -226,3 +226,6 @@ class App(Frameless, QtWidgets.QDialog):
                         crumb,
                         key,
                     ))
+
+        # Update tab focus order
+        self.navigation._update_focus_order()

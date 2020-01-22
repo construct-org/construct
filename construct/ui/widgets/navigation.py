@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Third party imports
-from Qt import QtCore, QtWidgets
+from Qt import QtCore, QtGui, QtWidgets
 
 # Local imports
 from ..layouts import HBarLayout
@@ -51,6 +51,7 @@ class Navigation(Widget, QtWidgets.QWidget):
         )
 
         self.layout = HBarLayout(parent=self)
+        self.layout.setSpacing(0)
         self.layout.setContentsMargins(*px(16, 6, 16, 6))
         self.layout.left.addWidget(self.menu_button)
         self.layout.left.addWidget(self.home_button)
@@ -63,12 +64,35 @@ class Navigation(Widget, QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_Hover)
         self.installEventFilter(self)
 
+    def _update_focus_order(self):
+        prev_widget = None
+        for lo in (self.layout.left, self.layout.center, self.layout.right):
+            for i in range(lo.count()):
+                next_widget = lo.itemAt(i).widget()
+
+                # We hit some crumbs baby
+                if isinstance(next_widget, Crumbs):
+                    for crumb in next_widget.iter():
+                        if prev_widget:
+                            self.setTabOrder(prev_widget, crumb.label)
+                        self.setTabOrder(crumb.label, crumb.arrow)
+                        prev_widget = crumb.arrow
+
+                # It's a normal widget - probably an IconButton
+                if next_widget:
+                    if prev_widget:
+                        self.setTabOrder(prev_widget, next_widget)
+                    prev_widget = next_widget
+
     def edit_crumbs(self):
         self.crumbs.hide()
         self.crumbs_editor.show()
-        self.crumbs_editor.setText(
-            '/'.join([c.label.text() for c in self.crumbs.iter()])
-        )
+        uri = 'cons://' + '/'.join([
+            c.label.text()
+            for c in self.crumbs.iter()
+            if c.label.text()
+        ])
+        self.crumbs_editor.setText(uri)
         self.crumbs_editor.setFocus()
 
     def done_edit_crumbs(self):
@@ -78,7 +102,8 @@ class Navigation(Widget, QtWidgets.QWidget):
 
     def commit_edit_crumbs(self):
         self.done_edit_crumbs()
-        self.uri_changed.emit(self.crumbs_editor.text())
+        uri = self.crumbs_editor.text()
+        self.uri_changed.emit(uri)
 
     def eventFilter(self, obj, event):
         '''Sets appropriate cursor when hovering over Navigation.'''
@@ -199,3 +224,17 @@ class Crumb(Widget, QtWidgets.QWidget):
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
+
+        self.label.installEventFilter(self)
+        self.arrow.installEventFilter(self)
+
+    def eventFilter(self, obj, event):
+        '''Sets appropriate cursor when hovering over Navigation.'''
+
+        if event.type() == QtCore.QEvent.KeyPress:
+            if event.key() == QtCore.Qt.Key_Down:
+                self.arrow.setFocus()
+                self.arrow.click()
+                return True
+
+        return super(Crumb, self).eventFilter(obj, event)

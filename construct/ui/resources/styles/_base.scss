@@ -28,16 +28,17 @@
     QMenu {
         background-color: $surface;
         border: $border-style $bg;
+        menu-scrollable: 1;
     }
 
     QMenu::icon {
-        padding: 8 8 8 8;
+        padding: 8px 8px 8px 8px;
     }
 
     QMenu::item {
-        padding: 8 8 8 8;
+        padding: 8px 8px 8px 24px;
         background-color: $transparent;
-        min-width: 144;
+        min-width: 144px;
     }
 
     QMenu::item:selected {
@@ -69,16 +70,17 @@
     }
     QPushButton[type="text"]:hover {
         color: $on_primary;
-        background-color: fade-out($primary, 0.55);
-        border: $border-style fade-out($primary, 0.55);
+        background-color: set_alpha($primary, 0.45);
+        border: $border-style $primary;
     }
     QPushButton[type="text"]:focus {
         outline: none;
-        border: $border-style fade-out($primary, 0.25);
+        border: $border-style $primary;
     }
     QPushButton[type="text"]:pressed {
         color: $on_primary;
         background-color: $primary;
+        border: $border-style $primary;
     }
 
     QPushButton[type="icon"] {
@@ -138,7 +140,7 @@
 
         &:hover {
             color: $on_primary;
-            background-color: fade-out($primary, 0.55);
+            background-color: set_alpha($primary, 0.65);
         }
 
         QPushButton {
@@ -151,11 +153,11 @@
             }
             &:hover {
                 color: $on_primary;
-                border: $border-style fade-out($primary, 0.55);
+                border: $border-style $primary;
             }
             &:focus {
                 outline: none;
-                border: $border-style fade-out($primary, 0.25);
+                border: $border-style $primary;
             }
             &:pressed {
                 color: $on_primary;
@@ -182,6 +184,7 @@
         QMenu {
             background-color: $surface;
             border: $border-style $bg;
+            menu-scrollable: 1;
         }
 
         QMenu::item {

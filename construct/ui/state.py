@@ -180,6 +180,10 @@ class State(QtCore.QObject):
         for k, v in kwargs.items():
             self[k] = v
 
+    def update(self, **kwargs):
+        for k, v in kwargs.items():
+            self.__setitem__(k, v)
+
     def get(self, key):
         return self.__getitem__(key)
 
