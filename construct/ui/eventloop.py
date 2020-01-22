@@ -2,8 +2,8 @@
 
 from __future__ import absolute_import
 
-# Standard library imports
-from functools import wraps
+# Local imports
+from ..compat import wraps
 
 
 class EventLoop(object):

@@ -5,13 +5,12 @@ from __future__ import absolute_import
 # Standard library imports
 import logging
 import re
-from functools import wraps
 
 # Third party imports
 import qtsass
 
 # Local imports
-from ..compat import basestring
+from ..compat import basestring, wraps
 from ..types import WeakSet
 from . import resources
 from .scale import pt, px

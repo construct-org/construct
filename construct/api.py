@@ -6,12 +6,12 @@ from __future__ import absolute_import
 import atexit
 import inspect
 import logging
-from functools import wraps
+from itertools import zip_longest
 from logging.config import dictConfig
 
 # Local imports
 from . import schemas
-from .compat import Mapping, basestring
+from .compat import Mapping, basestring, wraps
 from .constants import DEFAULT_LOGGING
 from .context import Context, validate_context
 from .errors import ContextError
@@ -288,6 +288,74 @@ class API(object):
         # TODO: Extract remaining context from path
 
         return ctx
+
+    def context_from_uri(self, uri):
+        '''Create a Context object from an uri.
+
+        Examples:
+
+            >>> api.context_from_uri('cons://local/projects/project')
+            {'location': 'local', 'mount': 'projects', 'project': 'project'}
+
+            >>> api.context_from_uri('local/projects/project')
+            {'location': 'local', 'mount': 'projects', 'project': 'project'}
+        '''
+
+        # Split off uri_prefix
+        uri_prefix = None
+        if '://' in uri:
+            uri_prefix, uri = uri.split('://', 1)
+            uri_prefix += '://'
+
+        uri_parts = uri.strip(' /\\').split('/')
+        uri_parts_map = [
+            'location',
+            'mount',
+            'project',
+            'bin',
+            'asset',
+            'workspace',
+            'task',
+            'file',
+        ]
+
+        context = Context(
+            host=self.context['host'],  # Inject host from current context
+        )
+        for key, value in zip_longest(uri_parts_map, uri_parts):
+            context[key] = value
+        return context
+
+    def uri_from_context(self, context):
+        '''Create a Context object from an uri.
+
+        Examples:
+
+            >>> ctx = Context(
+            ...     location='local',
+            ...     mount='projects',
+            ...     project='project'
+            ... )
+            >>> api.uri_from_context(ctx)
+            'cons://local/projects/project'
+        '''
+
+        uri_parts = []
+        uri_parts_map = [
+            'location',
+            'mount',
+            'project',
+            'bin',
+            'asset',
+            'workspace',
+            'task',
+            'file',
+        ]
+        for key in uri_parts_map:
+            value = context.get(key, None)
+            if value:
+                uri_parts.append(value)
+        return 'cons://' + '/'.join(uri_parts)
 
     def set_mount(self, location, mount):
         self.update_context(location=location, mount=mount)

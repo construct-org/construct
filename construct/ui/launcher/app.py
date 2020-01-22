@@ -4,7 +4,6 @@ from __future__ import absolute_import
 
 # Standard library imports
 from functools import partial
-from itertools import zip_longest
 
 # Third party imports
 from Qt import QtCore, QtWidgets
@@ -32,14 +31,19 @@ class App(Frameless, QtWidgets.QDialog):
         super(App, self).__init__(**kwargs)
 
         # Set App state
+        context = context or api.get_context()
         self.state = State(
             api=api,
-            context=context or api.get_context(),
+            context=context,
             uri=uri,
+            project=context['project'],
+            asset=context['asset'],
             bookmarks=api.user_cache.get('bookmarks', []),
+            crumb_item=None,
         )
-        self.state['context'].changed.connect(self.on_ctx_changed)
-        self.state['uri'].changed.connect(self.on_uri_changed)
+        self.state['context'].changed.connect(self._on_ctx_changed)
+        self.state['uri'].changed.connect(self._on_uri_changed)
+        self.state['crumb_item'].changed.connect(self._on_crumb_item_changed)
 
         # Window Attributes
         self.setWindowFlags(
@@ -53,8 +57,8 @@ class App(Frameless, QtWidgets.QDialog):
         self.header.close_button.clicked.connect(self.hide)
 
         self.navigation = Navigation(parent=self)
-        self.navigation.uri_changed.connect(self.on_uri_changed)
-        self.navigation.home_button.clicked.connect(self.on_home_clicked)
+        self.navigation.uri_changed.connect(self._on_uri_changed)
+        self.navigation.home_button.clicked.connect(self._on_home_clicked)
 
         # Layout widgets
         self.layout = VBarLayout(parent=self)
@@ -73,7 +77,7 @@ class App(Frameless, QtWidgets.QDialog):
         # Update UI from initial state
         self._refresh_crumbs(self.state['context'])
 
-    def on_home_clicked(self):
+    def _on_home_clicked(self):
         api = self.state['api'].get()
         context = self._trim_context(api.get_context(), 'location')
         self.state.set('context', context)
@@ -81,58 +85,25 @@ class App(Frameless, QtWidgets.QDialog):
         with self.state.signals_blocked():
             self.state.set('uri', '')
 
-    def on_uri_changed(self, uri):
+    def _on_uri_changed(self, uri):
         api = self.state['api'].get()
-        context = self._context_from_uri(uri)
+        context = api.context_from_uri(uri)
 
         if api.validate_context(context):
             self.state.set('context', context)
 
-    def on_ctx_changed(self, context):
+    def _on_ctx_changed(self, context):
+        api = self.state['api'].get()
         self._refresh_crumbs(context)
 
         with self.state.signals_blocked():
-            uri = self._uri_from_context(context)
+            uri = api.uri_from_context(context)
             self.state.set('uri', uri)
 
-    def _context_from_uri(self, uri):
-        api = self.state['api'].get()
-        uri_parts = uri.strip(' /\\').split('/')
-        uri_parts_map = [
-            'location',
-            'mount',
-            'project',
-            'bin',
-            'asset',
-            'workspace',
-            'task',
-            'file',
-        ]
-        context = Context(
-            host=self.state['context']['host'],
-        )
-        for key, value in zip_longest(uri_parts_map, parts):
-            context[key] = value
-
-        return context
-
-    def _uri_from_context(self, context):
-        uri_parts = []
-        uri_parts_map = [
-            'location',
-            'mount',
-            'project',
-            'bin',
-            'asset',
-            'workspace',
-            'task',
-            'file',
-        ]
-        for key in uri_parts_map:
-            value = context.get(key, None)
-            if value:
-                uri_parts.append(value)
-        return '/'.join(uri_parts)
+    def _on_crumb_item_changed(self, value):
+        for crumb in self.navigation.crumbs.iter():
+            if crumb.label.text() == value:
+                crumb.arrow.setFocus()
 
     def _trim_context(self, context, key):
         new_context = Context()
@@ -210,7 +181,11 @@ class App(Frameless, QtWidgets.QDialog):
                 menu_items.append((asset['name'], item_context))
 
         for item_label, item_context in menu_items:
-            callback = partial(self.state.set, 'context', item_context)
+            callback = partial(
+                self.state.update,
+                context=item_context,
+                crumb_item=item_label,
+            )
             crumb.menu.addAction(item_label, callback)
 
     def _refresh_crumbs(self, context):
