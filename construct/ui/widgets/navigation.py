@@ -20,7 +20,7 @@ class Navigation(Widget, QtWidgets.QWidget):
     css_properties = {
         'theme': 'surface',
     }
-    crumbs_changed = QtCore.Signal(str)
+    uri_changed = QtCore.Signal(str)
 
     def __init__(self, *args, **kwargs):
         super(Navigation, self).__init__(*args, **kwargs)
@@ -39,14 +39,6 @@ class Navigation(Widget, QtWidgets.QWidget):
         )
 
         self.crumbs = Crumbs(parent=self)
-
-        # TODO: Trash these temp items
-        self.crumbs.add('NY')
-        self.crumbs.add('Projects')
-        self.crumbs.add('Project_A')
-        self.crumbs.add('Assets')
-        self.crumbs.add('Asset_A')
-
         self.crumbs_editor = CrumbsEditor(parent=self)
         self.crumbs_editor.hide()
         self.crumbs_editor.returnPressed.connect(self.commit_edit_crumbs)
@@ -86,7 +78,7 @@ class Navigation(Widget, QtWidgets.QWidget):
 
     def commit_edit_crumbs(self):
         self.done_edit_crumbs()
-        self.crumbs_changed.emit(self.crumbs_editor.text())
+        self.uri_changed.emit(self.crumbs_editor.text())
 
     def eventFilter(self, obj, event):
         '''Sets appropriate cursor when hovering over Navigation.'''
@@ -181,12 +173,6 @@ class Crumb(Widget, QtWidgets.QWidget):
         self.setProperty('position', 'left')
 
         self.menu = QtWidgets.QMenu(parent=self)
-
-        # TODO: Temporary menu items
-        self.menu.addAction('Menu Item A')
-        self.menu.addAction('Menu Item B')
-        self.menu.addAction('Menu Item C')
-        self.menu.addAction('Menu Item D')
         self.menu.setWindowFlags(
             self.menu.windowFlags() | QtCore.Qt.NoDropShadowWindowHint
         )
