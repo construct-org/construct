@@ -9,9 +9,9 @@ except ImportError:
     from pathlib import Path
 
 try:
-    from collections.abc import Mapping
+    from collections.abc import Mapping, MutableMapping
 except ImportError:
-    from collections import Mapping
+    from collections import Mapping, MutableMapping
 
 if six.PY2:
     import functools
