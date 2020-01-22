@@ -9,6 +9,7 @@ from __future__ import absolute_import
 # Standard library imports
 import logging
 import shutil
+from copy import deepcopy
 
 # Third party imports
 from bson.objectid import ObjectId
@@ -33,11 +34,11 @@ class FileCache(object):
         self._mtimes = {}
 
     def pop(self, file):
-        self._cache.pop(file)
-        self._mtimes.pop(file)
+        self._mtimes.pop(file, None)
+        return self._cache.pop(file, None)
 
     def set(self, file, data):
-        self._cache[file] = data
+        self._cache[file] = deepcopy(data)
         self._mtimes[file] = file.stat().st_mtime
 
     def get(self, file, default=missing):
@@ -52,7 +53,7 @@ class FileCache(object):
                 raise KeyError('File out of date: ' + file.stem)
             return default
 
-        return self._cache[file]
+        return deepcopy(self._cache[file])
 
 
 cache = FileCache()
@@ -173,9 +174,7 @@ def read(path, *keys):
 
     try:
         data = cache.get(file)
-        print('Read cache: ' + path.stem)
     except KeyError:
-        print('Read file: ' + path.stem)
         raw_data = file.read_text(encoding='utf-8')
         if not raw_data:
             return {}
@@ -215,6 +214,9 @@ def write(path, replace=False, **data):
         new_data = data
 
     file.write_bytes(yaml_dump(new_data))
+
+    cache.pop(file)
+    return new_data
 
 
 def set_id(path, value):
