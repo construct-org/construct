@@ -38,7 +38,7 @@ class FsfsLayer(IOLayer):
 
     def get_project_by_id(self, _id, location=None, mount=None):
 
-        location = self.api.context.location
+        location = self.api.context['location']
 
         for project in self._get_projects(location, mount):
             if fsfs.get_id(project) == _id:
@@ -87,7 +87,7 @@ class FsfsLayer(IOLayer):
         fsfs.delete(path)
 
     def get_assets(self, project, bin=None, asset_type=None, group=None):
-        my_location = self.api.context.location
+        my_location = self.api.context['location']
 
         for path in self._get_projects(my_location):
             if fsfs.get_id(path) == project['_id']:
@@ -112,7 +112,7 @@ class FsfsLayer(IOLayer):
             yield asset
 
     def get_asset(self, project, name):
-        my_location = self.api.context.location
+        my_location = self.api.context['location']
 
         for path in self._get_projects(my_location):
             if fsfs.get_id(path) == project['_id']:
@@ -172,7 +172,7 @@ class FsfsLayer(IOLayer):
     def get_path_to(self, entity, project_path=None):
         '''Get a file system path to the provided entity.'''
 
-        my_location = self.api.context.location
+        my_location = self.api.context['location']
 
         if entity['_type'] == 'project':
 
