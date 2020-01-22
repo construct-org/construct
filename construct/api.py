@@ -13,7 +13,7 @@ from logging.config import dictConfig
 from . import schemas
 from .compat import Mapping, basestring
 from .constants import DEFAULT_LOGGING
-from .context import Context
+from .context import Context, validate_context
 from .errors import ContextError
 from .events import EventManager
 from .extensions import ExtensionManager
@@ -179,7 +179,7 @@ class API(object):
     def get_context(self):
         '''Get a copy of the current context.
 
-        .. seealso:: :class:`construct.context.Context`
+        .. seealso:: :class:`construct.context.Context.copy`
         '''
 
         return self.context.copy()
@@ -191,7 +191,7 @@ class API(object):
             Set the active context permanently::
 
                 >>> new_ctx = api.get_context()
-                >>> new_ctx.project = 'A_PROJECT'
+                >>> new_ctx['project'] = 'A_PROJECT'
                 >>> api.set_context(new_context)
 
             Temporarily set context::
@@ -231,13 +231,50 @@ class API(object):
 
         self.context = self.context_from_path(path)
 
+    def _context_from_obj(self, obj, data):
+        if obj['_type'] == 'project':
+            data['project'] = obj['name']
+            project = self.io.get_project_by_id(obj['_id'])
+            project_path = self.io.get_path_to(project)
+            location, mount = self.get_mount_from_path(project_path)
+            data['location'] = location
+            data['mount'] = mount
+        elif obj['type'] == 'asset':
+            data['asset'] = obj['name']
+            data['bin'] = obj['bin']
+            project = self.io.get_project_by_id(obj['project_id'])
+            self._context_from_obj(project, data)
+
+    def context_from_obj(self, obj, data=None):
+        '''Returns a Context instance from the specific data obj.
+
+        Arguments:
+            obj (dict) - Project or asset data.
+        '''
+
+        data = {}
+        self._context_from_obj(obj, data)
+
+        context = Context(
+            host=self.context['host'],
+            location=self.context['location'],
+            mount=self.context['mount'],
+            **data
+        )
+        return context
+
+    def validate_context(self, context):
+        '''Returns True if the context is valid.'''
+
+        return validate_context(self, context)
+
     def context_from_path(self, path):
 
-        ctx = Context(host=self.context.host)
+        ctx = Context(host=self.context['host'])
 
         path = unipath(path)
         if path.is_file():
-            ctx.file = path.as_posix()
+            ctx['file'] = path.as_posix()
 
         location_mount = self.get_mount_from_path(path)
         if location_mount:
@@ -264,11 +301,11 @@ class API(object):
             mount (str): Name of mount or context['mount']
         '''
 
-        location = location or self.context.location
-        mount = mount or self.context.mount
+        location = location or self.context['location']
+        mount = mount or self.context['mount']
         path = self.settings['locations'][location][mount]
         if isinstance(path, dict):
-            path = path[self.context.platform]
+            path = path[self.context['platform']]
             ensure_exists(path)
             return unipath(path)
         else:
@@ -294,7 +331,7 @@ class API(object):
     def host(self):
         '''Get the active Host Extension.'''
 
-        return self.extensions.get(self.context.host, None)
+        return self.extensions.get(self.context['host'], None)
 
     def define(self, event, doc):
         '''Define a new event
