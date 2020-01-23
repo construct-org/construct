@@ -38,6 +38,8 @@ class Button(Widget, QtWidgets.QPushButton):
 
         if icon_size:
             self.setIconSize(QtCore.QSize(*px(icon_size[0], icon_size[1])))
+        else:
+            self.size = QtCore.QSize(*px(24, 24))
 
 
 class IconButton(Widget, QtWidgets.QPushButton):

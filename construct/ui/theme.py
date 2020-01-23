@@ -201,7 +201,9 @@ class Theme(object):
         var_tmpl = '${}: {};\n'
         rgb_tmpl = '${}: rgb({}, {}, {});\n'
         rgba_tmpl = '${}: rgba({}, {}, {}, {});\n'
-        for var in self.variables:
+        for var in self.color_variables:
+            if not hasattr(self, var):
+                continue
             value = getattr(self, var)
             if isinstance(value, basestring):
                 sass += var_tmpl.format(var, value)
@@ -285,6 +287,8 @@ class Theme(object):
             setattr(self, name, value)
         else:
             raise ValueError('Expected rgb tuple or hex code got %s' % value)
+
+        self.refresh_stylesheet()
 
     def hex(self, name):
         '''Return the named color as a hex code string.'''

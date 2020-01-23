@@ -11,6 +11,7 @@ from Qt import QtCore, QtWidgets
 
 # Local imports
 from ...context import Context
+from ..dialogs import BookmarksDialog
 from ..layouts import VBarLayout
 from ..scale import px
 from ..state import State
@@ -51,7 +52,7 @@ class App(Frameless, QtWidgets.QDialog):
         self.state['context'].changed.connect(self._on_ctx_changed)
         self.state['uri'].changed.connect(self._on_uri_changed)
         self.state['crumb_item'].changed.connect(self._on_crumb_item_changed)
-        self.state['bookmarks'].changed.connect(self._on_bookmarks_changed)
+        self.state['bookmarks'].changed.connect(self._refresh_bookmark_button)
 
         # Window Attributes
         self.setWindowFlags(
@@ -67,7 +68,7 @@ class App(Frameless, QtWidgets.QDialog):
         self.navigation = Navigation(parent=self)
         self.navigation.uri_changed.connect(self._on_uri_changed)
         self.navigation.home_button.clicked.connect(self._on_home_clicked)
-        self.navigation.bookmark_button.toggled.connect(self._on_bookmark)
+        self.navigation.bookmark_button.clicked.connect(self._show_bookmarks)
 
         # Layout widgets
         self.layout = VBarLayout(parent=self)
@@ -85,11 +86,13 @@ class App(Frameless, QtWidgets.QDialog):
 
         # Update UI from initial state
         self._refresh_crumbs(self.state['context'].copy())
-        self._refresh_bookmark(self.state['uri'].get())
+        self._refresh_bookmark_button(self.state['uri'].get())
 
     def _on_home_clicked(self):
         api = self.state['api'].get()
-        context = self._trim_context(api.get_context(), 'location')
+        context = Context(
+            host=api.context['host']
+        )
         self.state.set('context', context)
 
         with self.state.signals_blocked():
@@ -102,22 +105,33 @@ class App(Frameless, QtWidgets.QDialog):
         if api.validate_context(context):
             self.state.set('context', context)
 
-    def _refresh_bookmark(self, uri):
-        is_bookmarked = uri in self.state['bookmarks']
-        self.navigation.bookmark_button.setChecked(is_bookmarked)
-
-    def _on_bookmark(self, value):
+    def _refresh_bookmark_button(self, *args):
         uri = self.state['uri'].get()
+        is_bookmarked = False
+        for bookmark in self.state['bookmarks'].get():
+            if uri == bookmark['uri']:
+                is_bookmarked = True
 
-        if value and uri not in self.state['bookmarks']:
-            self.state['bookmarks'].append(uri)
+        self.navigation.bookmark_button.set_icon(
+            ('bookmark_outline', 'bookmark')[is_bookmarked]
+        )
 
-        if not value and uri in self.state['bookmarks']:
-            self.state['bookmarks'].remove(uri)
+    def _show_bookmarks(self, value):
+        dialog = BookmarksDialog(self.state, parent=self)
+        dialog.finished.connect(
+            lambda x: self.navigation.bookmark_button.setChecked(False)
+        )
+        dialog.show()
+        dialog.setFocus()
 
-    def _on_bookmarks_changed(self, value):
-        api = self.state['api'].get()
-        api.user_cache.set('bookmarks', value)
+        # Reposition dialog
+        button = self.navigation.bookmark_button
+        anchor = button.mapToGlobal(button.rect().bottomRight())
+        dialog_anchor = dialog.mapToGlobal(dialog.rect().topRight())
+        dialog_source = dialog.mapToGlobal(dialog.rect().topLeft())
+        dialog.move(
+            dialog_source + (anchor - dialog_anchor) + QtCore.QPoint(0, 1)
+        )
 
     def _on_ctx_changed(self, context):
         api = self.state['api'].get()
@@ -132,19 +146,22 @@ class App(Frameless, QtWidgets.QDialog):
             # By blocking signals here we prevent a loop
             uri = api.uri_from_context(context)
             self.state.set('uri', uri)
-            self.state['history'].appendleft((uri, dict(context)))
 
-        self._refresh_bookmark(uri)
+        self.state['history'].appendleft((uri, dict(context)))
+        self._refresh_bookmark_button(uri)
 
     def _on_crumb_item_changed(self, value):
         for crumb in self.navigation.crumbs.iter():
             if crumb.label.text() == value:
-                crumb.arrow.setFocus()
+                if not crumb.arrow.isHidden():
+                    crumb.arrow.setFocus()
+                else:
+                    crumb.label.setFocus()
 
     def _trim_context(self, context, key):
         new_context = Context()
         include = ['location', 'mount', 'project', 'bin', 'asset']
-        include = include[:include.index(key)]
+        include = include[:include.index(key) + 1]
         new_context.update(**{k: context[k] for k in include})
         return new_context
 
@@ -228,7 +245,7 @@ class App(Frameless, QtWidgets.QDialog):
         self.navigation.crumbs.clear()
 
         # Add home arrow
-        crumb = self.navigation.crumbs.add('')
+        crumb = self.navigation.crumbs.add('home')
         crumb.label.hide()
         crumb_context = self._trim_context(
             self.state['context'].copy(),
@@ -250,9 +267,9 @@ class App(Frameless, QtWidgets.QDialog):
                     key
                 )
                 crumb.label.clicked.connect(partial(
-                    self.state.set,
-                    'context',
-                    crumb_context
+                    self.state.update,
+                    context=crumb_context,
+                    crumb_item=label,
                 ))
                 if key == 'asset':
                     crumb.arrow.hide()

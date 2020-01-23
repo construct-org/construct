@@ -47,7 +47,6 @@ class Navigation(Widget, QtWidgets.QWidget):
         self.bookmark_button = IconButton(
             icon='bookmark_outline',
             icon_size=(24, 24),
-            on_icon='bookmark',
             parent=self,
         )
         self.bookmark_button.setCheckable(True)
@@ -92,7 +91,7 @@ class Navigation(Widget, QtWidgets.QWidget):
         uri = 'cons://' + '/'.join([
             c.label.text()
             for c in self.crumbs.iter()
-            if c.label.text()
+            if c.label.text() and c.label.text() != 'home'
         ])
         self.crumbs_editor.setText(uri)
         self.crumbs_editor.setFocus()
