@@ -4,12 +4,13 @@ from __future__ import absolute_import
 
 # Standard library imports
 import contextlib
+from copy import deepcopy
 
 # Third party imports
 from Qt import QtCore
 
 # Local imports
-from ..compat import Mapping, MutableMapping
+from ..compat import Mapping, Sequence, basestring
 
 
 missing = object()
@@ -17,12 +18,13 @@ missing = object()
 
 def value_factory(name, default, parent):
 
-    value_map = {
-        (list,): ListValue,
-        Mapping: DictValue,
-    }
+    value_map = [
+        (basestring, Value),
+        (Sequence, SequenceValue),
+        (Mapping, MappingValue),
+    ]
 
-    for types, value_type in value_map.items():
+    for types, value_type in value_map:
         if isinstance(default, types):
             return value_type(name, default, parent)
 
@@ -30,6 +32,11 @@ def value_factory(name, default, parent):
 
 
 class Value(QtCore.QObject):
+    '''Base Value type.
+
+    All Value types should emit the changed signal when their internal value
+    changes.
+    '''
 
     changed = QtCore.Signal((object,))
 
@@ -54,7 +61,8 @@ class Value(QtCore.QObject):
             return deepcopy(self.value)
 
 
-class ListValue(Value):
+class SequenceValue(Value):
+    '''Value type that handles Sequence Types like list, tuple, and deque.'''
 
     def __getitem__(self, index):
         return self.value[index]
@@ -73,9 +81,30 @@ class ListValue(Value):
     def __len__(self):
         return len(self.value)
 
+    def extend(self, value):
+        self.value.extend(value)
+        self.changed.emit(self.value)
+
+    def extendleft(self, value):
+        try:
+            self.value.extendleft(value)
+        except AttributeError:
+            value.extend(self.value)
+            self.value = value
+        self.changed.emit(self.value)
+
     def remove(self, value):
         self.value.remove(value)
         self.changed.emit(self.value)
+
+    def popleft(self, value):
+        try:
+            value = self.value.popleft(value)
+        except AttributeError:
+            value = self.value[0]
+            self.value = self.value[1:]
+        self.changed.emit(self.value)
+        return value
 
     def pop(self):
         if not len(self.value):
@@ -83,6 +112,13 @@ class ListValue(Value):
         value = self.value.pop()
         self.changed.emit(self.value)
         return value
+
+    def appendleft(self, value):
+        try:
+            self.value.appendleft(value)
+        except AttributeError:
+            self.value.insert(0, value)
+        self.changed.emit(self.value)
 
     def append(self, value):
         self.value.append(value)
@@ -95,7 +131,8 @@ class ListValue(Value):
             self.changed.emit(self.value)
 
 
-class DictValue(Value):
+class MappingValue(Value):
+    '''Value type that handles Mapping types like Dict.'''
 
     def __getitem__(self, key):
         return self.value[key]

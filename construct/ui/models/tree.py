@@ -6,6 +6,17 @@ from __future__ import absolute_import
 from Qt import QtCore
 
 
+class TreeNode(object):
+
+    def __init__(self, name, parent=None):
+        self._name = name
+        self._parent = parent
+        self._children = []
+
+        if parent:
+            self.parent.addChild(self)
+
+
 class TreeModel(QtCore.QAbstractItemModel):
 
     def __init__(self, data, parent=None):

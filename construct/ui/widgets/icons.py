@@ -75,7 +75,9 @@ class FontIconEngine(QIconEngine):
         painter.setFont(font)
         if self.parent:
             # Set color from parent
-            painter.setPen(self.parent.palette().text().color())
+            palette = self.parent.palette()
+            color = palette.color(palette.Normal, palette.Text)
+            painter.setPen(color)
         painter.drawText(rect, alignment, self.char)
 
 

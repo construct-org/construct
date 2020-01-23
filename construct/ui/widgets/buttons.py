@@ -10,6 +10,7 @@ from ..scale import pt, px
 from ..theme import theme
 from . import P, Widget
 
+
 __all__ = [
     'Button',
     'Glyph',
@@ -46,12 +47,25 @@ class IconButton(Widget, QtWidgets.QPushButton):
         'type': 'icon',
     }
 
-    def __init__(self, icon, icon_size=None, **kwargs):
+    def __init__(self, icon, icon_size=None, on_icon=None, **kwargs):
         super(IconButton, self).__init__(**kwargs)
         self.setFlat(True)
         self.set_icon(icon, icon_size)
 
-    def set_icon(self, icon, icon_size=None):
+        self._icon = icon
+        self._icon_size = icon_size
+        self._on_icon = on_icon
+
+        if self._on_icon:
+            self.toggled.connect(self.update_icon)
+
+    def update_icon(self, state):
+        icon = self._icon
+        if state and self._on_icon:
+            icon = self._on_icon
+        self.set_icon(icon, self._icon_size)
+
+    def set_icon(self, icon, icon_size=None, on_icon=None):
         self.setIcon(theme.icon(icon, parent=self))
         if icon_size:
             self.size = QtCore.QSize(*px(icon_size[0], icon_size[1]))
@@ -110,4 +124,3 @@ class Glyph(IconButton):
     def __init__(self, icon, icon_size=None, parent=None):
         super(Glyph, self).__init__(icon, icon_size, parent=parent)
         self.setDisabled(True)
-

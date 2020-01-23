@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 # Standard library imports
+from collections import deque
 from functools import partial
 
 # Third party imports
@@ -31,7 +32,12 @@ class App(Frameless, QtWidgets.QDialog):
         super(App, self).__init__(**kwargs)
 
         # Set App state
-        context = context or api.get_context()
+        if uri and not context:
+            context = api.context_from_uri(uri)
+        else:
+            context = context or api.get_context()
+            uri = api.uri_from_context(context)
+
         self.state = State(
             api=api,
             context=context,
@@ -40,10 +46,12 @@ class App(Frameless, QtWidgets.QDialog):
             asset=context['asset'],
             bookmarks=api.user_cache.get('bookmarks', []),
             crumb_item=None,
+            history=deque(api.user_cache.get('history', []), maxlen=20),
         )
         self.state['context'].changed.connect(self._on_ctx_changed)
         self.state['uri'].changed.connect(self._on_uri_changed)
         self.state['crumb_item'].changed.connect(self._on_crumb_item_changed)
+        self.state['bookmarks'].changed.connect(self._on_bookmarks_changed)
 
         # Window Attributes
         self.setWindowFlags(
@@ -59,6 +67,7 @@ class App(Frameless, QtWidgets.QDialog):
         self.navigation = Navigation(parent=self)
         self.navigation.uri_changed.connect(self._on_uri_changed)
         self.navigation.home_button.clicked.connect(self._on_home_clicked)
+        self.navigation.bookmark_button.toggled.connect(self._on_bookmark)
 
         # Layout widgets
         self.layout = VBarLayout(parent=self)
@@ -75,7 +84,8 @@ class App(Frameless, QtWidgets.QDialog):
         theme.apply(self)
 
         # Update UI from initial state
-        self._refresh_crumbs(self.state['context'])
+        self._refresh_crumbs(self.state['context'].copy())
+        self._refresh_bookmark(self.state['uri'].get())
 
     def _on_home_clicked(self):
         api = self.state['api'].get()
@@ -92,13 +102,39 @@ class App(Frameless, QtWidgets.QDialog):
         if api.validate_context(context):
             self.state.set('context', context)
 
+    def _refresh_bookmark(self, uri):
+        is_bookmarked = uri in self.state['bookmarks']
+        self.navigation.bookmark_button.setChecked(is_bookmarked)
+
+    def _on_bookmark(self, value):
+        uri = self.state['uri'].get()
+
+        if value and uri not in self.state['bookmarks']:
+            self.state['bookmarks'].append(uri)
+
+        if not value and uri in self.state['bookmarks']:
+            self.state['bookmarks'].remove(uri)
+
+    def _on_bookmarks_changed(self, value):
+        api = self.state['api'].get()
+        api.user_cache.set('bookmarks', value)
+
     def _on_ctx_changed(self, context):
         api = self.state['api'].get()
         self._refresh_crumbs(context)
 
+        # Update project and asset from context
+        self.state.set('project', context['project'])
+        self.state.set('asset', context['asset'])
+
         with self.state.signals_blocked():
+            # Setting uri state will update context: see _on_uri_changed
+            # By blocking signals here we prevent a loop
             uri = api.uri_from_context(context)
             self.state.set('uri', uri)
+            self.state['history'].appendleft((uri, dict(context)))
+
+        self._refresh_bookmark(uri)
 
     def _on_crumb_item_changed(self, value):
         for crumb in self.navigation.crumbs.iter():

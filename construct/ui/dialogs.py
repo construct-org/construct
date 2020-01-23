@@ -7,9 +7,9 @@ from Qt import QtCore, QtWidgets
 
 # Local imports
 from .layouts import HBarLayout
-from .scale import pt, px
+from .scale import px
 from .theme import theme
-from .widgets import H3, Button, Frameless, P, Glyph, IconButton
+from .widgets import H3, Button, Frameless, Glyph, IconButton, P
 
 
 class FramelessDialog(Frameless, QtWidgets.QDialog):

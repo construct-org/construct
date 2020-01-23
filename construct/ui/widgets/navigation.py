@@ -45,10 +45,12 @@ class Navigation(Widget, QtWidgets.QWidget):
         self.crumbs_editor.focus_lost.connect(self.done_edit_crumbs)
 
         self.bookmark_button = IconButton(
-            icon='bookmark',
+            icon='bookmark_outline',
             icon_size=(24, 24),
+            on_icon='bookmark',
             parent=self,
         )
+        self.bookmark_button.setCheckable(True)
 
         self.layout = HBarLayout(parent=self)
         self.layout.setSpacing(0)

@@ -94,7 +94,6 @@
         color: vary($surface, 15%);
     }
     QPushButton[type="icon"]:hover {
-        color: $on_primary;
         background-color: set_alpha($primary, 0.45);
         border: $border-style $primary;
     }
@@ -103,7 +102,6 @@
         border: $border-style $primary;
     }
     QPushButton[type="icon"]:pressed {
-        color: $on_primary;
         background-color: $primary;
         border: $border-style $primary;
     }
