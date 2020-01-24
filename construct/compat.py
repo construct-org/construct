@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+'''
+Python2-3 Compatability
+-----------------------
+Rather than performing variable imports on a module by module basis, all
+python compatability issues are handled here. This makes imports throughout
+construct slightly neater than otherwise.
+'''
+
 # Third party imports
 import six
 
@@ -22,9 +30,11 @@ if six.PY2:
         assigned = set(members) & set(assigned)
         updated = set(members) & set(updated)
         return functools.wraps(wrapped, assigned, updated)
+
+    from itertools import izip_longest as zip_longest
 else:
     from functools import wraps
-
+    from itertools import zip_longest
 
 # Instead of python-future
 basestring = six.string_types

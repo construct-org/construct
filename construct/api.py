@@ -6,12 +6,11 @@ from __future__ import absolute_import
 import atexit
 import inspect
 import logging
-from itertools import zip_longest
 from logging.config import dictConfig
 
 # Local imports
 from . import schemas
-from .compat import Mapping, basestring, wraps
+from .compat import Mapping, basestring, wraps, zip_longest
 from .constants import DEFAULT_LOGGING
 from .context import Context, validate_context
 from .errors import ContextError
