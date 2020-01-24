@@ -78,7 +78,7 @@ def teardown_module():
     teardown_api(__name__)
 
 
-@unittest.skip('Temporarily Disabled.')
+# @unittest.skip('Temporarily Disabled.')
 def test_initial_migration():
 
     project_root = data_dir(__name__, 'projects', 'old_style_project')
@@ -88,13 +88,7 @@ def test_initial_migration():
 
     # Make sure our project is invalid
     prj = api.io.get_project('old_style_project')
-    assert '_id' not in prj
-
-    try:
-        api.io.get_folders(prj)
-        assert True
-    except:
-        assert False, 'project does not need migration.'
+    assert 'schema_version' not in prj
 
     # Perform migration
     migrations.initial_migration(api, project_root)
@@ -104,25 +98,26 @@ def test_initial_migration():
 
     expected_assets = ['prop_01', 'product_01', 'char_01']
     actual_assets = []
-    for asset in api.io.get_assets(prj, 'asset'):
+    for asset in api.io.get_assets(prj, asset_type='asset'):
         actual_assets.append(asset['name'])
         assert '_id' in asset
+        assert asset['name'] in prj['assets']
     assert set(expected_assets) == set(actual_assets)
 
-    seq = api.io.get_folder('seq_01', prj)
     expected_shots = ['seq_01_010', 'seq_01_020', 'seq_01_030']
     actual_shots = []
-    for shot in api.io.get_assets(seq, 'shot'):
+    for shot in api.io.get_assets(prj, group='seq_01', asset_type='shot'):
         actual_shots.append(shot['name'])
         assert '_id' in shot
+        assert shot['name'] in prj['assets']
     assert set(expected_shots) == set(actual_shots)
 
-    seq = api.io.get_folder('user_01', prj)
     expected_shots = ['user_01_010', 'user_01_020', 'user_01_030']
     actual_shots = []
-    for shot in api.io.get_assets(seq, 'shot'):
+    for shot in api.io.get_assets(prj, group='user_01', asset_type='shot'):
         actual_shots.append(shot['name'])
         assert '_id' in shot
+        assert shot['name'] in prj['assets']
     assert set(expected_shots) == set(actual_shots)
 
 

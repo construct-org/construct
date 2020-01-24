@@ -99,10 +99,24 @@ def search_by_name(path, name, max_depth=10):
         return best
 
 
+def safe_iterdir(path):
+
+    contents = path.iterdir()
+    while True:
+        try:
+            yield next(contents)
+        except StopIteration:
+            return
+        except (OSError, WindowsError) as e:
+            print(dir(e))
+            print(e)
+            print(e.errno)
+
+
 def search(path, max_depth=10):
     '''Yields directories with metadata.'''
 
-    roots = list(path.iterdir())
+    roots = list(safe_iterdir(path))
     level = 0
 
     while roots and level < max_depth:
@@ -110,17 +124,31 @@ def search(path, max_depth=10):
         next_roots = []
 
         for root in roots:
-
             if root.is_file() or root.name == '.data':
                 continue
 
             if exists(root):
                 yield root
 
-            next_roots.extend(list(path.iterdir()))
+            next_roots.extend(list(safe_iterdir(root)))
 
         level += 1
         roots = next_roots
+
+    return
+
+
+def parents(path, tag=None):
+
+    for parent in path.parents:
+        if exists(parent):
+            if tag and tag in get_tags(parent):
+                yield parent
+
+
+def parent(path, tag=None):
+    for parent in parents(path, tag):
+        return parent
 
 
 def exists(path):
