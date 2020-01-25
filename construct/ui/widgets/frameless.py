@@ -107,7 +107,7 @@ class Frameless(Widget):
             self.setCursor(QtCore.Qt.ArrowCursor)
             return True
 
-        return super(Frameless, self).eventFilter(obj, event)
+        return False
 
     def mousePressEvent(self, event):
         if event.buttons() & QtCore.Qt.LeftButton:

@@ -145,6 +145,15 @@ class CrumbsEditor(Widget, QtWidgets.QLineEdit):
             QtWidgets.QSizePolicy.Minimum,
         )
 
+    def keyPressEvent(self, event):
+        '''Sets appropriate cursor when hovering over Navigation.'''
+
+        if event.key() == QtCore.Qt.Key_Escape:
+            self.hide()
+            return True
+
+        return super(CrumbsEditor, self).keyPressEvent(event)
+
     def focusOutEvent(self, event):
         self.focus_lost.emit()
 

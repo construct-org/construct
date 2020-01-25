@@ -20,7 +20,6 @@ class FramelessDialog(Frameless, QtWidgets.QDialog):
 
     css_id = ''
     css_properties = {
-        'border': True,
         'theme': 'surface'
     }
 

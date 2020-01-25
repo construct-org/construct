@@ -40,8 +40,8 @@ class UIManager(object):
             uri (str): Location where Launcher should start
         '''
 
-        from .launcher import App
-        return App(self.api, uri)
+        from .launcher import Launcher
+        return Launcher(self.api, uri)
 
     @requires_event_loop
     def alert(self, message, title=None, short=None):

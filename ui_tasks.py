@@ -36,6 +36,29 @@ def launcher(ctx):
 
 
 @task(watch)
+def bookmarks(self):
+    '''Show the Bookmarks Dialog.'''
+
+    from construct.ui.state import State
+    from construct.ui.dialogs import BookmarksDialog
+    from construct.ui.eventloop import get_event_loop
+
+    loop = get_event_loop()
+
+    api = construct.API()
+    state = State(
+        api=api,
+        context=api.get_context(),
+        bookmarks=api.user_cache.get('bookmarks', []),
+        uri=api.uri_from_context(api.get_context()),
+    )
+    dialog = BookmarksDialog(state)
+    dialog.show()
+
+    loop.start()
+
+
+@task(watch)
 def dialogs(ctx):
     '''Show a series of dialogs.'''
 

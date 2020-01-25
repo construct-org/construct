@@ -238,9 +238,8 @@ class State(QtCore.QObject):
         else:
             obj = self._data[key]
             previous_value = obj.get()
-            obj.set(value)
             if previous_value != value:
-                self.changed.emit(key, value)
+                obj.set(value)
 
     def __delitem__(self, key):
         del self._data[key]

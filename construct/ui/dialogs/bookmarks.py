@@ -72,7 +72,9 @@ class BookmarksView(Frameless, QtWidgets.QDialog):
 
     css_id = 'bookmarks'
     css_properties = {
-        'theme': 'surface'
+        'theme': 'surface',
+        'windowTitle': 'Bookmarks',
+        'windowIcon': 'bookmarks',
     }
     added = QtCore.Signal()
     removed = QtCore.Signal()
@@ -80,6 +82,9 @@ class BookmarksView(Frameless, QtWidgets.QDialog):
 
     def __init__(self, *args, **kwargs):
         super(BookmarksView, self).__init__(*args, **kwargs)
+
+        self.setMinimumWidth(px(256))
+        self.setMinimumHeight(px(256))
 
         self.header = H4('Bookmarks', parent=self)
         self.header.setAlignment(QtCore.Qt.AlignCenter)
@@ -135,6 +140,7 @@ class BookmarksView(Frameless, QtWidgets.QDialog):
         self.layout.top.addLayout(self.form)
         self.layout.top.addWidget(HLine(parent=self))
         self.layout.center.addWidget(self.list)
+        self.layout.center.setContentsMargins(*px(1, 0, 1, 1))
         self.setLayout(self.layout)
 
     def add_bookmark_item(self, bookmark, remove_callback):
@@ -156,13 +162,15 @@ class BookmarksDialog(BookmarksView):
     '''
 
     def __init__(self, state, *args, **kwargs):
-        self.state = state
         super(BookmarksDialog, self).__init__(*args, **kwargs)
 
         self.remove.clicked.connect(self._on_rem_clicked)
         self.add.clicked.connect(self._on_add_or_edit_clicked)
         self.edit.clicked.connect(self._on_add_or_edit_clicked)
         self.list.itemClicked.connect(self._on_bookmark_clicked)
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
+        self.state = state
         self.state['bookmarks'].changed.connect(self._refresh)
         self.state['context'].changed.connect(self._refresh)
         self._refresh()
@@ -171,9 +179,11 @@ class BookmarksDialog(BookmarksView):
     def eventFilter(self, object, event):
         if event.type() == QtCore.QEvent.WindowDeactivate:
             self.accept()
-        return False
+        return super(BookmarksDialog, self).eventFilter(object, event)
 
     def _refresh(self):
+        self.list.clear()
+
         bookmark = self._get_bookmark(self.state['uri'].get())
         if bookmark:
             self.name.setText(bookmark['name'])
@@ -186,7 +196,6 @@ class BookmarksDialog(BookmarksView):
             self.edit.setEnabled(False)
             self.remove.setEnabled(False)
 
-        self.list.clear()
         bookmarks = self.state['bookmarks'].get()
         for bookmark in reversed(bookmarks):
             self.add_bookmark_item(
@@ -205,6 +214,8 @@ class BookmarksDialog(BookmarksView):
             parts = [context['location'], context['mount']]
         elif context['location']:
             parts = [context['location']]
+        else:
+            parts = []
         return '  /  '.join([p.title() for p in parts])
 
     def _on_rem_clicked(self):
@@ -221,8 +232,9 @@ class BookmarksDialog(BookmarksView):
 
     def _on_bookmark_clicked(self, item):
         widget = self.list.itemWidget(item)
-        uri = widget.data['uri']
-        self.state.set('uri', uri)
+        bookmark = widget.data
+        self.state.set('uri', bookmark['uri'])
+        self.state.set('context', bookmark['context'])
         self.list.clearSelection()
 
     def _remove_bookmark(self, bookmark):
@@ -260,10 +272,3 @@ class BookmarksDialog(BookmarksView):
         for bookmark in bookmarks:
             if uri == bookmark['uri']:
                 return bookmark
-
-    def _is_bookmarked(self, uri):
-        bookmarks = self.state['bookmarks'].get()
-        for bookmark in bookmarks:
-            if uri == bookmark['uri']:
-                return True
-        return False
