@@ -9,7 +9,7 @@ import logging
 from logging.config import dictConfig
 
 # Local imports
-from . import schemas
+from . import migrations, schemas
 from .compat import Mapping, basestring, wraps, zip_longest
 from .constants import DEFAULT_LOGGING
 from .context import Context, validate_context
@@ -84,6 +84,7 @@ class API(object):
         self.extensions = ExtensionManager(self)
         self.context = Context()
         self.schemas = schemas
+        self.migrations = migrations
         self.io = IO(self)
         self.ui = UIManager(self)
         self._logging_dict = kwargs.pop('logging', None)
