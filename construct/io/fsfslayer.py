@@ -14,6 +14,16 @@ from .layer import IOLayer
 _log = logging.getLogger(__name__)
 
 
+def _read_project(project):
+    '''Packs project data with minimum data necessary for construct 0.2+'''
+
+    data = fsfs.read(project)
+    data.setdefault('name', project.name)
+    data.setdefault('_id', fsfs.get_id(project))
+    data.setdefault('_type', 'project')
+    return data
+
+
 class FsfsLayer(IOLayer):
 
     def __init__(self, api):
@@ -33,8 +43,8 @@ class FsfsLayer(IOLayer):
                 yield entry
 
     def get_projects(self, location, mount=None):
-        for entry in self._get_projects(location, mount):
-            yield fsfs.read(entry)
+        for project in self._get_projects(location, mount):
+            yield _read_project(project)
 
     def get_project_by_id(self, _id, location=None, mount=None):
 
@@ -42,21 +52,21 @@ class FsfsLayer(IOLayer):
 
         for project in self._get_projects(location, mount):
             if fsfs.get_id(project) == _id:
-                return fsfs.read(project)
+                yield _read_project(project)
 
     def get_project(self, name, location, mount=None):
         if mount:
             root = self.api.get_mount(location, mount)
-            for entry in fsfs.search(root, max_depth=1):
-                if entry.name == name:
-                    return fsfs.read(entry)
+            for project in fsfs.search(root, max_depth=1):
+                if project.name == name:
+                    return _read_project(project)
             return
 
         for mount in self.settings['locations'][location].keys():
             root = self.api.get_mount(location, mount)
-            for entry in fsfs.search(root, max_depth=1):
-                if entry.name == name:
-                    return fsfs.read(entry)
+            for project in fsfs.search(root, max_depth=1):
+                if project.name == name:
+                    return _read_project(project)
 
     def new_project(self, name, location, mount, data):
         path = self.api.get_mount(location, mount) / name

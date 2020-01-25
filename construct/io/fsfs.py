@@ -7,6 +7,7 @@ Uses Path objects instead of passing strings and fsfs.Entry objects around.
 from __future__ import absolute_import
 
 # Standard library imports
+import errno
 import logging
 import shutil
 from copy import deepcopy
@@ -24,6 +25,14 @@ missing = object()
 search_pattern = '*/.data/uuid_*'
 data_dir = '.data'
 data_file = 'data'
+IGNORE_ERRNO = (
+    errno.EACCES,
+    errno.ENOENT,
+    errno.EIO,
+    errno.EPERM,
+    59,  # WinError network access
+    errno.EINVAL,  # WinError network access
+)
 
 
 class FileCache(object):
@@ -105,12 +114,12 @@ def safe_iterdir(path):
     while True:
         try:
             yield next(contents)
+        except (OSError, WindowsError) as e:
+            if e.errno not in IGNORE_ERRNO:
+                print(e)
+                raise
         except StopIteration:
             return
-        except (OSError, WindowsError) as e:
-            print(dir(e))
-            print(e)
-            print(e.errno)
 
 
 def search(path, max_depth=10):
