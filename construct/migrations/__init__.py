@@ -112,6 +112,10 @@ def initial_migration(api, project):
     InitialMigration(api, project).forward()
 
 
+def requires_initial_migration(project):
+    return 'schema_version' not in project
+
+
 def get_migrations(migrations_dir=None):
     import sys
     relative_dir = Path(__file__).parent
