@@ -52,7 +52,7 @@ class FsfsLayer(IOLayer):
 
         for project in self._get_projects(location, mount):
             if fsfs.get_id(project) == _id:
-                yield _read_project(project)
+                return _read_project(project)
 
     def get_project(self, name, location, mount=None):
         if mount:

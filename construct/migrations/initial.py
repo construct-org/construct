@@ -67,7 +67,7 @@ class InitialMigration(object):
         elif tags & self.workspace_tags:
             self.migrate_workspace(path)
         else:
-            print('WARNING: could not migrate %s' % path)
+            _log.debug('Could not migrate %s' % path)
 
     def migrate_project(self, path):
         _log.debug('Found project: %s' % path)
