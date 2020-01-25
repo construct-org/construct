@@ -116,8 +116,7 @@ def safe_iterdir(path):
             yield next(contents)
         except (OSError, WindowsError) as e:
             if e.errno not in IGNORE_ERRNO:
-                print(e)
-                raise
+                _log.exception('Unrecognized error in safe_iterdir.')
         except StopIteration:
             return
 

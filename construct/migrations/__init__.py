@@ -9,6 +9,7 @@ from inspect import getmembers
 
 # Local imports
 from ..compat import Path, basestring
+from . import utils
 
 
 _log = logging.getLogger(__name__)

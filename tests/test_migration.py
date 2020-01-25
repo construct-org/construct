@@ -2,72 +2,15 @@
 
 from __future__ import absolute_import
 
-# Standard library imports
-import unittest
-
-# Third party imports
-import fsfs
-
 # Local imports
 import construct
 from construct import migrations
-from construct.settings import restore_default_settings
-from construct.utils import unipath
 
 # Local imports
 from . import data_dir, setup_api, teardown_api
 
 
 MIGRATIONS_DIR = data_dir('migrations')
-
-
-def _setup_old_project(where):
-
-    def new_asset(p, col, typ, asset):
-        return [
-            (p/'3D'/col, 'collection'),
-            (p/'3D'/col/typ, 'asset_type'),
-            (p/'3D'/col/typ/asset, 'asset'),
-            (p/'3D'/col/typ/asset/'model', 'task'),
-            (p/'3D'/col/typ/asset/'model/work/maya', 'workspace'),
-            (p/'3D'/col/typ/asset/'rig', 'task'),
-            (p/'3D'/col/typ/asset/'rig/work/maya', 'workspace'),
-            (p/'3D'/col/typ/asset/'shade', 'task'),
-            (p/'3D'/col/typ/asset/'shade/work/maya', 'workspace'),
-            (p/'3D'/col/typ/asset/'light', 'task'),
-            (p/'3D'/col/typ/asset/'light/work/maya', 'workspace'),
-            (p/'3D'/col/typ/asset/'comp', 'task'),
-            (p/'3D'/col/typ/asset/'comp/work/maya', 'workspace'),
-        ]
-
-    def new_shot(p, col, seq, shot):
-        return [
-            (p/'3D'/col, 'collection'),
-            (p/'3D'/col/seq, 'sequence'),
-            (p/'3D'/col/seq/shot, 'shot'),
-            (p/'3D'/col/seq/shot/'anim', 'task'),
-            (p/'3D'/col/seq/shot/'anim/work/maya', 'workspace'),
-            (p/'3D'/col/seq/shot/'light', 'task'),
-            (p/'3D'/col/seq/shot/'light/work/maya', 'workspace'),
-            (p/'3D'/col/seq/shot/'fx', 'task'),
-            (p/'3D'/col/seq/shot/'fx/work/maya', 'workspace'),
-            (p/'3D'/col/seq/shot/'comp', 'task'),
-            (p/'3D'/col/seq/shot/'comp/work/maya', 'workspace'),
-        ]
-
-    entries = [(where, 'project')]
-    entries.extend(new_asset(where, 'assets', 'prop', 'prop_01'))
-    entries.extend(new_asset(where, 'assets', 'product', 'product_01'))
-    entries.extend(new_asset(where, 'assets', 'character', 'char_01'))
-    entries.extend(new_shot(where, 'shots', 'seq_01', 'seq_01_010'))
-    entries.extend(new_shot(where, 'shots', 'seq_01', 'seq_01_020'))
-    entries.extend(new_shot(where, 'shots', 'seq_01', 'seq_01_030'))
-    entries.extend(new_shot(where, 'users', 'user_01', 'user_01_010'))
-    entries.extend(new_shot(where, 'users', 'user_01', 'user_01_020'))
-    entries.extend(new_shot(where, 'users', 'user_01', 'user_01_030'))
-
-    for path, tag in entries:
-        fsfs.tag(str(path), tag)
 
 
 def setup_module():
@@ -78,11 +21,11 @@ def teardown_module():
     teardown_api(__name__)
 
 
-# @unittest.skip('Temporarily Disabled.')
 def test_initial_migration():
+    '''Migrate old style project.'''
 
     project_root = data_dir(__name__, 'projects', 'old_style_project')
-    _setup_old_project(project_root)
+    migrations.utils.create_old_project(project_root)
 
     api = construct.API(__name__)
 
@@ -122,6 +65,7 @@ def test_initial_migration():
 
 
 def test_collect_migrations():
+    '''Collect migrations from a folder.'''
 
     expected = set(['M1', 'M2', 'M3', 'M4', 'M5'])
     retrieved_migrations = migrations.get_migrations(MIGRATIONS_DIR)
@@ -130,6 +74,7 @@ def test_collect_migrations():
 
 
 def test_forward_migration():
+    '''Migrate data forward.'''
 
     api = construct.API(__name__)
     entity = {'_type': 'test', 'schema_version': '0.0.2'}
@@ -137,7 +82,7 @@ def test_forward_migration():
     result = migrations.forward(
         api,
         entity,
-        to_version=None, # None will run forward to the latest version
+        to_version=None,  # None will run forward to the latest version
         migrations_dir=MIGRATIONS_DIR,
     )
     assert result['schema_version'] == '1.0.1'
@@ -152,6 +97,7 @@ def test_forward_migration():
 
 
 def test_backward_migration():
+    '''Migrate date backward.'''
 
     api = construct.API(__name__)
     entity = {'_type': 'test', 'schema_version': '1.1.0'}

@@ -180,6 +180,7 @@ class Software(Extension):
                 '%s has no registered ext.' % software['host']
             )
 
+        self.api.send('before_launch', self.api, software, env, ctx)
         _log.debug('Launching %s' % name.title())
         _run(cmd, env=env)
 
@@ -216,12 +217,13 @@ class Software(Extension):
                 '%s has no registered ext.' % software['host']
             )
 
+        self.api.send('before_launch', self.api, software, env, ctx)
         _log.debug('Launching %s' % name.title())
         _run(cmd, env=env)
 
 
 def _get_command(software):
-    '''Get the platform specific command used to execute a piece of software.'''
+    '''Get the platform specific command used to launch the software.'''
 
     cmd = software['cmd'].get(platform, None)
     if isinstance(cmd, basestring):
