@@ -93,6 +93,32 @@ class Context(dict):
         self.update(**self._defaults)
         self.update(**kwargs)
 
+    def trim(self, key):
+        '''Returns a new context with context beyond key set to None.
+
+        Example:
+            >>> c = Context(location='location', mount='mount',
+            ...             project='project', bin='bin', asset='asset')
+            >>> c2 = c.trim('project')
+            >>> assert c2['project'] == 'project'
+            >>> assert c2['bin'] is None
+            >>> assert c2['asset'] is None
+        '''
+        context = Context()
+        include = [
+            'host',
+            'location',
+            'mount',
+            'project',
+            'bin',
+            'asset',
+            'task'
+            'workspace',
+        ]
+        include = include[:include.index(key) + 1]
+        context.update(**{k: self[k] for k in include})
+        return context
+
     def set(self, key, value):
         self[key] = value
 

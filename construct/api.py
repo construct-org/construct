@@ -347,8 +347,8 @@ class API(object):
             'project',
             'bin',
             'asset',
-            'workspace',
             'task',
+            'workspace',
             'file',
         ]
         for key in uri_parts_map:
