@@ -12,3 +12,5 @@ from .labels import *
 from .buttons import *
 from .header import *
 from .navigation import *
+from .sidebar import *
+from .splitters import *

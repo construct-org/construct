@@ -312,12 +312,18 @@ class Theme(object):
 
         Arguments:
             resource (str):  Path relative to Construct PATH or font icon name
-            size (QSize): Size of pixmap to return
+            size (tuple): Size of pixmap to return
             family (str): Font family for font icon character (optional)
         '''
 
+        from Qt import QtCore
         from Qt.QtGui import QPixmap, QIcon
         from .widgets import FontIcon
+
+        if size:
+            size = QtCore.QSize(*px(*size))
+        else:
+            size = QtCore.QSize(*px(24, 24))
 
         path = self.resources.get(resource, None)
         if path:

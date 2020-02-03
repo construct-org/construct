@@ -18,7 +18,7 @@ class HLine(Widget, QtWidgets.QFrame):
 
     css_id = 'line'
 
-    def __init__(self, thickness=1, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(HLine, self).__init__(*args, **kwargs)
 
         self.setFrameShape(QtWidgets.QFrame.HLine)
@@ -26,19 +26,19 @@ class HLine(Widget, QtWidgets.QFrame):
             QtWidgets.QSizePolicy.Expanding,
             QtWidgets.QSizePolicy.Fixed,
         )
-        self.setFixedHeight(px(thickness))
+        self.setFixedHeight(px(1))
 
 
 class VLine(Widget, QtWidgets.QFrame):
 
     css_id = 'line'
 
-    def __init__(self, thickness=1, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(HLine, self).__init__(*args, **kwargs)
 
         self.setFrameShape(QtWidgets.QFrame.VLine)
         self.setSizePolicy(
-            QtCore.QSizePolicy.Fixed,
-            QtGui.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Fixed,
+            QtWidgets.QSizePolicy.Expanding,
         )
-        self.setFixedWidth(px(thickness))
+        self.setFixedWidth(px(1))

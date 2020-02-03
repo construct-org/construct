@@ -66,7 +66,7 @@ class BookmarkWidget(Widget, QtWidgets.QWidget):
         self.remove.hide()
 
 
-class BookmarksView(Frameless, QtWidgets.QDialog):
+class BookmarksBase(Frameless, QtWidgets.QDialog):
     '''Base view for displaying and editing bookmarks. This is not connected
     to any signals.'''
 
@@ -81,10 +81,10 @@ class BookmarksView(Frameless, QtWidgets.QDialog):
     edited = QtCore.Signal()
 
     def __init__(self, *args, **kwargs):
-        super(BookmarksView, self).__init__(*args, **kwargs)
+        super(BookmarksBase, self).__init__(*args, **kwargs)
 
         self.setMinimumWidth(px(256))
-        self.setMinimumHeight(px(256))
+        self.setMinimumHeight(px(384))
 
         self.header = H4('Bookmarks', parent=self)
         self.header.setAlignment(QtCore.Qt.AlignCenter)
@@ -136,9 +136,9 @@ class BookmarksView(Frameless, QtWidgets.QDialog):
         self.layout.setSpacing(0)
         self.layout.top.setSpacing(0)
         self.layout.top.addWidget(self.header)
-        self.layout.top.addWidget(HLine(parent=self))
+        self.layout.top.addWidget(HLine(self))
         self.layout.top.addLayout(self.form)
-        self.layout.top.addWidget(HLine(parent=self))
+        self.layout.top.addWidget(HLine(self))
         self.layout.center.addWidget(self.list)
         self.layout.center.setContentsMargins(*px(1, 0, 1, 1))
         self.setLayout(self.layout)
@@ -151,8 +151,8 @@ class BookmarksView(Frameless, QtWidgets.QDialog):
         self.list.setItemWidget(item, widget)
 
 
-class BookmarksDialog(BookmarksView):
-    '''Bookmarks Dialog. This is the stateful version of the BookmarksView.
+class BookmarksDialog(BookmarksBase):
+    '''Bookmarks Dialog. This is the stateful version of the BookmarksBase.
 
     Required State:
         api (API): Used to retrieve and persist bookmarks in user_cache.
