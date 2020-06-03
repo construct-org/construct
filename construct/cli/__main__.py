@@ -5,6 +5,7 @@ import sys
 import argparse
 import colorama
 import construct
+import warnings
 from collections import OrderedDict
 from construct import signals, get_context
 from construct.constants import FAILED, SUCCESS, SKIPPED
@@ -23,6 +24,11 @@ from construct.cli.constants import (
 from construct.cli import stout
 from construct.cli.widgets import TaskLine, ProgressBar
 import win_unicode_console
+
+
+# Disable warnings
+# TODO: Remove this in future release
+warnings.simplefilter("ignore")
 
 
 CONSOLE_WIDGETS = {}

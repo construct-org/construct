@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from construct.constants import DEFAULT_CONFIG
-import yaml
+from construct.vendor import yaml
 try:
     from collections import ChainMap
 except ImportError:
